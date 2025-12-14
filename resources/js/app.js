@@ -1,27 +1,22 @@
 import './bootstrap';
 
-// Meklēšanas un kārtošanas funkcionalitāte
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('casesForm');
     const searchInput = document.getElementById('searchInput');
     const sortSelect = document.getElementById('sortSelect');
-    const cases = document.querySelectorAll('.case-card');
 
-    searchInput.addEventListener('input', function() {
-        const query = this.value.toLowerCase();
-        cases.forEach(card => {
-            const title = card.dataset.title.toLowerCase();
-            card.style.display = title.includes(query) ? '' : 'none';
-        });
+    function updateUrl() {
+        const params = new URLSearchParams(window.location.search);
+        params.set('search', searchInput.value.trim());
+        params.set('sort', sortSelect.value);
+        window.location.href = window.location.pathname + '?' + params.toString();
+    }
+
+    let debounceTimeout;
+    searchInput.addEventListener('input', () => {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(updateUrl, 300);
     });
 
-    sortSelect.addEventListener('change', function() {
-        const value = this.value;
-        cases.forEach(card => {
-            if(value === '') {
-                card.style.display = '';
-            } else {
-                card.style.display = card.dataset.status === value ? '' : 'none';
-            }
-        });
-    });
+    sortSelect.addEventListener('change', updateUrl);
 });

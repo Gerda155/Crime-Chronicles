@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CaseController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,8 +18,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/visas-lietas', function () {
-    return view('all_cases');
-});
+Route::get('/cases', [CaseController::class, 'index'])->name('cases.index');
 
 require __DIR__.'/auth.php';
+

@@ -69,21 +69,6 @@ main {
   box-shadow: 0 10px 20px rgba(0,0,0,0.5);
 }
 
-.status-jauna {
-  background-color: #0dcaf0;
-  color: #000;
-}
-
-.status-izpildes {
-  background-color: #ffc107;
-  color: #000;
-}
-
-.status-pabeigta {
-  background-color: #198754;
-  color: #fff;
-}
-
 .card-title {
   font-size: 1.2rem;
   font-weight: 600;
@@ -95,13 +80,6 @@ main {
   color: #fff;
 }
 
-.status-badge {
-  font-size: 0.8rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-weight: 500;
-}
-
 /*Search*/
 .search-sort {
     margin-bottom: 30px;
@@ -110,4 +88,8 @@ main {
     cursor: pointer;
     transform: translateY(-5px);
     transition: 0.3s;
+}
+
+li{
+    color: #fff;
 }

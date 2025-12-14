@@ -29,7 +29,7 @@
       Jebkādas sakritības ar reāliem cilvēkiem vai notikumiem ir nejaušas.
     </p>
 
-    <a href="{{ url('/visas-lietas') }}" class="btn btn-lg btn-danger px-5">Skatīt visas lietas</a>
+    <a href="{{ url('/cases') }}" class="btn btn-lg btn-danger px-5">Skatīt visas lietas</a>
   </main>
 </body>
 </html>
