@@ -1,0 +1,113 @@
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #1b1b1b, #0a0a0a);
+  color: #f1f1f1;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar {
+  backdrop-filter: blur(6px);
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+.btn-outline-light {
+  border-width: 2px;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover,
+.btn-light:hover {
+  color: #fff;
+  background-color: #dc3545;
+  border-color: #dc3545;
+  transform: scale(1.05);
+}
+
+.btn-light {
+  transition: all 0.3s ease;
+}
+
+main {
+  min-height: 80vh;
+}
+
+.logo {
+  font-size: 4rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  text-shadow: 0 0 10px #dc3545, 0 0 20px #ff4c4c;
+}
+
+.disclaimer {
+  max-width: 700px;
+  opacity: 0.75;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ff4c4c, #dc3545);
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #dc3545, #ff1a1a);
+  transform: scale(1.05);
+}
+
+/*________________________________ALL CASES____*/
+.card {
+  background-color: #2a2a2a;
+  border: none;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.status-jauna {
+  background-color: #0dcaf0;
+  color: #000;
+}
+
+.status-izpildes {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.status-pabeigta {
+  background-color: #198754;
+  color: #fff;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.card-text {
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.status-badge {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+}
+
+/*Search*/
+.search-sort {
+    margin-bottom: 30px;
+}
+.card:hover {
+    cursor: pointer;
+    transform: translateY(-5px);
+    transition: 0.3s;
+}
