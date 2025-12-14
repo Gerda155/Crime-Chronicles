@@ -14,6 +14,12 @@
                     <x-input-error :messages="$errors->get('name')" class="mt-2" />
                 </div>
 
+                <div class="mb-4">
+                    <x-input-label for="username" :value="__('Segvārds')" />
+                    <x-text-input id="username" class="block mt-1 w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+                    <x-input-error :messages="$errors->get('username')" class="mt-2" />
+                </div>
+
                 <!-- E-pasts -->
                 <div class="mb-4">
                     <x-input-label for="email" :value="__('E-pasts')" />
