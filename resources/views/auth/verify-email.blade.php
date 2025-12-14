@@ -1,31 +1,40 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
-    </div>
+    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-indigo-800 to-black px-4">
+        <div class="max-w-md w-full bg-gray-900 shadow-2xl rounded-xl p-8 text-white">
 
-    @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
-        </div>
-    @endif
+            <h2 class="text-center text-3xl font-bold mb-6">Apstipriniet e-pastu</h2>
 
-    <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
-            @csrf
+            <p class="mb-4 text-gray-400 text-sm">
+                Paldies par reģistrēšanos! Lūdzu, apstipriniet savu e-pasta adresi, noklikšķinot uz saites, ko mēs nosūtījām.
+                Ja saite netika saņemta, mēs to nosūtīsim vēlreiz.
+            </p>
 
-            <div>
-                <x-primary-button>
-                    {{ __('Resend Verification Email') }}
-                </x-primary-button>
+            @if (session('status') == 'verification-link-sent')
+                <div class="mb-4 text-green-400 text-sm">
+                    Jauna apstiprinājuma saite tika nosūtīta uz jūsu e-pastu.
+                </div>
+            @endif
+
+            <div class="flex flex-col gap-3 mt-4">
+                <form method="POST" action="{{ route('verification.send') }}">
+                    @csrf
+                    <x-primary-button class="w-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 px-6 py-2 rounded-lg mb-2">
+                        Nosūtīt apstiprinājuma e-pastu vēlreiz
+                    </x-primary-button>
+                </form>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full underline text-sm text-gray-400 hover:text-gray-300 rounded-lg py-2">
+                        Iziet
+                    </button>
+                </form>
+
+                <a href="{{ url('/') }}" class="mt-2 block text-center text-gray-400 hover:text-gray-300 text-sm">
+                    Atpakaļ uz galveno
+                </a>
             </div>
-        </form>
 
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-
-            <button type="submit" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                {{ __('Log Out') }}
-            </button>
-        </form>
+        </div>
     </div>
 </x-guest-layout>
