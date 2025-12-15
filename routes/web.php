@@ -17,6 +17,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/my-cases', [CaseController::class, 'myCases'])->name('cases.my-cases');
+    Route::delete('/cases/{id}', [CaseController::class, 'destroy'])->name('cases.destroy');
+    Route::get('/cases/{id}/edit', [CaseController::class, 'edit'])->name('cases.edit');
+    Route::put('/cases/{id}', [CaseController::class, 'update'])->name('cases.update');
 });
 
 Route::get('/users/search', [UserController::class, 'search'])

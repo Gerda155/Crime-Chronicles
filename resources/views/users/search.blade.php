@@ -67,7 +67,7 @@
                             </div>
                         @else
                             <p class="text-white">
-                                Nav nevienas ačīvmenta 😔
+                                Nav nevienas ačīvmenta
                             </p>
                         @endif
                         <p class="text-secondary mb-2" style="font-size: 0.9rem;">

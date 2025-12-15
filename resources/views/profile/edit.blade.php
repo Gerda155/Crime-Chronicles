@@ -30,9 +30,6 @@
                             style="object-fit: cover;">
 
                         <h4 class="mb-0">{{ $user->username }}</h4>
-                        <small class="text-muted">
-                            Reģistrēts: {{ $user->created_at->format('d.m.Y') }}
-                        </small>
 
                         <hr class="border-secondary">
 
@@ -40,14 +37,15 @@
                             {{ $user->bio ?: 'Nav apraksta' }}
                         </p>
 
-                        <h6 class="text-uppercase text-muted mt-4">Sasniegumi</h6>
+                        <h6 class="text-uppercase card-text mt-4">Sasniegumi</h6>
                         <ul class="list-unstyled small">
                             @forelse($user->achievements as $ach)
-                            <li>🏆 {{ $ach->title }}</li>
+                            <li>{{ $ach->title }}</li>
                             @empty
-                            <li class="text-muted">Nav sasniegumu</li>
+                            <li class="card-text">Nav sasniegumu</li>
                             @endforelse
                         </ul>
+                        <small class="text-secondary mb-2"> Detektīvs kopš: {{ $user->created_at->format('d.m.Y') }}</small>
                     </div>
                 </div>
             </div>

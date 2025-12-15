@@ -11,6 +11,10 @@
             Visas lietas
         </a>
 
+        <a href=" {{ route('cases.my-cases') }}" class="d-block text-light mb-2">
+            Manas lietas
+        </a>
+
         <form method=" GET" action="{{ route('users.search') }}" class="mb-3">
             <p>Meklēt detektīvus pēc sēgvārda:</p>
             <input
