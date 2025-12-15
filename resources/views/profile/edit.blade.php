@@ -13,58 +13,9 @@
 </head>
 
 <body>
-    {{-- HEADER --}}
-    <nav class="navbar navbar-dark px-4 d-flex justify-content-between">
-        <div>
-            @auth
-            <button class="btn btn-outline-light" data-bs-toggle="offcanvas" data-bs-target="#burgerMenu">
-                ☰
-            </button>
-            @endauth
-        </div>
-
-        <div class="d-flex align-items-center gap-3">
-            @guest
-            <a href="{{ route('login') }}" class="btn btn-outline-light">Pieteikties</a>
-            <a href="{{ route('register') }}" class="btn btn-light">Reģistrēties</a>
-            @endguest
-
-            @auth
-            <img
-                src="{{ Auth::user()->avatar
-                    ? asset('storage/' . Auth::user()->avatar)
-                    : asset('images/avatar-placeholder.jpg') }}"
-                class="rounded-circle"
-                width="40"
-                height="40"
-                style="object-fit: cover;">
-
-            <span class="text-light">
-                Sveiki, {{ Auth::user()->username }}!
-            </span>
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="btn btn-danger btn-sm">Iziet</button>
-            </form>
-            @endauth
-        </div>
-    </nav>
-
-    {{-- BURGER --}}
-    @auth
-    <div class="offcanvas offcanvas-start text-bg-dark" id="burgerMenu">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Izvēlne</h5>
-            <button class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body">
-            <a href="{{ route('cases.index') }}" class="d-block text-light mb-2">
-                Visas lietas
-            </a>
-        </div>
-    </div>
-    @endauth
+    @include('partials.header')
+    @include('partials.burger')
+    
     <main class="container my-5">
         <div class="row g-4">
 
@@ -193,6 +144,7 @@
             </div>
         </div>
     </main>
+@include('partials.footer')
 
 </body>
 
