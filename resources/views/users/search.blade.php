@@ -37,15 +37,15 @@
                 $user = $users->first();
             @endphp
 
-            <div class="card bg-dark border-secondary shadow-sm mx-auto p-4" style="max-width: 800px;">
+            <div class="card bg-dark border-secondary shadow-sm mx-auto p-4" style="max-width: 1000px; min-height: 282px;">
                 <div class="d-flex gap-4 align-items-start">
 
                     {{-- AVATAR --}}
                     <img
                         src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('images/avatar-placeholder.jpg') }}"
                         class="rounded-circle border border-secondary"
-                        width="120"
-                        height="120"
+                        width="200"
+                        height="200"
                         style="object-fit: cover;"
                     >
 
