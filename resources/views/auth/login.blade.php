@@ -1,57 +1,67 @@
 <x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-indigo-800 to-black px-4">
-        <div class="max-w-md w-full bg-gray-900 shadow-2xl rounded-xl p-8 text-white">
+    <div class="h-screen overflow-hidden flex items-center justify-center px-4
+    bg-black bg-gradient-to-br from-purple-900/40 via-indigo-900/30 to-black">
 
-            <h2 class="text-center text-3xl font-bold mb-6">Pieteikties</h2>
 
-            <x-auth-session-status class="mb-4" :status="session('status')" />
+        <div class="w-full max-w-md rounded-2xl p-8 text-white
+            bg-gradient-to-b from-gray-900 to-black
+            border border-purple-500/20
+            shadow-[0_0_40px_rgba(168,85,247,0.25)]">
 
-            <form method="POST" action="{{ route('login') }}">
+            <h2 class="text-center text-3xl font-bold mb-2
+                tracking-widest
+                text-purple-300
+                drop-shadow-[0_0_12px_rgba(168,85,247,0.8)]">
+                CRIME CHRONICLES
+            </h2>
+            <form method="POST" action="{{ route('login') }}" class="space-y-4">
                 @csrf
 
-                <!-- E-pasts -->
-                <div class="mb-4">
-                    <x-input-label for="email" :value="__('E-pasts')" />
-                    <x-text-input id="email" class="block mt-1 w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                <input name="email" type="email" required placeholder="E-pasts"
+                    class="w-full px-4 py-2 rounded-lg
+                    bg-gray-950 text-white
+                    border border-gray-700
+                    focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30
+                    outline-none transition">
+
+                <input name="password" type="password" required placeholder="Parole"
+                    class="w-full px-4 py-2 rounded-lg
+                    bg-gray-950 text-white
+                    border border-gray-700
+                    focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30
+                    outline-none transition">
+
+                <div class="flex items-center justify-between text-sm text-gray-400">
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" name="remember" class="accent-purple-500">
+                        Atcerēties mani
+                    </label>
+
+                    <a href="{{ route('password.request') }}" class="hover:text-purple-400">
+                        Aizmirsi paroli?
+                    </a>
                 </div>
 
-                <!-- Parole -->
-                <div class="mb-4">
-                    <x-input-label for="password" :value="__('Parole')" />
-                    <x-text-input id="password" class="block mt-1 w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500" type="password" name="password" required autocomplete="current-password" />
-                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                </div>
-
-                <!-- Atcerēties mani -->
-                <div class="flex items-center mb-4">
-                    <input id="remember_me" type="checkbox" class="rounded border-gray-600 bg-gray-800 text-indigo-600 focus:ring-indigo-500" name="remember">
-                    <label for="remember_me" class="ml-2 text-gray-300 text-sm">Atcerēties mani</label>
-                </div>
-
-                <!-- Poga un saite -->
-                <div class="flex items-center justify-between">
-                    @if (Route::has('password.request'))
-                        <a class="text-sm text-indigo-400 hover:text-indigo-300" href="{{ route('password.request') }}">
-                            Aizmirsi paroli?
-                        </a>
-                    @endif
-
-                    <x-primary-button class="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 px-6 py-2 rounded-lg">
-                        Pieteikties
-                    </x-primary-button>
-                </div>
+                <button
+                    class="w-full py-3 rounded-lg font-semibold tracking-wide
+                    bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500
+                    shadow-[0_0_30px_rgba(168,85,247,0.6)]
+                    hover:shadow-[0_0_45px_rgba(168,85,247,0.9)]
+                    transition">
+                    Pieteikties
+                </button>
             </form>
 
-            <p class="mt-6 text-center text-gray-400 text-sm">
-                Nav konta? 
-                <a href="{{ route('register') }}" class="text-indigo-400 hover:text-indigo-300 font-semibold">Reģistrējies šeit</a>
+            <p class="mt-6 text-center text-sm text-gray-400">
+                Nav konta?
+                <a href="{{ route('register') }}" class="text-purple-400 hover:text-purple-300">
+                    Reģistrēties
+                </a>
             </p>
 
-            <a href="{{ url('/') }}" class="mt-4 block text-center text-gray-400 hover:text-gray-300 text-sm">
+            <a href="{{ url('/') }}" class="block mt-4 text-center text-xs text-gray-500 hover:text-gray-300">
                 Atpakaļ uz galveno
             </a>
-
         </div>
     </div>
 </x-guest-layout>
