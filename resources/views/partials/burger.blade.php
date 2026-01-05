@@ -5,7 +5,7 @@
         <button class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
     </div>
     <div class="offcanvas-body">
-        <a href="{{ route('profile.edit') }}"">Mans profils</a>
+        <a href="{{ route('profile.edit') }}" class="d-block text-light mb-2">Mans profils</a>
 
         <a href=" {{ route('cases.index') }}" class="d-block text-light mb-2">
             Visas lietas
@@ -13,6 +13,14 @@
 
         <a href=" {{ route('cases.my-cases') }}" class="d-block text-light mb-2">
             Manas lietas
+        </a>
+
+        <a href=" {{ route('leaderboard') }}" class="d-block text-light mb-2">
+            Labākie detektīvi
+        </a>
+
+        <a href="{{ route('achievements.index') }}" class="d-block text-light mb-2">
+            Sasniegumi
         </a>
 
         <form method=" GET" action="{{ route('users.search') }}" class="mb-3">

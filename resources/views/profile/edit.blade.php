@@ -15,7 +15,7 @@
 <body>
     @include('partials.header')
     @include('partials.burger')
-    
+
     <main class="container my-5">
         <div class="row g-4">
 
@@ -37,14 +37,23 @@
                             {{ $user->bio ?: 'Nav apraksta' }}
                         </p>
 
-                        <h6 class="text-uppercase card-text mt-4">Sasniegumi</h6>
-                        <ul class="list-unstyled small">
+                        <h6 class="text-uppercase card-text mt-4 mb-3">Sasniegumi</h6>
+
+                        <div class="d-flex flex-wrap gap-3 justify-content-center">
                             @forelse($user->achievements as $ach)
-                            <li>{{ $ach->title }}</li>
+                            <div class="card bg-secondary text-dark text-center p-2" style="width: 120px;">
+                                <img src="{{ $ach->icon 
+                        ? asset('images/achievements/'.$ach->icon) 
+                        : asset('images/achievements/default.png') }}"
+                                    class="mb-2 mx-auto"
+                                    style="width: 50px; height: 50px; object-fit: contain;">
+                                <div class="small fw-bold">{{ $ach->title }}</div>
+                            </div>
                             @empty
-                            <li class="card-text">Nav sasniegumu</li>
+                            <div class="text-secondary">Nav sasniegumu</div>
                             @endforelse
-                        </ul>
+                        </div>
+
                         <small class="text-secondary mb-2"> Detektīvs kopš: {{ $user->created_at->format('d.m.Y') }}</small>
                     </div>
                 </div>
@@ -54,6 +63,16 @@
             <div class="col-lg-8">
                 <div class="card bg-dark text-light shadow-lg border-0">
                     <div class="card-body">
+                        <h5 class="mb-4">Profila iestatījumi</h5>
+                        @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
                         <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
                             @csrf
                             @method('PATCH')
@@ -87,19 +106,6 @@
                                     <label class="form-label">Avatars</label>
                                     <input type="file" name="avatar" class="form-control">
                                 </div>
-
-
-                                <h5 class="mb-4">Profila iestatījumi</h5>
-                                @if ($errors->any())
-                                <div class="alert alert-danger">
-                                    <ul class="mb-0">
-                                        @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                                @endif
-
 
                                 <div class="col-md-6">
                                     <label class="form-label">Jauna parole</label>
@@ -142,7 +148,7 @@
             </div>
         </div>
     </main>
-@include('partials.footer')
+    @include('partials.footer')
 
 </body>
 
