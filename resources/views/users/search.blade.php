@@ -20,65 +20,72 @@
         <h1 class="text-center mb-4">
             Lietotāju meklēšana
             @if($query)
-                <span class="text-secondary">“{{ $query }}”</span>
+            <span class="text-secondary">“{{ $query }}”</span>
             @endif
         </h1>
 
         @if($query === '')
-            <p class="text-center text-secondary mb-2">
-                Ievadi lietotājvārdu, lai sāktu meklēšanu.
-            </p>
+        <p class="text-center text-secondary mb-2">
+            Ievadi lietotājvārdu, lai sāktu meklēšanu.
+        </p>
         @elseif($users->isEmpty())
-            <p class="text-center text-secondary mb-2">
-                Neviens lietotājs netika atrasts.
-            </p>
+        <p class="text-center text-secondary mb-2">
+            Neviens lietotājs netika atrasts.
+        </p>
         @else
-            @php
-                $user = $users->first();
-            @endphp
+        @php
+        $user = $users->first();
+        @endphp
 
-            <div class="card bg-dark border-secondary shadow-sm mx-auto p-4" style="max-width: 1000px; min-height: 282px;">
-                <div class="d-flex gap-4 align-items-start">
+        <div class="card bg-dark border-secondary shadow-sm mx-auto p-4" style="max-width: 1000px; min-height: 282px;">
+            <div class="d-flex gap-4 align-items-start">
 
-                    {{-- AVATAR --}}
-                    <img
-                        src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('images/avatar-placeholder.jpg') }}"
-                        class="rounded-circle border border-secondary"
-                        width="200"
-                        height="200"
-                        style="object-fit: cover;"
-                    >
+                {{-- AVATAR --}}
+                <img
+                    src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('images/avatar-placeholder.jpg') }}"
+                    class="rounded-circle border 
+        @if($user->role === 'admin') border-danger 
+        @elseif($user->role === 'moderator') border-warning 
+        @else border-secondary @endif"
+                    width="200"
+                    height="200"
+                    style="object-fit: cover;">
 
-                    {{-- INFO --}}
-                    <div class="flex-grow-1 text-white">
-                        <h3 class="mb-1">{{ $user->name }}</h3>
-                        <p class="mb-1">
-                            {{ $user->bio ?? 'Lietotājs vēl nav pievienojis bio.' }}
-                        </p>
+                {{-- INFO --}}
+                <div class="flex-grow-1 text-white">
+                    <h3 class="@if($user->role === 'admin') text-danger fw-bold
+            @elseif($user->role === 'moderator') text-warning fw-bold
+            @endif">
+                        {{ $user->name }}
+                    </h3>
+                    <p class="mb-1">
+                        {{ $user->bio ?? 'Lietotājs vēl nav pievienojis bio.' }}
+                    </p>
 
-                        <h5 class="mb-2 mt-3">Ačīvmenti</h5>
-                        @if($user->achievements && $user->achievements->count())
-                            <div class="d-flex flex-wrap gap-2">
-                                @foreach($user->achievements as $achievement)
-                                    <span class="badge bg-secondary">
-                                        {{ $achievement->title }}
-                                    </span>
-                                @endforeach
-                            </div>
-                        @else
-                            <p class="text-white">
-                                Nav nevienas ačīvmenta
-                            </p>
-                        @endif
-                        <p class="text-secondary mb-2" style="font-size: 0.9rem;">
-                            Detektīvs kopš: {{ $user->created_at->format('d.m.Y') }}
-                        </p>
+                    <h5 class="mb-2 mt-3">Ačīvmenti</h5>
+                    @if($user->achievements && $user->achievements->count())
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach($user->achievements as $achievement)
+                        <span class="badge bg-secondary">
+                            {{ $achievement->title }}
+                        </span>
+                        @endforeach
                     </div>
-
+                    @else
+                    <p class="text-white">
+                        Nav nevienas ačīvmenta
+                    </p>
+                    @endif
+                    <p class="text-secondary mb-2" style="font-size: 0.9rem;">
+                        Detektīvs kopš: {{ $user->created_at->format('d.m.Y') }}
+                    </p>
                 </div>
+
             </div>
+        </div>
         @endif
     </div>
     @include('partials.footer')
 </body>
+
 </html>
