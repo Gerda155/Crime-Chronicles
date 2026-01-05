@@ -28,6 +28,8 @@ class RegisterRequest extends FormRequest
                     ->numbers()
                     ->symbols(),
             ],
+            'bio' => ['nullable', 'string', 'max:300'], 
+            'avatar' => ['nullable', 'image', 'max:2048'],
         ];
     }
 

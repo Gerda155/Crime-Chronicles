@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Auth\RegisterRequest;
 
 class RegisteredUserController extends Controller
@@ -28,17 +29,36 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
+
     public function store(RegisterRequest $request)
     {
+        $data = $request->validated();
+
+        if ($request->filled('avatar_cropped')) {
+            $avatarData = $request->input('avatar_cropped');
+            $avatarData = str_replace('data:image/jpeg;base64,', '', $avatarData);
+            $avatarData = str_replace(' ', '+', $avatarData);
+            $avatarName = uniqid() . '.jpg';
+            Storage::disk('public')->put('avatars/' . $avatarName, base64_decode($avatarData));
+            $data['avatar'] = 'avatars/' . $avatarName;
+        }
+
+        elseif ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $data['avatar'] = $path;
+        }
+
         $user = User::create([
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
+            'name' => $data['name'],
+            'username' => $data['username'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'bio' => $data['bio'] ?? null,
+            'avatar' => $data['avatar'] ?? null,
         ]);
 
         Auth::login($user);
 
-        return redirect('/');
+        return redirect()->intended('/');
     }
 }

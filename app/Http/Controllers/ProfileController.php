@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use App\Models\User;
 use App\Models\Achievement;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -28,7 +29,7 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255', 
+            'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users,username,' . $user->id,
             'email' => 'required|email|max:255',
             'password' => ['nullable', Password::min(8)->mixedCase()->numbers()->symbols()],
@@ -37,7 +38,7 @@ class ProfileController extends Controller
             'avatar' => 'nullable|image|max:5120',
         ]);
 
-        $user->name = $validated['name']; 
+        $user->name = $validated['name'];
         $user->username = $validated['username'];
         $user->email = $validated['email'];
         $user->bio = $validated['bio'] ?? $user->bio;
@@ -46,9 +47,15 @@ class ProfileController extends Controller
             $user->password = Hash::make($validated['password']);
         }
 
-        if ($request->hasFile('avatar')) {
-            $user->avatar = $request->file('avatar')->store('avatars', 'public');
+        if ($request->filled('avatar_cropped')) {
+            $imageData = $request->input('avatar_cropped');
+            $imageData = str_replace('data:image/jpeg;base64,', '', $imageData);
+            $imageData = str_replace(' ', '+', $imageData);
+            $imageName = 'avatar_' . $user->id . '_' . time() . '.jpg';
+            Storage::disk('public')->put('avatars/' . $imageName, base64_decode($imageData));
+            $user->avatar = 'avatars/' . $imageName;
         }
+
 
         $user->save();
 

@@ -8,6 +8,8 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 
 </head>
@@ -64,15 +66,9 @@
                 <div class="card bg-dark text-light shadow-lg border-0">
                     <div class="card-body">
                         <h5 class="mb-4">Profila iestatījumi</h5>
-                        @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                        @endif
+                        @error('field')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                         <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
                             @csrf
                             @method('PATCH')
@@ -81,46 +77,55 @@
 
                                 <div class="col-md-6">
                                     <label class="form-label">Pilnais vārds</label>
-                                    <input name="name" class="form-control" value="{{ $user->name }}" required>
+                                    <input name="name" class="form-control rounded @error('field') is-invalid @enderror" value="{{ $user->name }}" required>
                                 </div>
 
                                 <div class="col-md-6">
                                     <label class="form-label">Lietotājvārds</label>
-                                    <input name="username" class="form-control"
+                                    <input name="username" class="form-control rounded @error('field') is-invalid @enderror"
                                         value="{{ $user->username }}" required>
                                 </div>
 
                                 <div class="col-md-6">
                                     <label class="form-label">E-pasts</label>
-                                    <input name="email" type="email" class="form-control"
+                                    <input name="email" type="email" class="form-control rounded @error('field') is-invalid @enderror"
                                         value="{{ $user->email }}" required>
                                 </div>
 
                                 <div class="col-12">
                                     <label class="form-label">Par mani</label>
-                                    <textarea name="bio" class="form-control" maxlength="300"
+                                    <textarea name="bio" class="form-control rounded @error('field') is-invalid @enderror" maxlength="300"
                                         rows="3">{{ $user->bio }}</textarea>
                                 </div>
 
                                 <div class="col-12">
                                     <label class="form-label">Avatars</label>
-                                    <input type="file" name="avatar" class="form-control">
+                                    <input type="file" id="avatarInput" accept="image/*" class="form-control @error('avatar') is-invalid @enderror">
+                                    @error('avatar')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+
+                                    <div id="avatarPreviewWrapper" class="mt-3 w-64 h-64 border border-secondary overflow-hidden d-none">
+                                        <img id="avatarPreview" class="w-100 h-100 object-cover">
+                                    </div>
+
+                                    <input type="hidden" name="avatar_cropped" id="avatarCropped">
                                 </div>
 
                                 <div class="col-md-6">
                                     <label class="form-label">Jauna parole</label>
-                                    <input type="password" name="password" class="form-control">
+                                    <input type="password" name="password" class="form-control rounded @error('field') is-invalid @enderror"">
                                 </div>
 
-                                <div class="col-md-6">
+                                <div class=" col-md-6">
                                     <label class="form-label">Apstiprināt paroli</label>
-                                    <input type="password" name="password_confirmation" class="form-control">
+                                    <input type="password" name="password_confirmation" class="form-control rounded @error('field') is-invalid @enderror"">
                                 </div>
                             </div>
 
-                            <button class="btn btn-success mt-4">
-                                Saglabāt izmaiņas
-                            </button>
+                            <button class=" btn btn-success mt-4">
+                                    Saglabāt izmaiņas
+                                    </button>
                         </form>
                     </div>
                 </div>
@@ -148,6 +153,51 @@
             </div>
         </div>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const avatarInput = document.getElementById('avatarInput');
+            const avatarPreview = document.getElementById('avatarPreview');
+            const avatarPreviewWrapper = document.getElementById('avatarPreviewWrapper');
+            const avatarCropped = document.getElementById('avatarCropped');
+            let cropper;
+
+            avatarInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function() {
+                    avatarPreview.src = reader.result;
+                    avatarPreviewWrapper.classList.remove('d-none');
+
+                    if (cropper) cropper.destroy();
+                    cropper = new Cropper(avatarPreview, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        autoCropArea: 1,
+                        movable: true,
+                        zoomable: true,
+                        rotatable: false,
+                        scalable: false,
+                    });
+                };
+                reader.readAsDataURL(file);
+            });
+
+            const profileForm = avatarInput.closest('form');
+            profileForm.addEventListener('submit', function(e) {
+                if (cropper) {
+                    const canvas = cropper.getCroppedCanvas({
+                        width: 250,
+                        height: 250
+                    });
+                    avatarCropped.value = canvas.toDataURL('image/jpeg');
+                }
+            });
+        });
+    </script>
+
     @include('partials.footer')
 
 </body>
