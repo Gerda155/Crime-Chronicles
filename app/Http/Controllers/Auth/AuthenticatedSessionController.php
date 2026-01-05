@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Validation\ValidationException;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -17,20 +18,6 @@ class AuthenticatedSessionController extends Controller
     public function create(): View
     {
         return view('auth.login');
-    }
-
-    /**
-     * Handle an incoming authentication request.
-     */
-    public function store(LoginRequest $request): RedirectResponse
-    {
-        $request->authenticate();
-
-        $request->session()->regenerate();
-
-        return redirect()->intended('/');
-
-
     }
 
     /**
@@ -45,5 +32,22 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    public function store(LoginRequest $request)
+    {
+        $login = $request->input('login'); 
+        $password = $request->input('password');
+
+        $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        if (Auth::attempt([$fieldType => $login, 'password' => $password], $request->filled('remember'))) {
+            $request->session()->regenerate();
+            return redirect()->intended('/');
+        }
+
+        throw ValidationException::withMessages([
+            'login' => __('Nepareizs lietotājvārds / e-pasts vai parole.'),
+        ]);
     }
 }

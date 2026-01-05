@@ -23,39 +23,54 @@
                 @csrf
 
                 <input name="name" required placeholder="Vārds"
+                    value="{{ old('name') }}"
                     class="w-full px-4 py-2 rounded-lg
-                    bg-gray-950 text-white
+                    bg-gray-950 text-gray-900 
                     border border-gray-700
                     focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30
                     outline-none transition">
 
                 <input name="username" required placeholder="Segvārds"
+                    value="{{ old('username') }}"
                     class="w-full px-4 py-2 rounded-lg
-                    bg-gray-950 text-white
+                    bg-gray-950 text-gray-900 
                     border border-gray-700
                     focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30
                     outline-none transition">
 
+                @error('username')
+                    <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
+                @enderror
+
                 <input name="email" type="email" required placeholder="E-pasts"
+                    value="{{ old('email') }}"
                     class="w-full px-4 py-2 rounded-lg
-                    bg-gray-950 text-white
+                    bg-gray-950 text-gray-900 
                     border border-gray-700
                     focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30
                     outline-none transition">
+
+                @error('email')
+                    <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
+                @enderror
 
                 <input name="password" type="password" required placeholder="Parole"
                     class="w-full px-4 py-2 rounded-lg
-                    bg-gray-950 text-white
+                    bg-gray-950 text-gray-900 
                     border border-gray-700
                     focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30
                     outline-none transition">
 
                 <input name="password_confirmation" type="password" required placeholder="Apstiprināt paroli"
                     class="w-full px-4 py-2 rounded-lg
-                    bg-gray-950 text-white
+                    bg-gray-950 text-gray-900 
                     border border-gray-700
                     focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30
                     outline-none transition">
+
+                @error('password')
+                    <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
+                @enderror
 
                 <button
                     class="w-full py-3 rounded-lg font-semibold tracking-wide
