@@ -63,14 +63,16 @@
                             {{-- Редактировать --}}
                             <a href="{{ route('moderator.cases.edit', $case->id) }}" class="btn btn-sm btn-outline-primary rounded">Rediģēt</a>
 
-                            {{-- Деактивировать (soft delete) --}}
-                            @if($case->statuss !== 'neaktivs')
-                            <form action="{{ route('moderator.cases.deactivate', $case->id) }}" method="POST">
+                            <form action="{{ $case->statuss === 'neaktivs' 
+    ? route('moderator.cases.activate', $case->id) 
+    : route('moderator.cases.deactivate', $case->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
-                                <button type="submit" class="btn btn-sm btn-outline-danger rounded">Deaktivēt</button>
+                                <button type="submit" class="btn btn-sm {{ $case->statuss === 'neaktivs' ? 'btn-outline-success' : 'btn-outline-danger' }} rounded">
+                                    {{ $case->statuss === 'neaktivs' ? 'Aktivēt' : 'Deaktivēt' }}
+                                </button>
                             </form>
-                            @endif
+
 
                         </td>
                     </tr>

@@ -31,11 +31,11 @@ class ModeratorController extends Controller
         return redirect()->route('moderator.cases.index')->with('success', 'Lieta atjaunināta');
     }
 
-public function deactivateCase(CaseModel $case)
-{
-    $case->update(['statuss' => 'neaktivs']);
-    return redirect()->route('moderator.cases.index')->with('success', 'Lieta deaktivēta');
-}
+    public function deactivateCase(CaseModel $case)
+    {
+        $case->update(['statuss' => 'neaktivs']);
+        return redirect()->route('moderator.cases.index')->with('success', 'Lieta deaktivēta');
+    }
 
 
     public function deactivateUser(User $user)
@@ -43,6 +43,13 @@ public function deactivateCase(CaseModel $case)
         $user->update(['active' => false]);
         return redirect()->route('moderator.users')->with('success', 'Lietotājs deaktivēts');
     }
+
+    public function activateCase(CaseModel $case)
+    {
+        $case->update(['statuss' => 'aktīvs']);
+        return redirect()->route('moderator.cases.index')->with('success', 'Lieta aktivēta');
+    }
+
 
     public function casesIndex(Request $request)
     {
@@ -53,29 +60,29 @@ public function deactivateCase(CaseModel $case)
         }
 
         if ($request->sort) {
-    switch ($request->sort) {
-        case 'newest':
-            $query->orderBy('created_at', 'desc');
-            break;
-        case 'oldest':
-            $query->orderBy('created_at', 'asc');
-            break;
-        case 'rating':
-            $query->orderBy('rating', 'desc');
-            break;
-        case 'title':
-            $query->orderBy('title', 'asc');
-            break;
-        case 'genre':
-            $query->orderBy('genre_id', 'asc');
-            break;
-        case 'statuss': 
-            $query->orderBy('statuss', 'asc');
-            break;
-    }
-} else {
-    $query->latest();
-}
+            switch ($request->sort) {
+                case 'newest':
+                    $query->orderBy('created_at', 'desc');
+                    break;
+                case 'oldest':
+                    $query->orderBy('created_at', 'asc');
+                    break;
+                case 'rating':
+                    $query->orderBy('rating', 'desc');
+                    break;
+                case 'title':
+                    $query->orderBy('title', 'asc');
+                    break;
+                case 'genre':
+                    $query->orderBy('genre_id', 'asc');
+                    break;
+                case 'statuss':
+                    $query->orderBy('statuss', 'asc');
+                    break;
+            }
+        } else {
+            $query->latest();
+        }
 
 
         $cases = $query->paginate(10)->withQueryString();
@@ -89,14 +96,52 @@ public function deactivateCase(CaseModel $case)
         $users = User::all();
         return view('moderator.users', compact('users'));
     }
-
     public function stats()
     {
         $totalCases = CaseModel::count();
-        $activeCases = CaseModel::where('statuss', 'aktīvs')->count();
-        $totalUsers = User::count();
-        $activeUsers = User::where('active', true)->count();
+        $activeCases = CaseModel::where('statuss', 'aktivs')->count();
 
-        return view('moderator.stats', compact('totalCases', 'activeCases', 'totalUsers', 'activeUsers'));
+        $totalUsers = User::whereNotIn('role', ['moderator', 'administrator'])->count();
+        $activeUsers = User::where('statuss', 'aktivs')->count();
+        $activeUsers = User::where('statuss', 'aktivs')
+                  ->where('role', '!=', 'administrator')
+                  ->where('role', '!=', 'moderator')
+                  ->count();
+
+
+        $casesByGenre = CaseModel::where('statuss', '!=', 'neaktivs')
+            ->selectRaw('genre_id, count(*) as count')
+            ->groupBy('genre_id')
+            ->with('genre')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [$item->genre->name ?? 'Nav žanra' => $item->count];
+            });
+
+        $genreLabels = $casesByGenre->keys();
+        $genreData = $casesByGenre->values();
+
+        $registrations = User::where('statuss', '!=', 'neaktivs')
+            ->where('created_at', '>=', now()->subDays(7))
+            ->selectRaw('DATE(created_at) as date, count(*) as total')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        $regLabels = $registrations->pluck('date')->map(fn($d) => \Carbon\Carbon::parse($d)->format('d.m'))->toArray();
+        $regData = $registrations->pluck('total')->toArray();
+
+        return view('moderator.stats', [
+            'totalCases' => $totalCases,
+            'activeCases' => $activeCases,
+            'totalUsers' => $totalUsers,
+            'activeUsers' => $activeUsers,
+            'casesByGenre' => [
+                'labels' => $genreLabels,
+                'data' => $genreData,
+            ],
+            'regLabels' => $regLabels,
+            'regData' => $regData,
+        ]);
     }
 }

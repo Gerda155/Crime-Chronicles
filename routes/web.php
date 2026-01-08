@@ -49,6 +49,7 @@ Route::middleware([ModeratorMiddleware::class])->prefix('moderator')->group(func
 
     Route::get('/users', [ModeratorController::class,'usersIndex'])->name('moderator.users.index');
     Route::put('/users/{user}/deactivate', [ModeratorController::class,'deactivateUser'])->name('moderator.users.deactivate');
+    Route::put('/cases/{case}/activate', [ModeratorController::class,'activateCase'])->name('moderator.cases.activate');
 
     Route::get('/stats', [ModeratorController::class,'stats'])->name('moderator.stats');
 });

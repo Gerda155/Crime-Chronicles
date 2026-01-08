@@ -43,7 +43,7 @@
 
         {{-- CASES --}}
         <div class="row g-4">
-            @foreach($cases as $case)
+            @forelse($cases as $case)
             <div class="col-md-6 col-lg-4">
                 <div class="card p-3 h-100"
                     data-bs-toggle="modal"
@@ -63,42 +63,39 @@
                 </div>
             </div>
 
-            {{-- AUTH MODAL --}}
+            {{-- Auth модалки --}}
             @auth
             <div class="modal fade" id="caseModal-{{ $case->id }}">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                     <div class="modal-content bg-dark text-light">
-
                         <div class="modal-header">
                             <h5 class="modal-title">{{ $case->title }}</h5>
                             <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
-
                         <div class="modal-body">
                             <p>{{ $case->description }}</p>
-
                             <ul class="list-unstyled">
                                 <li><strong>Žanrs:</strong> {{ $case->genre->name ?? '-' }}</li>
                                 <li><strong>Reitings:</strong> {{ $case->rating }}</li>
                                 <li><strong>Izveidots:</strong> {{ $case->created_at->format('d.m.Y') }}</li>
                             </ul>
                         </div>
-
                         <div class="modal-footer">
-                            <a href="" class="btn btn-success">
-                                Sākt izmeklēšanu
-                            </a>
-                            <button class="btn btn-secondary" data-bs-dismiss="modal">
-                                Aizvērt
-                            </button>
+                            <a href="" class="btn btn-success">Sākt izmeklēšanu</a>
+                            <button class="btn btn-secondary" data-bs-dismiss="modal">Aizvērt</button>
                         </div>
-
                     </div>
                 </div>
             </div>
             @endauth
-            @endforeach
+
+            @empty
+            <div class="col-12 text-center text-secondary my-5">
+                <p>Nav nevienas aktīvas lietas, kas atbilst meklēšanas kritērijiem.</p>
+            </div>
+            @endforelse
         </div>
+
 
         <div class="mt-4">
             {{ $cases->links('vendor.pagination.custom') }}
@@ -123,7 +120,7 @@
             </div>
         </div>
     </div>
-@include('partials.footer')
+    @include('partials.footer')
 
 </body>
 

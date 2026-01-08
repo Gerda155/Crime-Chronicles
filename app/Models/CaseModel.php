@@ -14,7 +14,7 @@ class CaseModel extends Model
     protected $table = 'cases';
 
     protected $fillable = [
-        'title', 'description', 'preview', 'genre_id', 'rating', 'answer', 'user_id'
+        'title', 'description', 'preview', 'genre_id', 'rating', 'answer', 'user_id', 'statuss' 
     ];
 
     public function genre()
@@ -26,4 +26,4 @@ class CaseModel extends Model
     {
         return $this->belongsTo(User::class);
     }
-}
+} 

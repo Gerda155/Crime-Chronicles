@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Auth;
 
 class CaseController extends Controller
 {
-    // Все дела
     public function index(Request $request)
     {
-        $query = CaseModel::with('genre')->where('status', '!=', 'pabeigta');
+        $query = CaseModel::with('genre')
+            ->where('statuss', 'aktīvs');
 
         if ($request->filled('search')) {
             $query->where('title', 'like', '%' . $request->search . '%');
@@ -43,7 +43,6 @@ class CaseController extends Controller
         return view('cases.index', compact('cases'));
     }
 
-    // Мои уровни
     public function myCases(Request $request)
     {
         $user = Auth::user();
@@ -51,12 +50,10 @@ class CaseController extends Controller
         $query = CaseModel::with('genre')
             ->where('user_id', $user->id);
 
-        // Поиск
         if ($request->filled('search')) {
             $query->where('title', 'like', '%' . $request->search . '%');
         }
 
-        // Сортировка
         $sort = $request->get('sort', 'newest');
         switch ($sort) {
             case 'oldest':
@@ -85,11 +82,10 @@ class CaseController extends Controller
     }
 
 
-    // Редактирование
     public function edit($id)
     {
         $case = CaseModel::findOrFail($id);
-        if ($case->user_id != Auth::id()) abort(403); // проверка авторства
+        if ($case->user_id != Auth::id()) abort(403);
         return view('cases.edit', compact('case'));
     }
 
@@ -102,7 +98,6 @@ class CaseController extends Controller
         return redirect()->route('cases.my-cases');
     }
 
-    // Удаление
     public function destroy($id)
     {
         $case = CaseModel::findOrFail($id);
