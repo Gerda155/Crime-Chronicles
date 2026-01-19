@@ -50,44 +50,44 @@
                 </thead>
                 <tbody>
                     @forelse($cases as $case)
-                        <tr class="align-middle">
-                            <td>{{ $loop->iteration }}</td>
-                            <td class="fw-bold">{{ $case->title }}</td>
-                            <td>{{ Str::limit($case->description, 50) }}</td>
-                            <td>{{ $case->genre->name ?? '-' }}</td>
-                            <td>{{ $case->rating ?? '0' }}</td>
-                            <td class="d-flex flex-wrap gap-1">
-                                <a href="{{ route('cases.edit', $case->id) }}" class="btn btn-sm btn-outline-primary rounded">Rediģēt</a>
-                                <button type="button" class="btn btn-sm btn-outline-danger rounded" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $case->id }}">Dzēst</button>
+                    <tr class="align-middle">
+                        <td>{{ $loop->iteration }}</td>
+                        <td class="fw-bold">{{ $case->title }}</td>
+                        <td>{{ Str::limit($case->description, 50) }}</td>
+                        <td>{{ $case->genre->name ?? '-' }}</td>
+                        <td>{{ $case->rating ?? '0' }}</td>
+                        <td class="d-flex flex-wrap gap-1">
+                            <a href="{{ route('cases.edit', $case->id) }}" class="btn btn-sm btn-outline-primary rounded">Rediģēt</a>
+                            <button type="button" class="btn btn-sm btn-outline-danger rounded" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $case->id }}">Dzēst</button>
 
-                                <div class="modal fade" id="deleteModal{{ $case->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $case->id }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content bg-secondary text-light rounded">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="deleteModalLabel{{ $case->id }}">Apstiprināt dzēšanu</h5>
-                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Vai tiešām vēlies dzēst līmeni "{{ $case->title }}"?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-outline-light rounded" data-bs-dismiss="modal">Atcelt</button>
-                                                <form action="{{ route('cases.destroy', $case->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-outline-danger rounded">Dzēst</button>
-                                                </form>
-                                            </div>
+                            <div class="modal fade" id="deleteModal{{ $case->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $case->id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content bg-secondary text-light rounded">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel{{ $case->id }}">Apstiprināt dzēšanu</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Vai tiešām vēlies dzēst līmeni "{{ $case->title }}"?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-outline-light rounded" data-bs-dismiss="modal">Atcelt</button>
+                                            <form action="{{ route('cases.destroy', $case->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-outline-danger rounded">Dzēst</button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                            </td>
-                        </tr>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="6" class="text-center text-secondary">Nav izveidotu līmeņu</td>
-                        </tr>
+                    <tr>
+                        <td colspan="6" class="text-center text-secondary">Nav izveidotu līmeņu</td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>

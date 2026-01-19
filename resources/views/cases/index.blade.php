@@ -87,6 +87,7 @@
                     </div>
                 </div>
             </div>
+
             @endauth
 
             @empty
@@ -98,7 +99,7 @@
 
 
         <div class="mt-4">
-            {{ $cases->links('vendor.pagination.custom') }}
+            {{ $cases->links() }}
         </div>
     </div>
 

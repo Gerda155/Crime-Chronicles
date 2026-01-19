@@ -37,19 +37,17 @@ class ModeratorController extends Controller
         return redirect()->route('moderator.cases.index')->with('success', 'Lieta deaktivēta');
     }
 
-
     public function deactivateUser(User $user)
     {
-        $user->update(['active' => false]);
-        return redirect()->route('moderator.users')->with('success', 'Lietotājs deaktivēts');
+        $user->update(['statuss' => 'neaktivs']);
+        return redirect()->route('moderator.users.index')->with('success', 'Lietotājs deaktivēts');
     }
 
-    public function activateCase(CaseModel $case)
+    public function activateUser(User $user)
     {
-        $case->update(['statuss' => 'aktīvs']);
-        return redirect()->route('moderator.cases.index')->with('success', 'Lieta aktivēta');
+        $user->update(['statuss' => 'aktivs']);
+        return redirect()->route('moderator.users.index')->with('success', 'Lietotājs aktivēts');
     }
-
 
     public function casesIndex(Request $request)
     {
@@ -84,18 +82,53 @@ class ModeratorController extends Controller
             $query->latest();
         }
 
-
         $cases = $query->paginate(10)->withQueryString();
 
         return view('moderator.cases', compact('cases'));
     }
 
-
-    public function usersIndex()
+    public function usersIndex(Request $request)
     {
-        $users = User::all();
+        $query = User::query();
+
+        if (Auth::user()->role === 'moderator') {
+            $query->where('role', 'user');
+        } elseif (Auth::user()->role === 'admin') {
+            $query->whereIn('role', ['user', 'moderator']);
+        }
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('email', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        switch ($request->get('sort')) {
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'name':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'email':
+                $query->orderBy('email', 'asc');
+                break;
+            case 'role':
+                $query->orderBy('role', 'asc');
+                break;
+            case 'statuss':
+                $query->orderBy('statuss', 'asc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc');
+        }
+
+        $users = $query->paginate(10)->withQueryString();
+
         return view('moderator.users', compact('users'));
     }
+
     public function stats()
     {
         $totalCases = CaseModel::count();
@@ -104,9 +137,9 @@ class ModeratorController extends Controller
         $totalUsers = User::whereNotIn('role', ['moderator', 'administrator'])->count();
         $activeUsers = User::where('statuss', 'aktivs')->count();
         $activeUsers = User::where('statuss', 'aktivs')
-                  ->where('role', '!=', 'administrator')
-                  ->where('role', '!=', 'moderator')
-                  ->count();
+            ->where('role', '!=', 'administrator')
+            ->where('role', '!=', 'moderator')
+            ->count();
 
 
         $casesByGenre = CaseModel::where('statuss', '!=', 'neaktivs')
@@ -130,6 +163,8 @@ class ModeratorController extends Controller
 
         $regLabels = $registrations->pluck('date')->map(fn($d) => \Carbon\Carbon::parse($d)->format('d.m'))->toArray();
         $regData = $registrations->pluck('total')->toArray();
+
+
 
         return view('moderator.stats', [
             'totalCases' => $totalCases,
