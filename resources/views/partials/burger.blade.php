@@ -15,7 +15,7 @@
 
         <a href="{{ route('achievements.index') }}" class="d-block text-light mb-2">Sasniegumi</a>
 
-        @if(Auth::user()->role === 'moderator')
+        @if(Auth::user()->role === 'moderator' || Auth::user()->role === 'admin')
         <div class="mb-2">
             <span class="fw-bold text-light">Moderatora panelis</span>
             <div class="ms-3 mt-1">
@@ -25,19 +25,7 @@
             </div>
         </div>
         @endif
-
-        @if(Auth::user()->role === 'admin')
-        <div class="mb-2">
-            <span class="fw-bold text-light">Moderatora panelis</span>
-            <div class="ms-3 mt-1">
-                <a href="{{ route('moderator.cases.index') }}" class="d-block text-light mb-1">📁 Dela</a>
-                <a href="{{ route('moderator.users.index') }}" class="d-block text-light mb-1">👤 Lietotāji</a>
-                <a href="{{ route('moderator.stats') }}" class="d-block text-light mb-1">📊 Statistika</a>
-            </div>
-        </div>
-        @endif
-
-
+        
         <form method="GET" action="{{ route('users.search') }}" class="mb-3">
             <p>Meklēt detektīvus pēc sēgvārda:</p>
             <input

@@ -10,10 +10,12 @@ class ModeratorMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        $user = Auth::user();
+        if (!Auth::check()) {
+            abort(403);
+        }
 
-        if (!$user || $user->role !== 'moderator') {
-            abort(403, 'Nav piekļuves tiesību'); 
+        if (!in_array(Auth::user()->role, ['moderator', 'admin'])) {
+            abort(403);
         }
 
         return $next($request);
