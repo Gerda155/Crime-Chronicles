@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\ModeratorController;
+use App\Http\Controllers\ContactController;
 use App\Http\Middleware\ModeratorMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +17,9 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('welcome');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/contacts', [ContactController::class, 'index'])->name('contacts');
+Route::post('/contacts', [ContactController::class, 'send'])->name('contacts.send');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

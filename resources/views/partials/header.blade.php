@@ -8,7 +8,9 @@
     </div>
 
     <div class="d-flex align-items-center gap-3">
+
         @guest
+        <a href="{{ route('contacts') }}" class="btn btn-outline-light">Kontakti</a>
         <a href="{{ route('login') }}" class="btn btn-outline-light">Pieteikties</a>
         <a href="{{ route('register') }}" class="btn btn-light">Reģistrēties</a>
         @endguest

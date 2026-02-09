@@ -34,6 +34,8 @@
                 class="form-control bg-dark text-light border-secondary"
                 value="{{ request('q') }}">
         </form>
+
+        <a href="{{ route('contacts') }}" class="d-block text-light mb-2">Kontakti</a>
     </div>
 </div>
 @endauth

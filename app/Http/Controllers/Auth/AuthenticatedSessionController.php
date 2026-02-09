@@ -8,8 +8,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\User;
 use Illuminate\Validation\ValidationException;
-
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -36,18 +36,31 @@ class AuthenticatedSessionController extends Controller
 
     public function store(LoginRequest $request)
     {
-        $login = $request->input('login'); 
+        $login = $request->input('login');
         $password = $request->input('password');
 
         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        if (Auth::attempt([$fieldType => $login, 'password' => $password], $request->filled('remember'))) {
+        $user = User::where($fieldType, $login)->first();
+
+        if ($user && $user->statuss !== 'aktivs') {
+            throw ValidationException::withMessages([
+                'login' => 'Tavs konts ir deaktivēts. Sazinieties ar mums, lai to aktivizētu.',
+            ]);
+        }
+
+        if (Auth::attempt([
+            $fieldType => $login,
+            'password' => $password,
+            'statuss' => 'aktivs',
+        ], $request->filled('remember'))) {
+
             $request->session()->regenerate();
             return redirect()->intended('/');
         }
 
         throw ValidationException::withMessages([
-            'login' => __('Nepareizs lietotājvārds / e-pasts vai parole.'),
+            'login' => 'Nepareizs lietotājvārds / e-pasts vai parole.',
         ]);
     }
 }
