@@ -9,48 +9,13 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use App\Models\User;
 use App\Models\CaseModel;
+use App\Models\Genre;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Achievement;
 
 
 class ModeratorController extends Controller
 {
-    public function index()
-    {
-        $cases = CaseModel::latest()->get();
-        $users = User::all();
-        return view('moderator.stats', compact('cases', 'users'));
-    }
-
-    public function editCase(CaseModel $case)
-    {
-        return view('moderator.edit-case', compact('case'));
-    }
-
-    public function updateCase(Request $request, CaseModel $case)
-    {
-        $case->update($request->only(['title', 'description', 'genre_id', 'rating']));
-        return redirect()->route('moderator.cases.index')->with('success', 'Lieta atjaunināta');
-    }
-
-    public function deactivateCase(CaseModel $case)
-    {
-        $case->update(['statuss' => 'neaktivs']);
-        return redirect()->route('moderator.cases.index')->with('success', 'Lieta deaktivēta');
-    }
-
-    public function deactivateUser(User $user)
-    {
-        $user->update(['statuss' => 'neaktivs']);
-        return redirect()->route('moderator.users.index')->with('success', 'Lietotājs deaktivēts');
-    }
-
-    public function activateUser(User $user)
-    {
-        $user->update(['statuss' => 'aktivs']);
-        return redirect()->route('moderator.users.index')->with('success', 'Lietotājs aktivēts');
-    }
-
     public function casesIndex(Request $request)
     {
         $query = CaseModel::query();
@@ -85,8 +50,59 @@ class ModeratorController extends Controller
         }
 
         $cases = $query->paginate(10)->withQueryString();
+        return view('moderator.cases.index', compact('cases'));
+    }
 
-        return view('moderator.cases', compact('cases'));
+    public function createCase()
+    {
+        $genres = Genre::all(); // для селекта
+        return view('moderator.cases.create', compact('genres'));
+    }
+
+    public function storeCase(Request $request)
+    {
+        $data = $request->validate([
+            'title' => 'required|max:255',
+            'description' => 'nullable',
+            'genre_id' => 'nullable|exists:genres,id',
+            'rating' => 'nullable|numeric|min:0|max:5',
+        ]);
+
+        CaseModel::create($data);
+
+        return redirect()->route('moderator.cases.index')->with('success', 'Lieta izveidota!');
+    }
+
+    public function editCase(CaseModel $case)
+    {
+        $genres = Genre::all();
+        return view('moderator.cases.edit', compact('case', 'genres'));
+    }
+
+    public function updateCase(Request $request, CaseModel $case)
+    {
+        $data = $request->validate([
+            'title' => 'required|max:255',
+            'description' => 'nullable',
+            'genre_id' => 'nullable|exists:genres,id',
+            'rating' => 'nullable|numeric|min:0|max:5',
+        ]);
+
+        $case->update($data);
+
+        return redirect()->route('moderator.cases.index')->with('success', 'Lieta atjaunināta');
+    }
+
+    public function deactivateCase(CaseModel $case)
+    {
+        $case->update(['statuss' => 'neaktivs']);
+        return redirect()->route('moderator.cases.index')->with('success', 'Lieta deaktivēta');
+    }
+
+    public function activateCase(CaseModel $case)
+    {
+        $case->update(['statuss' => 'aktivs']);
+        return redirect()->route('moderator.cases.index')->with('success', 'Lieta aktivēta');
     }
 
     public function usersIndex(Request $request)

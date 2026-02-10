@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rediģēt sasniegumu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 </head>
 
 <body class="bg-dark text-light">
@@ -38,8 +39,8 @@
                     <img
                         id="iconPreview"
                         src="{{ $achievement->icon
-                ? asset('storage/'.$achievement->icon)
-                : asset('storage/achievements/default.png') }}"
+                        ? asset('storage/'.$achievement->icon)
+                        : asset('storage/achievements/default.png') }}"
                         width="160"
                         height="160"
                         style="object-fit: contain;">

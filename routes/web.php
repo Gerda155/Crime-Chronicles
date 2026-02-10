@@ -46,8 +46,10 @@ Route::get('/cases', [CaseController::class, 'index'])->name('cases.index');
 Route::middleware([ModeratorMiddleware::class])->prefix('moderator')->group(function () {
 
     Route::get('/cases', [ModeratorController::class, 'casesIndex'])->name('moderator.cases.index');
+    Route::get('/cases/create', [ModeratorController::class, 'createCase'])->name('moderator.cases.create');
+    Route::post('/cases', [ModeratorController::class, 'storeCase'])->name('moderator.cases.store');
     Route::get('/cases/{case}/edit', [ModeratorController::class, 'editCase'])->name('moderator.cases.edit');
-    Route::put('/cases/{case}/update', [ModeratorController::class, 'updateCase'])->name('moderator.cases.update');
+    Route::put('/cases/{case}', [ModeratorController::class, 'updateCase'])->name('moderator.cases.update');
     Route::put('/cases/{case}/deactivate', [ModeratorController::class, 'deactivateCase'])->name('moderator.cases.deactivate');
     Route::put('/cases/{case}/activate', [ModeratorController::class, 'activateCase'])->name('moderator.cases.activate');
 
