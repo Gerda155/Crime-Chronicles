@@ -10,6 +10,8 @@ use Illuminate\Validation\Rules\Password;
 use App\Models\User;
 use App\Models\CaseModel;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Achievement;
+
 
 class ModeratorController extends Controller
 {
@@ -178,5 +180,75 @@ class ModeratorController extends Controller
             'regLabels' => $regLabels,
             'regData' => $regData,
         ]);
+    }
+
+    public function achievementsIndex()
+    {
+        $achievements = Achievement::orderBy('created_at', 'desc')->paginate(10);
+        return view('moderator.achievements.index', compact('achievements'));
+    }
+
+    public function createAchievement()
+    {
+        return view('moderator.achievements.create');
+    }
+
+    public function storeAchievement(Request $request)
+    {
+        $data = $request->validate([
+            'title' => 'required|max:255',
+            'description' => 'nullable',
+            'icon' => 'nullable|image|max:2048'
+        ]);
+
+        if ($request->hasFile('icon')) {
+            $data['icon'] = $request->file('icon')->store('achievements', 'public');
+        }
+
+        Achievement::create($data);
+
+        return redirect()->route('moderator.achievements.index')
+            ->with('success', 'Sasniegums izveidots!');
+    }
+
+    public function editAchievement(Achievement $achievement)
+    {
+        return view('moderator.achievements.edit', compact('achievement'));
+    }
+
+    public function updateAchievement(Request $request, Achievement $achievement)
+    {
+        $data = $request->validate([
+            'title' => 'required|max:255',
+            'description' => 'nullable',
+            'icon' => 'nullable|image|max:2048'
+        ]);
+
+        if ($request->hasFile('icon')) {
+
+            if ($achievement->icon) {
+                Storage::disk('public')->delete($achievement->icon);
+            }
+
+            $data['icon'] = $request->file('icon')->store('achievements', 'public');
+        }
+
+
+        $achievement->update($data);
+
+        return redirect()->route('moderator.achievements.index')
+            ->with('success', 'Sasniegums atjaunināts!');
+    }
+
+    public function destroyAchievement(Achievement $achievement)
+    {
+        if ($achievement->icon) {
+            Storage::disk('public')->delete($achievement->icon);
+        }
+
+        $achievement->delete();
+
+        return redirect()->route('moderator.achievements.index')
+            ->with('success', 'Sasniegums dzēsts!');
     }
 }

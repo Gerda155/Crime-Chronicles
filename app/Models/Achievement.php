@@ -9,7 +9,13 @@ class Achievement extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'title', 'description'];
+        protected $fillable = [
+        'title',
+        'description',
+        'icon',
+    ];
+
+    public $timestamps = false;
 
     public function users()
     {

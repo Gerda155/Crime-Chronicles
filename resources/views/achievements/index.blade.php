@@ -20,31 +20,31 @@
 
         <div class="row g-4">
             @foreach($achievements as $achievement)
-                <div class="col-md-6 col-lg-4">
-                    <div class="card bg-dark border-secondary h-100 shadow-sm text-center p-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card bg-dark border-secondary h-100 shadow-sm text-center p-4">
 
-                        <img
-                            src="{{ $achievement->icon
-                                ? asset('images/achievements/'.$achievement->icon)
-                                : asset('images/achievements/default.png') }}"
-                            class="mx-auto mb-3"
-                            width="80"
-                            height="80"
-                            style="object-fit: contain;"
-                        >
+                    <img
+                        src="{{ $achievement->icon
+                        ? asset('storage/'.$achievement->icon)
+                        : asset('storage/achievements/default.png') }}"
+                        class="mx-auto mb-3"
+                        width="80"
+                        height="80"
+                        style="object-fit: contain;">
 
-                        <h5 class="card-title">{{ $achievement->title }}</h5>
+                    <h5 class="card-title">{{ $achievement->title }}</h5>
 
-                        <p class="text-secondary mb-0">
-                            {{ $achievement->description }}
-                        </p>
+                    <p class="text-secondary mb-0">
+                        {{ $achievement->description }}
+                    </p>
 
-                    </div>
                 </div>
+            </div>
             @endforeach
         </div>
     </div>
 
     @include('partials.footer')
 </body>
+
 </html>

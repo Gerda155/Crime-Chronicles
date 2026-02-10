@@ -22,6 +22,7 @@
                 <a href="{{ route('moderator.stats') }}" class="d-block text-light mb-1">Statistika</a>
                 <a href="{{ route('moderator.cases.index') }}" class="d-block text-light mb-1">Lietas</a>
                 <a href="{{ route('moderator.users.index') }}" class="d-block text-light mb-1">Lietotāji</a>
+                <a href="{{ route('moderator.achievements.index') }}" class="d-block text-light mb-1">Sasniegumi</a>
             </div>
         </div>
         @endif
