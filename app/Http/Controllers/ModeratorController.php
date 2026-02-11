@@ -16,6 +16,24 @@ use App\Models\Achievement;
 
 class ModeratorController extends Controller
 {
+    public function deactivateUser(User $user)
+    {
+        $user->update(['statuss' => 'neaktivs']);
+
+        return redirect()
+            ->route('moderator.users.index')
+            ->with('success', 'Lietotājs deaktivēts');
+    }
+
+    public function activateUser(User $user)
+    {
+        $user->update(['statuss' => 'aktivs']);
+
+        return redirect()
+            ->route('moderator.users.index')
+            ->with('success', 'Lietotājs aktivēts');
+    }
+
     public function casesIndex(Request $request)
     {
         $query = CaseModel::query();
@@ -55,7 +73,7 @@ class ModeratorController extends Controller
 
     public function createCase()
     {
-        $genres = Genre::all(); // для селекта
+        $genres = Genre::all();
         return view('moderator.cases.create', compact('genres'));
     }
 
