@@ -45,8 +45,8 @@
                             @forelse($user->achievements as $ach)
                             <div class="card bg-secondary text-dark text-center p-2" style="width: 120px;">
                                 <img src="{{ $ach->icon 
-                        ? asset('images/achievements/'.$ach->icon) 
-                        : asset('images/achievements/default.png') }}"
+                                    ? asset('images/achievements/'.$ach->icon) 
+                                    : asset('images/achievements/default.png') }}"
                                     class="mb-2 mx-auto"
                                     style="width: 50px; height: 50px; object-fit: contain;">
                                 <div class="small fw-bold">{{ $ach->title }}</div>
@@ -56,12 +56,14 @@
                             @endforelse
                         </div>
 
+                        <div class="d-flex flex-wrap gap-3 justify-content-center">
+                            <h6 class="text-uppercase card-text mt-3 mb-3">Pabeigtie līmeņi: {{ $completedCount }}</h6>
+                        </div>
                         <small class="text-secondary mb-2"> Detektīvs kopš: {{ $user->created_at->format('d.m.Y') }}</small>
                     </div>
                 </div>
             </div>
 
-            {{-- REDIĢĒŠANA --}}
             <div class="col-lg-8">
                 <div class="card bg-dark text-light shadow-lg border-0">
                     <div class="card-body">
@@ -123,14 +125,11 @@
                                 </div>
                             </div>
 
-                            <button class=" btn btn-success mt-4">
-                                    Saglabāt izmaiņas
-                                    </button>
+                            <button class=" btn btn-success mt-4">Saglabāt izmaiņas</button>
                         </form>
                     </div>
                 </div>
 
-                {{-- DZĒŠANA --}}
                 <div class="card bg-danger bg-opacity-10 border border-danger mt-4">
                     <div class="card-body">
                         <h6 class="text-danger">Bīstama zona</h6>

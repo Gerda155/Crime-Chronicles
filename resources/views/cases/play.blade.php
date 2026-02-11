@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crime Chronicles</title>
+    <title>Crime Chronicles - {{ $case->title }}</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
@@ -16,44 +16,58 @@
     @include('partials.burger')
 
     <main class="container my-5">
-        <div class="container my-5">
-            <h1>{{ $case->title }}</h1>
-            <p>{{ $case->description }}</p>
+        <div class="mb-5 text-center">
+            <h1 class="display-4">{{ $case->title }}</h1>
+            <p class="lead">{{ $case->description }}</p>
+        </div>
 
-            <h3>Pierādījumi</h3>
-            <div class="row mb-4">
+        {{-- Evidence Section --}}
+        <section class="mb-5">
+            <h3 class="mb-4 border-bottom pb-2">Pierādījumi</h3>
+            <div class="row g-4">
                 @foreach($evidence as $item)
-                <div class="col-md-4 mb-3">
-                    @if($item->type === 'image')
-                    <img src="{{ asset('storage/' . $item->content) }}" class="img-fluid rounded">
-                    @else
-                    <p>{{ $item->description }}</p>
-                    @endif
+                <div class="col-md-4">
+                    <div class="card bg-secondary text-dark evidence-card h-100">
+                        @if($item->type === 'image')
+                        <img src="{{ asset('storage/' . $item->content) }}" class="card-img-top rounded-top" style="height:200px; object-fit:cover;">
+                        @endif
+                        <div class="card-body">
+                            <p class="card-text">{{ $item->description }}</p>
+                        </div>
+                    </div>
                 </div>
                 @endforeach
             </div>
+        </section>
 
-            <h3>Aizdomās turamie</h3>
+        {{-- Suspects Section --}}
+        <section>
+            <h3 class="mb-4 border-bottom pb-2">Aizdomās turamie</h3>
             <form action="{{ route('cases.submit', $case->id) }}" method="POST">
                 @csrf
-                @foreach($suspects as $suspect)
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="radio" name="suspect_id" value="{{ $suspect->id }}" id="suspect-{{ $suspect->id }}">
-                    <label class="form-check-label" for="suspect-{{ $suspect->id }}">
-                        {{ $suspect->name }} - {{ $suspect->description }}
-                    </label>
+                <div class="row g-3">
+                    @foreach($suspects as $suspect)
+                    <div class="col-md-6">
+                        <label class="card suspect-card p-3 d-flex align-items-center gap-3" for="suspect-{{ $suspect->id }}">
+                            <input class="form-check-input mt-0" type="radio" name="suspect_id" value="{{ $suspect->id }}" id="suspect-{{ $suspect->id }}">
+                            <div>
+                                <strong>{{ $suspect->name }}</strong>
+                                <p class="mb-0 text-secondary">{{ $suspect->description }}</p>
+                            </div>
+                        </label>
+                    </div>
+                    @endforeach
                 </div>
-                @endforeach
-                <button type="submit" class="btn btn-success mt-3">Iesniegt atbildi</button>
+
+                <button type="submit" class="btn btn-success btn-lg mt-4 w-100">Iesniegt atbildi</button>
             </form>
 
             @if(session('status'))
-            <div class="alert alert-info mt-3">
+            <div class="alert alert-info mt-4 status-message text-center fw-bold">
                 {{ session('status') }}
             </div>
             @endif
-        </div>
-
+        </section>
     </main>
 
     @include('partials.footer')

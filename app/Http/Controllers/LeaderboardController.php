@@ -8,10 +8,12 @@ class LeaderboardController extends Controller
 {
     public function index()
     {
-        $topDetectives = User::withCount('achievements')
-            ->orderByDesc('achievements_count')
-            ->take(10)
-            ->get();
+        $topDetectives = User::withCount('completedCases') 
+                      ->withCount('achievements')
+                      ->orderByDesc('completed_cases_count')
+                      ->take(10)
+                      ->get();
+
 
         return view('leaderboard.index', compact('topDetectives'));
     }

@@ -24,11 +24,21 @@ class User extends Authenticatable
 
     protected $casts = ['email_verified_at' => 'datetime'];
 
+    public function attempts()
+    {
+        return $this->hasMany(PlayerAttempt::class);
+    }
+
     public function achievements()
     {
         return $this->belongsToMany(
             Achievement::class,
             'user_achievements'
         )->withTimestamps();
+    }
+
+    public function completedCases()
+    {
+        return $this->hasMany(PlayerAttempt::class)->where('is_correct', 1);
     }
 }

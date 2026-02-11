@@ -27,6 +27,7 @@
                     <tr>
                         <th>#</th>
                         <th>Detektīvs</th>
+                        <th>Pabeigtie līmeņi</th>
                         <th>Ačīvmenti</th>
                         <th>Kopš</th>
                     </tr>
@@ -41,16 +42,16 @@
                                 <img
                                     src="{{ $user->avatar ? asset('storage/'.$user->avatar) : asset('images/avatar-placeholder.jpg') }}"
                                     class="rounded-circle border 
-                @if($user->role === 'admin') border-danger 
-                @elseif($user->role === 'moderator') border-warning 
-                @else border-secondary @endif"
+                                    @if($user->role === 'admin') border-danger 
+                                    @elseif($user->role === 'moderator') border-warning 
+                                    @else border-secondary @endif"
                                     width="48"
                                     height="48"
                                     style="object-fit: cover;">
                                 <div>
                                     <div class="@if($user->role === 'admin') text-danger fw-bold 
-                        @elseif($user->role === 'moderator') text-warning fw-bold 
-                        @endif">
+                                    @elseif($user->role === 'moderator') text-warning fw-bold 
+                                    @endif">
                                         {{ $user->name }}
                                     </div>
                                     <small class="text-secondary">
@@ -60,10 +61,9 @@
                             </div>
                         </td>
 
+                        <td>{{ $user->completed_cases_count }}</td>
 
-                        <td>
-                            {{ $user->achievements_count }}
-                        </td>
+                        <td>{{ $user->achievements_count }}</td>
 
                         <td class="text-secondary">
                             {{ $user->created_at->format('d.m.Y') }}

@@ -106,4 +106,42 @@ class CaseController extends Controller
         $case->delete();
         return redirect()->route('cases.my-cases');
     }
+
+    public function play(CaseModel $case)
+    {
+        $evidence = $case->evidence()->get();
+        $suspects = $case->suspects()->get();
+
+        return view('cases.play', compact('case', 'evidence', 'suspects'));
+    }
+
+    public function submit(Request $request, CaseModel $case)
+{
+    $request->validate([
+        'suspect_id' => 'required|exists:suspects,id',
+    ]);
+
+    $user = Auth::user();
+
+    $alreadyCompleted = $user->attempts()
+        ->where('case_id', $case->id)
+        ->where('is_correct', 1)
+        ->exists();
+
+    $isCorrect = $request->suspect_id == $case->answer_id;
+
+    if ($isCorrect && !$alreadyCompleted) {
+        $user->attempts()->create([
+            'case_id' => $case->id,
+            'suspect_id' => $request->suspect_id,
+            'is_correct' => true,
+        ]);
+    }
+
+    $status = $isCorrect ? "Pareizi! Tu atradi īsto aizdomās turamo!" : "Nepareizi. Mēģini vēlreiz.";
+
+    return redirect()->route('cases.play', $case->id)
+                     ->with('status', $status);
+}
+
 }

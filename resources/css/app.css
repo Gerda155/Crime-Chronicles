@@ -70,7 +70,7 @@ main {
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
 }
 
 .card-title {
@@ -86,14 +86,47 @@ main {
 
 /*Search*/
 .search-sort {
-    margin-bottom: 30px;
-}
-.card:hover {
-    cursor: pointer;
-    transform: translateY(-5px);
-    transition: 0.3s;
+  margin-bottom: 30px;
 }
 
-li{
-    color: #fff;
+.card:hover {
+  cursor: pointer;
+  transform: translateY(-5px);
+  transition: 0.3s;
+}
+
+li {
+  color: #fff;
+}
+
+.evidence-card {
+  transition: transform 0.2s;
+}
+
+.evidence-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+.suspect-card {
+  transition: transform 0.2s;
+}
+
+.suspect-card:hover {
+  transform: translateX(5px);
+  background-color: rgba(0, 255, 255, 0.1);
+}
+
+.status-message {
+  animation: fadein 0.5s;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }

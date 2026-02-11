@@ -20,11 +20,9 @@ Route::get('/dashboard', function () {
 
 Route::get('/contacts', [ContactController::class, 'index'])->name('contacts');
 Route::post('/contacts', [ContactController::class, 'send'])->name('contacts.send');
-Route::get('/achievements', [AchievementController::class, 'index'])
-    ->name('achievements.index');
+Route::get('/achievements', [AchievementController::class, 'index'])->name('achievements.index');
 
 Route::middleware('auth')->group(function () {
-
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -34,11 +32,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/cases/{id}/edit', [CaseController::class, 'edit'])->name('cases.edit');
     Route::put('/cases/{id}', [CaseController::class, 'update'])->name('cases.update');
 
-    Route::get('/users/search', [UserController::class, 'search'])
-        ->name('users.search');
+    Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 
-    Route::get('/leaderboard', [LeaderboardController::class, 'index'])
-        ->name('leaderboard');
+    Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard');
+
+    Route::get('/cases/{case}/play', [CaseController::class, 'play'])->name('cases.play');
+    Route::post('/cases/{case}/submit', [CaseController::class, 'submit'])->name('cases.submit');
+
 });
 
 Route::get('/cases', [CaseController::class, 'index'])->name('cases.index');

@@ -81,7 +81,7 @@
                             </ul>
                         </div>
                         <div class="modal-footer">
-                            <a href="" class="btn btn-success">Sākt izmeklēšanu</a>
+                            <a href="{{ route('cases.play', $case->id) }}" class="btn btn-success">Sākt izmeklēšanu</a>
                             <button class="btn btn-secondary" data-bs-dismiss="modal">Aizvērt</button>
                         </div>
                     </div>

@@ -14,7 +14,14 @@ class CaseModel extends Model
     protected $table = 'cases';
 
     protected $fillable = [
-        'title', 'description', 'preview', 'genre_id', 'rating', 'answer', 'user_id', 'statuss' 
+        'title',
+        'description',
+        'preview',
+        'genre_id',
+        'rating',
+        'answer',
+        'user_id',
+        'statuss'
     ];
 
     public function genre()
@@ -26,4 +33,14 @@ class CaseModel extends Model
     {
         return $this->belongsTo(User::class);
     }
-} 
+
+    public function evidence()
+    {
+        return $this->hasMany(Evidence::class, 'case_id');
+    }
+
+    public function suspects()
+    {
+        return $this->hasMany(Suspect::class, 'case_id');
+    }
+}
