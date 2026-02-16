@@ -32,6 +32,12 @@
                 <label class="form-label">Apraksts</label>
                 <textarea name="description" class="form-control" required>{{ $achievement->description }}</textarea>
             </div>
+
+            <div class="mb-3">
+                <label class="form-label">Nosacījums (pabeigto lietu skaits)</label>
+                <input type="number" name="required_cases" class="form-control" min="1" value="{{ $achievement->required_cases }}" required>
+            </div>
+
             <div class="mb-3">
                 <label class="form-label">Ikona</label>
 

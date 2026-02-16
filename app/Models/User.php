@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\PlayerAttempt;
+use App\Models\Achievement;
+
 
 class User extends Authenticatable
 {
@@ -31,10 +34,7 @@ class User extends Authenticatable
 
     public function achievements()
     {
-        return $this->belongsToMany(
-            Achievement::class,
-            'user_achievements'
-        )->withTimestamps();
+        return $this->belongsToMany(Achievement::class);
     }
 
     public function completedCases()

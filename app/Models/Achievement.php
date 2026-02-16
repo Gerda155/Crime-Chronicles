@@ -9,19 +9,18 @@ class Achievement extends Model
 {
     use HasFactory;
 
-        protected $fillable = [
+    protected $fillable = [
         'title',
         'description',
         'icon',
+        'required_cases',
     ];
 
     public $timestamps = false;
 
     public function users()
     {
-        return $this->belongsToMany(
-            User::class,
-            'user_achievements'
-        )->withTimestamps();
+        return $this->belongsToMany(User::class);
     }
+
 }

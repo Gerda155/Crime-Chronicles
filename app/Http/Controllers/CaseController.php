@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\CaseModel;
 use App\Models\Genre;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Models\Achievement;
+use App\Models\PlayerAttempt;
+
 
 class CaseController extends Controller
 {
@@ -116,32 +120,64 @@ class CaseController extends Controller
     }
 
     public function submit(Request $request, CaseModel $case)
-{
-    $request->validate([
-        'suspect_id' => 'required|exists:suspects,id',
-    ]);
-
-    $user = Auth::user();
-
-    $alreadyCompleted = $user->attempts()
-        ->where('case_id', $case->id)
-        ->where('is_correct', 1)
-        ->exists();
-
-    $isCorrect = $request->suspect_id == $case->answer_id;
-
-    if ($isCorrect && !$alreadyCompleted) {
-        $user->attempts()->create([
-            'case_id' => $case->id,
-            'suspect_id' => $request->suspect_id,
-            'is_correct' => true,
+    {
+        $request->validate([
+            'suspect_id' => 'required|exists:suspects,id',
         ]);
+
+        $user = Auth::user();
+
+        $alreadyCompleted = $user->attempts()
+            ->where('case_id', $case->id)
+            ->where('is_correct', 1)
+            ->exists();
+
+        $isCorrect = $request->suspect_id == $case->answer_id;
+
+        $achievement = null;
+
+        if ($isCorrect && !$alreadyCompleted) {
+            $user->attempts()->create([
+                'case_id' => $case->id,
+                'suspect_id' => $request->suspect_id,
+                'is_correct' => true,
+            ]);
+
+            // проверка ачивок
+            $achievement = $this->checkAchievements($user);
+        }
+
+        $status = $isCorrect
+            ? "Pareizi! Tu atradi īsto aizdomās turamo!"
+            : "Nepareizi. Mēģini vēlreiz.";
+
+        $redirect = redirect()->route('cases.play', $case->id)
+            ->with('status', $status);
+
+        if ($achievement) {
+            $redirect->with('achievement', [
+                'title' => $achievement->title,
+                'description' => $achievement->description,
+                'icon' => $achievement->icon
+            ]);
+        }
+
+        return $redirect;
     }
 
-    $status = $isCorrect ? "Pareizi! Tu atradi īsto aizdomās turamo!" : "Nepareizi. Mēģini vēlreiz.";
+    public function checkAchievements($user)
+    {
+        $completed = $user->completedCases()->count();
 
-    return redirect()->route('cases.play', $case->id)
-                     ->with('status', $status);
-}
+        $achievements = Achievement::where('required_cases', '<=', $completed)->get();
 
+        foreach ($achievements as $achievement) {
+            if (!$user->achievements->contains($achievement->id)) {
+                $user->achievements()->attach($achievement->id);
+                return $achievement;
+            }
+        }
+
+        return null;
+    }
 }

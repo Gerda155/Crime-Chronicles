@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Izveidot sasniegumu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 </head>
 
 <body class="bg-dark text-light">
@@ -32,6 +32,12 @@
                 <label class="form-label">Apraksts</label>
                 <textarea name="description" class="form-control" required></textarea>
             </div>
+
+            <div class="mb-3">
+                <label class="form-label">Nosacījums (pabeigto lietu skaits)</label>
+                <input type="number" name="required_cases" class="form-control" min="1" value="{{ $achievement->required_cases ?? '' }}" required>
+            </div>
+
             <div class="mb-2">
                 <img
                     id="iconPreview"

@@ -200,8 +200,6 @@ class ModeratorController extends Controller
         $regLabels = $registrations->pluck('date')->map(fn($d) => \Carbon\Carbon::parse($d)->format('d.m'))->toArray();
         $regData = $registrations->pluck('total')->toArray();
 
-
-
         return view('moderator.stats', [
             'totalCases' => $totalCases,
             'activeCases' => $activeCases,
@@ -232,7 +230,8 @@ class ModeratorController extends Controller
         $data = $request->validate([
             'title' => 'required|max:255',
             'description' => 'nullable',
-            'icon' => 'nullable|image|max:2048'
+            'icon' => 'nullable|image|max:2048',
+            'required_cases' => 'required|integer|min:1',
         ]);
 
         if ($request->hasFile('icon')) {
@@ -255,7 +254,8 @@ class ModeratorController extends Controller
         $data = $request->validate([
             'title' => 'required|max:255',
             'description' => 'nullable',
-            'icon' => 'nullable|image|max:2048'
+            'icon' => 'nullable|image|max:2048',
+            'required_cases' => 'required|integer|min:1'
         ]);
 
         if ($request->hasFile('icon')) {
@@ -266,7 +266,6 @@ class ModeratorController extends Controller
 
             $data['icon'] = $request->file('icon')->store('achievements', 'public');
         }
-
 
         $achievement->update($data);
 

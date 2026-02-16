@@ -40,29 +40,27 @@
         <div class="card bg-dark border-secondary shadow-sm mx-auto p-4" style="max-width: 1000px; min-height: 282px;">
             <div class="d-flex gap-4 align-items-start">
 
-                {{-- AVATAR --}}
                 <img
                     src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('images/avatar-placeholder.jpg') }}"
                     class="rounded-circle border 
-        @if($user->role === 'admin') border-danger 
-        @elseif($user->role === 'moderator') border-warning 
-        @else border-secondary @endif"
+                    @if($user->role === 'admin') border-danger 
+                    @elseif($user->role === 'moderator') border-warning 
+                    @else border-secondary @endif"
                     width="200"
                     height="200"
                     style="object-fit: cover;">
 
-                {{-- INFO --}}
                 <div class="flex-grow-1 text-white">
                     <h3 class="@if($user->role === 'admin') text-danger fw-bold
-            @elseif($user->role === 'moderator') text-warning fw-bold
-            @endif">
+                    @elseif($user->role === 'moderator') text-warning fw-bold
+                    @endif">
                         {{ $user->name }}
                     </h3>
                     <p class="mb-1">
                         {{ $user->bio ?? 'Lietotājs vēl nav pievienojis bio.' }}
                     </p>
 
-                    <h5 class="mb-2 mt-3">Ačīvmenti</h5>
+                    <h5 class="mb-2 mt-3">Sasniegumi</h5>
                     @if($user->achievements && $user->achievements->count())
                     <div class="d-flex flex-wrap gap-2">
                         @foreach($user->achievements as $achievement)
@@ -73,12 +71,11 @@
                     </div>
                     @else
                     <p class="text-white">
-                        Nav nevienas ačīvmenta
+                        Nav neviena sasnieguma
                     </p>
                     @endif
-                    <p class="text-secondary mb-2" style="font-size: 0.9rem;">
-                        Detektīvs kopš: {{ $user->created_at->format('d.m.Y') }}
-                    </p>
+                    <p class="text-secondary mb-2" style="font-size: 0.9rem;"> Pabeigtas lietas: {{ $user->completed_tasks_count ?? 0 }} </p>
+                    <p class="text-secondary mb-2" style="font-size: 0.9rem;">Detektīvs kopš: {{ $user->created_at->format('d.m.Y') }}</p>
                 </div>
 
             </div>
