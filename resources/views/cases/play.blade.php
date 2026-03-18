@@ -27,12 +27,12 @@
             <div class="row g-4">
                 @foreach($evidence as $item)
                 <div class="col-md-4">
-                    <div class="card bg-secondary text-dark evidence-card h-100">
+                    <div class="card bg-secondary text-light evidence-card h-100">
                         @if($item->type === 'image')
                         <img src="{{ asset('storage/' . $item->content) }}" class="card-img-top rounded-top" style="height:200px; object-fit:cover;">
                         @endif
                         <div class="card-body">
-                            <p class="card-text">{{ $item->description }}</p>
+                            <p class="card-text text-light">{{ $item->description }}</p>
                         </div>
                     </div>
                 </div>
@@ -48,11 +48,11 @@
                 <div class="row g-3">
                     @foreach($suspects as $suspect)
                     <div class="col-md-6">
-                        <label class="card suspect-card p-3 d-flex align-items-center gap-3" for="suspect-{{ $suspect->id }}">
+                        <label class="card suspect-card p-3 d-flex align-items-center gap-3 bg-secondary text-light" for="suspect-{{ $suspect->id }}">
                             <input class="form-check-input mt-0" type="radio" name="suspect_id" value="{{ $suspect->id }}" id="suspect-{{ $suspect->id }}">
                             <div>
-                                <strong>{{ $suspect->name }}</strong>
-                                <p class="mb-0 text-secondary">{{ $suspect->description }}</p>
+                                <strong class="text-light">{{ $suspect->name }}</strong>
+                                <p class="mb-0">{{ $suspect->description }}</p>
                             </div>
                         </label>
                     </div>
@@ -87,8 +87,8 @@
                         width="100"
                         height="100"
                         style="object-fit: contain;">
-                    <h6 class="fw-bold">{{ session('achievement.title') }}</h6>
-                    <p>{{ session('achievement.description') }}</p>
+                    <h6 class="fw-bold mt-2">{{ session('achievement.title') }}</h6>
+                    <p class="mb-0">{{ session('achievement.description') }}</p>
                 </div>
                 <div class="modal-footer border-top-0 justify-content-center">
                     <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Labi!</button>

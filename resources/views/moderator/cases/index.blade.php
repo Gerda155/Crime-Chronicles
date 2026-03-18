@@ -15,10 +15,6 @@
     <main class="container my-5">
         <h1 class="text-center mb-4 fw-bold text-pink">Moderatora panelis - Lietas</h1>
 
-        <div class="mb-3">
-            <a href="{{ route('moderator.cases.create') }}" class="btn btn-success rounded">Izveidot jaunu lietu</a>
-        </div>
-
         <div class="d-flex flex-wrap gap-2 mb-3">
             <form method="GET" class="d-flex gap-2 flex-grow-1">
                 <input type="text" name="search" value="{{ request('search') }}" class="form-control bg-secondary text-light border-0 rounded" placeholder="Meklēt pēc nosaukuma">
@@ -35,6 +31,8 @@
                 </select>
                 <button type="submit" class="btn btn-primary rounded">Kārtot</button>
             </form>
+
+            <a href="{{ route('moderator.cases.create') }}" class="btn btn-success rounded">Izveidot jaunu lietu</a>
         </div>
 
         <div class="table-responsive rounded shadow-sm">

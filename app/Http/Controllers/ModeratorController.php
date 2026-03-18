@@ -83,13 +83,15 @@ class ModeratorController extends Controller
             'title' => 'required|max:255',
             'description' => 'nullable',
             'genre_id' => 'nullable|exists:genres,id',
-            'rating' => 'nullable|numeric|min:0|max:5',
         ]);
+
+        $data['rating'] = 0;
 
         CaseModel::create($data);
 
         return redirect()->route('moderator.cases.index')->with('success', 'Lieta izveidota!');
     }
+
 
     public function editCase(CaseModel $case)
     {
@@ -103,13 +105,13 @@ class ModeratorController extends Controller
             'title' => 'required|max:255',
             'description' => 'nullable',
             'genre_id' => 'nullable|exists:genres,id',
-            'rating' => 'nullable|numeric|min:0|max:5',
         ]);
 
         $case->update($data);
 
         return redirect()->route('moderator.cases.index')->with('success', 'Lieta atjaunināta');
     }
+
 
     public function deactivateCase(CaseModel $case)
     {
@@ -214,11 +216,39 @@ class ModeratorController extends Controller
         ]);
     }
 
-    public function achievementsIndex()
+    public function achievementsIndex(Request $request)
     {
-        $achievements = Achievement::orderBy('created_at', 'desc')->paginate(10);
+        $query = Achievement::query();
+
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $sort = $request->input('sort', 'newest');
+
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('id', 'asc');
+                break;
+            case 'title':
+                $query->orderBy('title', 'asc');
+                break;
+            case 'points':
+                $query->orderBy('required_cases', 'desc');
+                break;
+            default: // newest
+                $query->orderBy('id', 'desc');
+                break;
+        }
+
+        $achievements = $query->paginate(6)->withQueryString();
+
         return view('moderator.achievements.index', compact('achievements'));
     }
+
 
     public function createAchievement()
     {

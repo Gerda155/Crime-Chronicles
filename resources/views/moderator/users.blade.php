@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moderator Dashboard - Lietotāji</title>
+    <title>{{ ucfirst(Auth::user()->role) }} Dashboard - Lietotāji</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
@@ -17,20 +17,19 @@
 
     <main class="container my-5">
         <h1 class="text-center mb-4 fw-bold text-pink">
-            Moderatora panelis – Lietotāji
+            {{ ucfirst(Auth::user()->role) }} panelis – Lietotāji
         </h1>
 
-        <div class="d-flex flex-wrap gap-2 mb-3">
+        <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+            <!-- Поиск -->
             <form method="GET" class="d-flex gap-2 flex-grow-1">
-                <input
-                    type="text"
-                    name="search"
-                    value="{{ request('search') }}"
+                <input type="text" name="search" value="{{ request('search') }}"
                     class="form-control bg-secondary text-light border-0 rounded"
                     placeholder="Meklēt pēc vārda vai e-pasta">
-                <button class="btn btn-primary rounded">Meklēt</button>
+                <button type="submit" class="btn btn-primary rounded">Meklēt</button>
             </form>
 
+            <!-- Сортировка -->
             <form method="GET" class="d-flex gap-2">
                 <select name="sort" class="form-select bg-secondary text-light border-0 rounded">
                     <option value="newest" {{ request('sort')=='newest' ? 'selected' : '' }}>Jaunākie</option>
@@ -40,9 +39,58 @@
                     <option value="role" {{ request('sort')=='role' ? 'selected' : '' }}>Loma</option>
                     <option value="status" {{ request('sort')=='status' ? 'selected' : '' }}>Statuss</option>
                 </select>
-                <button class="btn btn-primary rounded">Kārtot</button>
+                <button type="submit" class="btn btn-primary rounded">Kārtot</button>
             </form>
+
+            <!-- Кнопка добавления нового модератора для админа -->
+            @if(Auth::user()->role === 'admin')
+            <button type="button" class="btn btn-success rounded" data-bs-toggle="modal" data-bs-target="#addModeratorModal">
+                Pievienot jaunu moderatoru
+            </button>
+            @endif
         </div>
+
+        <!-- Модальное окно для добавления модератора -->
+        <div class="modal fade" id="addModeratorModal" tabindex="-1" aria-labelledby="addModeratorModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark text-light">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addModeratorModalLabel">Moderatora pievienošanas forma</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('admin.moderators.store') }}" method="POST">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Lietotājvārds</label>
+                                <input type="text" name="username" class="form-control bg-secondary text-light border-0" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">E-pasts</label>
+                                <input type="email" name="email" class="form-control bg-secondary text-light border-0" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Vārds</label>
+                                <input type="text" name="name" class="form-control bg-secondary text-light border-0" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Parole</label>
+                                <input type="password" name="password" class="form-control bg-secondary text-light border-0" required minlength="8">
+                            </div>
+                            <div class="mb-3">
+                                <label for="password_confirmation" class="form-label">Apstiprināt paroli</label>
+                                <input type="password" name="password_confirmation" class="form-control bg-secondary text-light border-0" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success rounded">Pievienot</button>
+                            <button type="button" class="btn btn-secondary rounded" data-bs-dismiss="modal">Aizvērt</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
 
         <div class="table-responsive rounded shadow-sm">
             <table class="table table-dark table-hover align-middle mb-0">
@@ -64,20 +112,38 @@
                         <td>{{ $user->email }}</td>
                         <td>{{ ucfirst($user->role) }}</td>
                         <td>{{ $user->statuss === 'neaktivs' ? 'Neaktīvs' : 'Aktīvs' }}</td>
-                        <td>
-                            <form
-                                action="{{ $user->statuss === 'neaktivs'
-        ? route('moderator.users.activate', $user->id)
-        : route('moderator.users.deactivate', $user->id) }}"
+                        <td class="d-flex gap-1">
+
+                            {{-- Apskatīt - всегда --}}
+                            <a href="{{ route(Auth::user()->role.'.users.show', $user->id) }}"
+                                class="btn btn-sm btn-outline-info rounded">
+                                Skatīt
+                            </a>
+
+                            {{-- Rediģēt - только для админа --}}
+                            @if(Auth::user()->role === 'admin')
+                            <a href="{{ route('admin.users.edit', $user->id) }}"
+                                class="btn btn-sm btn-outline-warning rounded">
+                                Rediģēt
+                            </a>
+                            @endif
+
+                            {{-- Aktivēt / Deaktivēt --}}
+                            @if(Auth::user()->role === 'admin' || (Auth::user()->role === 'moderator' && $user->role === 'user'))
+                            <form action="{{ $user->statuss === 'neaktivs'
+                                    ? route(Auth::user()->role.'.users.activate', $user->id)
+                                    : route(Auth::user()->role.'.users.deactivate', $user->id) }}"
                                 method="POST">
                                 @csrf
-                                @method('PUT') 
+                                @method('PUT')
+
                                 <button class="btn btn-sm {{ $user->statuss === 'neaktivs'
-        ? 'btn-outline-success'
-        : 'btn-outline-danger' }} rounded">
+                                        ? 'btn-outline-success'
+                                        : 'btn-outline-danger' }} rounded">
                                     {{ $user->statuss === 'neaktivs' ? 'Aktivēt' : 'Deaktivēt' }}
                                 </button>
                             </form>
+                            @endif
 
                         </td>
                     </tr>

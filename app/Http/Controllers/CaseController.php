@@ -13,6 +13,7 @@ use App\Models\PlayerAttempt;
 
 class CaseController extends Controller
 {
+    
     public function index(Request $request)
     {
         $query = CaseModel::with('genre')
@@ -143,7 +144,6 @@ class CaseController extends Controller
                 'is_correct' => true,
             ]);
 
-            // проверка ачивок
             $achievement = $this->checkAchievements($user);
         }
 
