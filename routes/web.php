@@ -50,11 +50,10 @@ Route::middleware(['auth', ModeratorMiddleware::class])
     Route::put('/cases/{case}/deactivate', [ModeratorController::class, 'deactivateCase'])->name('cases.deactivate');
     Route::put('/cases/{case}/activate', [ModeratorController::class, 'activateCase'])->name('cases.activate');
 
-    Route::get('/users', [ModeratorController::class,'usersIndex'])->name('users.index');
-    Route::get('/users/{user}', [ModeratorController::class,'showUser'])->name('users.show'); // добавил
-    Route::get('/users/{user}/edit', [ModeratorController::class,'editUser'])->name('users.edit'); // добавил
-    Route::put('/users/{user}/deactivate', [ModeratorController::class,'deactivateUser'])->name('users.deactivate');
-    Route::put('/users/{user}/activate', [ModeratorController::class,'activateUser'])->name('users.activate');
+    Route::get('users', [ModeratorController::class, 'usersIndex'])->name('users.index');
+    Route::get('users/{user}', [ModeratorController::class, 'showUser'])->name('users.show');
+    Route::put('users/{user}/deactivate', [ModeratorController::class, 'deactivateUser'])->name('users.deactivate');
+    Route::put('users/{user}/activate', [ModeratorController::class, 'activateUser'])->name('users.activate');
 
     Route::get('/stats', [ModeratorController::class, 'stats'])->name('stats');
 
@@ -68,17 +67,18 @@ Route::middleware(['auth', ModeratorMiddleware::class])
 
 Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
 
-    Route::get('/moderators', [AdminController::class, 'moderatorsIndex'])->name('moderators.index');
-    Route::get('/moderators/create', [AdminController::class, 'createModerator'])->name('moderators.create');
-    Route::post('/moderators', [AdminController::class, 'storeModerator'])->name('moderators.store');
-    Route::put('/moderators/{user}/deactivate', [AdminController::class, 'deactivateModerator'])->name('moderators.deactivate');
-    Route::put('/moderators/{user}/activate', [AdminController::class, 'activateModerator'])->name('moderators.activate');
+    Route::get('moderators', [AdminController::class, 'moderatorsIndex'])->name('moderators.index');
+    Route::get('moderators/create', [AdminController::class, 'createModerator'])->name('moderators.create');
+    Route::post('moderators', [AdminController::class, 'storeModerator'])->name('moderators.store');
+    Route::put('moderators/{user}/deactivate', [AdminController::class, 'deactivateModerator'])->name('moderators.deactivate');
+    Route::put('moderators/{user}/activate', [AdminController::class, 'activateModerator'])->name('moderators.activate');
 
-    Route::get('/users', [AdminController::class, 'usersIndex'])->name('users.index');
-    Route::get('/users/{user}', [AdminController::class, 'showUser'])->name('users.show'); // добавил
-    Route::get('/users/{user}/edit', [AdminController::class, 'editUser'])->name('users.edit'); // добавил
-    Route::put('/users/{user}/deactivate', [AdminController::class, 'deactivateUser'])->name('users.deactivate');
-    Route::put('/users/{user}/activate', [AdminController::class, 'activateUser'])->name('users.activate');
+    Route::get('users', [AdminController::class, 'usersIndex'])->name('users.index'); 
+    Route::get('users/{user}', [AdminController::class, 'showUser'])->name('users.show');
+    Route::get('users/{user}/edit', [AdminController::class, 'editUser'])->name('users.edit');
+    Route::put('users/{user}', [AdminController::class, 'updateUser'])->name('users.update');
+    Route::put('users/{user}/deactivate', [AdminController::class, 'deactivateUser'])->name('users.deactivate');
+    Route::put('users/{user}/activate', [AdminController::class, 'activateUser'])->name('users.activate');
 });
 
 require __DIR__ . '/auth.php';

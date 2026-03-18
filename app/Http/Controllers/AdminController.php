@@ -10,83 +10,29 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
-    public function moderatorsIndex()
-    {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
 
-        $moderators = User::where('role', 'moderator')->paginate(10);
-        return view('admin.moderators.index', compact('moderators'));
+    public function usersIndex()
+    {
+        $users = User::paginate(10);
+        return view('moderator.users.index', compact('users'));
     }
 
-    public function usersIndex(Request $request)
+
+
+    public function showUser(User $user)
     {
-        $query = User::query()->whereIn('role', ['user', 'moderator']);
-
-        if ($request->filled('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                    ->orWhere('email', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        switch ($request->get('sort')) {
-            case 'oldest':
-                $query->orderBy('created_at', 'asc');
-                break;
-            case 'name':
-                $query->orderBy('name', 'asc');
-                break;
-            case 'email':
-                $query->orderBy('email', 'asc');
-                break;
-            case 'role':
-                $query->orderBy('role', 'asc');
-                break;
-            case 'statuss':
-                $query->orderBy('statuss', 'asc');
-                break;
-            default:
-                $query->orderBy('created_at', 'desc');
-        }
-
-        $users = $query->paginate(10)->withQueryString();
-
-        return view('admin.users.index', compact('users'));
-    }
-
-    public function createModerator()
-    {
-        return view('admin.users.create');
-    }
-
-    public function storeModerator(Request $request)
-    {
-        $data = $request->validate([
-            'name' => 'required|max:255',
-            'email' => 'required|email|unique:users,email',
-            'role' => 'required|in:moderator,administrator',
-            'password' => ['required', 'confirmed', 'min:8'],
-        ]);
-
-        $data['password'] = Hash::make($data['password']);
-        $data['statuss'] = 'aktivs';
-
-        User::create($data);
-
-        return redirect()->route('admin.users.index')->with('success', 'Moderators izveidots');
+        return view('moderator.users.show', compact('user'));
     }
 
     public function editUser(User $user)
     {
-        return view('admin.users.edit', compact('user'));
+        return view('moderator.users.edit', compact('user'));
     }
 
     public function updateUser(Request $request, User $user)
     {
         $data = $request->validate([
-            'role' => 'required|in:moderator,administrator',
+            'role' => 'required|in:administrator,moderator,user',
             'statuss' => 'required|in:aktivs,neaktivs',
         ]);
 
@@ -95,15 +41,37 @@ class AdminController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'Lietotājs atjaunināts');
     }
 
+
     public function deactivateUser(User $user)
     {
         $user->update(['statuss' => 'neaktivs']);
-        return redirect()->route('admin.users.index')->with('success', 'Lietotājs deaktivēts');
+        return redirect()->back();
     }
 
     public function activateUser(User $user)
     {
         $user->update(['statuss' => 'aktivs']);
-        return redirect()->route('admin.users.index')->with('success', 'Lietotājs aktivēts');
+        return redirect()->back();
+    }
+
+    public function storeModerator(Request $request)
+    {
+        $data = $request->validate([
+            'username' => 'required|string|max:255|unique:users,username',
+            'email' => 'required|email|max:255|unique:users,email',
+            'name' => 'required|string|max:255',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        User::create([
+            'username' => $data['username'],
+            'email' => $data['email'],
+            'name' => $data['name'],
+            'password' => bcrypt($data['password']),
+            'role' => 'moderator',
+            'statuss' => 'aktivs',
+        ]);
+
+        return redirect()->route('admin.users.index')->with('success', 'Moderators veiksmīgi pievienots');
     }
 }

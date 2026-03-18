@@ -16,6 +16,55 @@ use App\Models\Achievement;
 
 class ModeratorController extends Controller
 {
+    public function usersIndex(Request $request)
+    {
+        $query = User::query();
+
+        if (Auth::user()->role === 'moderator') {
+            $query->where('role', 'user');
+        } elseif (Auth::user()->role === 'admin') {
+            $query->whereIn('role', ['user', 'moderator']);
+        }
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('email', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        switch ($request->get('sort')) {
+            case 'oldest':
+                $query->orderBy('id', 'asc'); 
+                break;
+            case 'name':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'email':
+                $query->orderBy('email', 'asc');
+                break;
+            case 'role':
+                $query->orderBy('role', 'asc');
+                break;
+            case 'status':
+                $query->orderBy('statuss', 'asc');
+                break;
+            default:
+                $query->orderBy('id', 'desc');
+        }
+
+        $users = $query->paginate(10)->withQueryString();
+
+        return view('moderator.users.index', compact('users'));
+    }
+
+    public function showUser(User $user)
+    {
+        $user->load('achievements');
+
+        return view('moderator.users.show', compact('user'));
+    }
+
     public function deactivateUser(User $user)
     {
         $user->update(['statuss' => 'neaktivs']);
@@ -33,6 +82,8 @@ class ModeratorController extends Controller
             ->route('moderator.users.index')
             ->with('success', 'Lietotājs aktivēts');
     }
+
+
 
     public function casesIndex(Request $request)
     {
@@ -112,7 +163,6 @@ class ModeratorController extends Controller
         return redirect()->route('moderator.cases.index')->with('success', 'Lieta atjaunināta');
     }
 
-
     public function deactivateCase(CaseModel $case)
     {
         $case->update(['statuss' => 'neaktivs']);
@@ -125,47 +175,7 @@ class ModeratorController extends Controller
         return redirect()->route('moderator.cases.index')->with('success', 'Lieta aktivēta');
     }
 
-    public function usersIndex(Request $request)
-    {
-        $query = User::query();
 
-        if (Auth::user()->role === 'moderator') {
-            $query->where('role', 'user');
-        } elseif (Auth::user()->role === 'admin') {
-            $query->whereIn('role', ['user', 'moderator']);
-        }
-
-        if ($request->filled('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                    ->orWhere('email', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        switch ($request->get('sort')) {
-            case 'oldest':
-                $query->orderBy('created_at', 'asc');
-                break;
-            case 'name':
-                $query->orderBy('name', 'asc');
-                break;
-            case 'email':
-                $query->orderBy('email', 'asc');
-                break;
-            case 'role':
-                $query->orderBy('role', 'asc');
-                break;
-            case 'statuss':
-                $query->orderBy('statuss', 'asc');
-                break;
-            default:
-                $query->orderBy('created_at', 'desc');
-        }
-
-        $users = $query->paginate(10)->withQueryString();
-
-        return view('moderator.users', compact('users'));
-    }
 
     public function stats()
     {
@@ -216,6 +226,8 @@ class ModeratorController extends Controller
         ]);
     }
 
+
+
     public function achievementsIndex(Request $request)
     {
         $query = Achievement::query();
@@ -239,7 +251,7 @@ class ModeratorController extends Controller
             case 'points':
                 $query->orderBy('required_cases', 'desc');
                 break;
-            default: // newest
+            default: 
                 $query->orderBy('id', 'desc');
                 break;
         }
@@ -248,7 +260,6 @@ class ModeratorController extends Controller
 
         return view('moderator.achievements.index', compact('achievements'));
     }
-
 
     public function createAchievement()
     {
