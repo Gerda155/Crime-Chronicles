@@ -13,11 +13,9 @@ class AdminController extends Controller
 
     public function usersIndex()
     {
-        $users = User::paginate(10);
+        $users = User::where('role', '!=', 'admin')->paginate(10);
         return view('moderator.users.index', compact('users'));
     }
-
-
 
     public function showUser(User $user)
     {
@@ -32,7 +30,7 @@ class AdminController extends Controller
     public function updateUser(Request $request, User $user)
     {
         $data = $request->validate([
-            'role' => 'required|in:administrator,moderator,user',
+            'role' => 'required|in:admin,moderator,user',
             'statuss' => 'required|in:aktivs,neaktivs',
         ]);
 

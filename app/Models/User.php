@@ -21,6 +21,7 @@ class User extends Authenticatable
         'bio',
         'avatar',
         'statuss',
+        'role',
     ];
 
     protected $hidden = ['password', 'remember_token'];

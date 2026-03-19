@@ -21,7 +21,6 @@
         </h1>
 
         <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
-            <!-- Поиск -->
             <form method="GET" class="d-flex gap-2 flex-grow-1">
                 <input type="text" name="search" value="{{ request('search') }}"
                     class="form-control bg-secondary text-light border-0 rounded"
@@ -29,7 +28,6 @@
                 <button type="submit" class="btn btn-primary rounded">Meklēt</button>
             </form>
 
-            <!-- Сортировка -->
             <form method="GET" class="d-flex gap-2">
                 <select name="sort" class="form-select bg-secondary text-light border-0 rounded">
                     <option value="newest" {{ request('sort')=='newest' ? 'selected' : '' }}>Jaunākie</option>
@@ -42,7 +40,6 @@
                 <button type="submit" class="btn btn-primary rounded">Kārtot</button>
             </form>
 
-            <!-- Добавление модератора (только для админа) -->
             @if(Auth::user()->role === 'admin')
             <button type="button" class="btn btn-success rounded" data-bs-toggle="modal" data-bs-target="#addModeratorModal">
                 Pievienot jaunu moderatoru
@@ -50,7 +47,6 @@
             @endif
         </div>
 
-        <!-- Модалка создания модератора -->
         @if(Auth::user()->role === 'admin')
         <div class="modal fade" id="addModeratorModal" tabindex="-1" aria-labelledby="addModeratorModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -93,7 +89,6 @@
         </div>
         @endif
 
-        <!-- Таблица пользователей -->
         <div class="table-responsive rounded shadow-sm">
             <table class="table table-dark table-hover align-middle mb-0">
                 <thead class="text-uppercase text-muted small">
@@ -115,19 +110,15 @@
                         <td>{{ ucfirst($user->role) }}</td>
                         <td>{{ $user->statuss === 'neaktivs' ? 'Neaktīvs' : 'Aktīvs' }}</td>
                         <td class="d-flex gap-1">
-                            <!-- Просмотр профиля -->
                             <button type="button" class="btn btn-sm btn-outline-info rounded" data-bs-toggle="modal" data-bs-target="#userModal{{ $user->id }}">
                                 Skatīt
                             </button>
-
-                            <!-- Редактирование (только для админа) -->
                             @if(Auth::user()->role === 'admin')
                             <button type="button" class="btn btn-sm btn-outline-warning rounded" data-bs-toggle="modal" data-bs-target="#editUserModal{{ $user->id }}">
                                 Rediģēt
                             </button>
                             @endif
 
-                            <!-- Деактивация / активация -->
                             @if(Auth::user()->role === 'admin' || (Auth::user()->role === 'moderator' && $user->role === 'user'))
                             <form action="{{ $user->statuss === 'neaktivs'
                                 ? route(Auth::user()->role.'.users.activate', $user->id)
@@ -143,7 +134,6 @@
                         </td>
                     </tr>
 
-                    <!-- Модалка профиля -->
                     <div class="modal fade" id="userModal{{ $user->id }}" tabindex="-1" aria-labelledby="userModalLabel{{ $user->id }}" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                             <div class="modal-content bg-dark text-light">
@@ -189,11 +179,18 @@
                         </div>
                     </div>
 
-                    <!-- Модалка редактирования (только админ) -->
                     @if(Auth::user()->role === 'admin')
                     <div class="modal fade" id="editUserModal{{ $user->id }}" tabindex="-1" aria-labelledby="editUserModalLabel{{ $user->id }}" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content bg-dark text-light">
+                                @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    @foreach ($errors->all() as $error)
+                                    <div>{{ $error }}</div>
+                                    @endforeach
+                                </div>
+                                @endif
+
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="editUserModalLabel{{ $user->id }}">Moderatora rediģēšanas forma</h5>
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -205,8 +202,9 @@
                                         <div class="mb-3">
                                             <label for="role" class="form-label">Loma</label>
                                             <select name="role" class="form-select bg-secondary text-light border-0" required>
-                                                <option value="administrator" {{ $user->role === 'administrator' ? 'selected' : '' }}>Administrator</option>
+                                                <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Administrator</option>
                                                 <option value="moderator" {{ $user->role === 'moderator' ? 'selected' : '' }}>Moderator</option>
+                                                <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>User</option>
                                             </select>
                                         </div>
                                         <div class="mb-3">
