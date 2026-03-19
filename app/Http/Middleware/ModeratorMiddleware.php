@@ -6,6 +6,17 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+class AdminMiddleware
+{
+    public function handle(Request $request, Closure $next)
+    {
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+        return $next($request);
+    }
+}
+
 class ModeratorMiddleware
 {
     public function handle(Request $request, Closure $next)
@@ -14,7 +25,7 @@ class ModeratorMiddleware
             abort(403);
         }
 
-        if (!in_array(Auth::user()->role, ['moderator', 'admin'])) {
+        if (Auth::user()->role === 'user') {
             abort(403);
         }
 

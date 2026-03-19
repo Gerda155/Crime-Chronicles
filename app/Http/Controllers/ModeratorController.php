@@ -30,13 +30,13 @@ class ModeratorController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
+                    ->orWhere('email', 'like', '%' . $request->search . '%');
             });
         }
 
         switch ($request->get('sort')) {
             case 'oldest':
-                $query->orderBy('id', 'asc'); 
+                $query->orderBy('id', 'asc');
                 break;
             case 'name':
                 $query->orderBy('name', 'asc');
@@ -252,7 +252,7 @@ class ModeratorController extends Controller
             case 'points':
                 $query->orderBy('required_cases', 'desc');
                 break;
-            default: 
+            default:
                 $query->orderBy('id', 'desc');
                 break;
         }
@@ -325,5 +325,77 @@ class ModeratorController extends Controller
 
         return redirect()->route('moderator.achievements.index')
             ->with('success', 'Sasniegums dzēsts!');
+    }
+
+
+
+    public function genresIndex(Request $request)
+    {
+        $query = Genre::query();
+
+        if ($search = $request->input('search')) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $sort = $request->input('sort', 'newest');
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('id', 'asc');
+                break;
+            case 'name':
+                $query->orderBy('name', 'asc');
+                break;
+            default:
+                $query->orderBy('id', 'desc');
+                break;
+        }
+
+        $genres = $query->paginate(10)->withQueryString();
+
+        $editGenre = null;
+
+        return view('moderator.genres.index', compact('genres', 'editGenre'));
+    }
+
+    public function storeGenre(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255|unique:genres,name',
+        ]);
+
+        Genre::create($data);
+
+        return redirect()->route('moderator.genres.index')
+            ->with('success', 'Žanrs izveidots!');
+    }
+
+    public function editGenre(Genre $genre)
+    {
+        $query = Genre::query();
+        $genres = $query->paginate(10)->withQueryString();
+
+        $editGenre = $genre;
+
+        return view('moderator.genres.index', compact('genres', 'editGenre'));
+    }
+
+    public function updateGenre(Request $request, Genre $genre)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255|unique:genres,name,' . $genre->id,
+        ]);
+
+        $genre->update($data);
+
+        return redirect()->route('moderator.genres.index')
+            ->with('success', 'Žanrs atjaunināts!');
+    }
+
+    public function destroyGenre(Genre $genre)
+    {
+        $genre->delete();
+
+        return redirect()->route('moderator.genres.index')
+            ->with('success', 'Žanrs dzēsts!');
     }
 }

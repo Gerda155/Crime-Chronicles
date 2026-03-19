@@ -13,6 +13,10 @@ class AdminController extends Controller
 
     public function usersIndex()
     {
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+
         $users = User::where('role', '!=', 'admin')->paginate(10);
         return view('moderator.users.index', compact('users'));
     }

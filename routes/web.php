@@ -63,6 +63,12 @@ Route::middleware(['auth', ModeratorMiddleware::class])
         Route::get('/achievements/{achievement}/edit', [ModeratorController::class, 'editAchievement'])->name('achievements.edit');
         Route::put('/achievements/{achievement}', [ModeratorController::class, 'updateAchievement'])->name('achievements.update');
         Route::delete('/achievements/{achievement}', [ModeratorController::class, 'destroyAchievement'])->name('achievements.destroy');
+
+        Route::get('genres', [App\Http\Controllers\ModeratorController::class, 'genresIndex'])->name('genres.index');
+        Route::post('genres', [App\Http\Controllers\ModeratorController::class, 'storeGenre'])->name('genres.store');
+        Route::get('genres/{genre}/edit', [App\Http\Controllers\ModeratorController::class, 'editGenre'])->name('genres.edit');
+        Route::put('genres/{genre}', [App\Http\Controllers\ModeratorController::class, 'updateGenre'])->name('genres.update');
+        Route::delete('genres/{genre}', [App\Http\Controllers\ModeratorController::class, 'destroyGenre'])->name('genres.destroy');
     });
 
 Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
