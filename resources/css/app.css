@@ -121,6 +121,13 @@ li {
   animation: fadein 0.5s;
 }
 
+.suspect-card input:checked + div {
+    border: 2px solid #28a745;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+
 @keyframes fadein {
   from {
     opacity: 0;

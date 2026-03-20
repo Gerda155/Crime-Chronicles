@@ -7,7 +7,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\PlayerAttempt;
 use App\Models\Achievement;
-
+use App\Models\CaseModel;
 
 class User extends Authenticatable
 {
@@ -35,11 +35,22 @@ class User extends Authenticatable
 
     public function achievements()
     {
-        return $this->belongsToMany(Achievement::class);
+        return $this->belongsToMany(
+            Achievement::class,
+            'achievement_user',
+            'user_id',
+            'achievement_id'
+        );
     }
 
     public function completedCases()
     {
-        return $this->hasMany(PlayerAttempt::class)->where('is_correct', 1);
+        return $this->belongsToMany(
+            CaseModel::class,
+            'player_attempts',
+            'user_id',
+            'case_id'
+        )->wherePivot('is_correct', 1);
     }
 }
+

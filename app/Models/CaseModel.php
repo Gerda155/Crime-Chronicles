@@ -19,9 +19,10 @@ class CaseModel extends Model
         'preview',
         'genre_id',
         'rating',
-        'answer',
+        'answer_id',
         'user_id',
-        'statuss'
+        'statuss',
+        'solution_explanation',
     ];
 
     public function genre()
@@ -42,5 +43,22 @@ class CaseModel extends Model
     public function suspects()
     {
         return $this->hasMany(Suspect::class, 'case_id');
+    }
+
+    
+    public function attempts()
+    {
+        return $this->hasMany(PlayerAttempt::class);
+    }
+
+    public function completedCases()
+    {
+        return $this->belongsToMany(CaseModel::class, 'player_attempts')
+                    ->wherePivot('is_correct', true);
+    }
+
+    public function achievements()
+    {
+        return $this->belongsToMany(Achievement::class, 'achievement_user');
     }
 }

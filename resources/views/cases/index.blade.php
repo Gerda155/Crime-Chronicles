@@ -19,7 +19,6 @@
     <div class=" container my-5">
         <h1 class="text-center mb-4">Visas lietas</h1>
 
-        {{-- FILTERS --}}
         <form method="GET" action="{{ route('cases.index') }}" class="row g-3 mb-4">
             <div class="col-md-6">
                 <input type="text"
@@ -41,7 +40,6 @@
             </div>
         </form>
 
-        {{-- CASES --}}
         <div class="row g-4">
             @forelse($cases as $case)
             <div class="col-md-6 col-lg-4">
@@ -63,7 +61,7 @@
                 </div>
             </div>
 
-            {{-- Auth модалки --}}
+
             @auth
             <div class="modal fade" id="caseModal-{{ $case->id }}">
                 <div class="modal-dialog modal-lg modal-dialog-centered">

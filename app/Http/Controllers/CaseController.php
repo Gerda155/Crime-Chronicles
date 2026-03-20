@@ -13,7 +13,7 @@ use App\Models\PlayerAttempt;
 
 class CaseController extends Controller
 {
-    
+
     public function index(Request $request)
     {
         $query = CaseModel::with('genre')
@@ -51,6 +51,7 @@ class CaseController extends Controller
     public function myCases(Request $request)
     {
         $user = Auth::user();
+        $user = $user instanceof User ? $user : null;
 
         $query = CaseModel::with('genre')
             ->where('user_id', $user->id);
@@ -85,7 +86,6 @@ class CaseController extends Controller
 
         return view('cases.my-cases', compact('cases'));
     }
-
 
     public function edit($id)
     {
@@ -122,11 +122,34 @@ class CaseController extends Controller
 
     public function submit(Request $request, CaseModel $case)
     {
+        $opened = $request->input('opened_evidence_count', 0);
+
+        if ($opened < 1) {
+            return redirect()->back()
+                ->with('status', 'Vispirms apskati pierādījumus!')
+                ->with('can_submit', false);
+        }
+
         $request->validate([
             'suspect_id' => 'required|exists:suspects,id',
         ]);
 
+        /** @var \App\Models\User $user */
         $user = Auth::user();
+
+        $attemptCount = $user->attempts()
+            ->where('case_id', $case->id)
+            ->count();
+
+        $alreadyCompleted = $user->attempts()
+            ->where('case_id', $case->id)
+            ->where('is_correct', 1)
+            ->exists();
+
+
+        $attemptCount = $user->attempts()
+            ->where('case_id', $case->id)
+            ->count();
 
         $alreadyCompleted = $user->attempts()
             ->where('case_id', $case->id)
@@ -137,22 +160,26 @@ class CaseController extends Controller
 
         $achievement = null;
 
-        if ($isCorrect && !$alreadyCompleted) {
-            $user->attempts()->create([
-                'case_id' => $case->id,
-                'suspect_id' => $request->suspect_id,
-                'is_correct' => true,
-            ]);
+        $user->attempts()->create([
+            'case_id' => $case->id,
+            'suspect_id' => $request->suspect_id,
+            'is_correct' => $isCorrect,
+        ]);
 
+        if ($isCorrect && !$alreadyCompleted) {
             $achievement = $this->checkAchievements($user);
         }
 
         $status = $isCorrect
-            ? "Pareizi! Tu atradi īsto aizdomās turamo!"
-            : "Nepareizi. Mēģini vēlreiz.";
+            ? "Pareizi! Tu atradi īsto aizdomās turamo pēc " . ($attemptCount + 1) . " mēģinājumiem."
+            : "Nepareizi. Tas bija " . ($attemptCount + 1) . " mēģinājums. Mēģini vēlreiz.";
+
+        $explanation = $case->solution_explanation;
 
         $redirect = redirect()->route('cases.play', $case->id)
-            ->with('status', $status);
+            ->with('status', $status)
+            ->with('explanation', $explanation)
+            ->with('can_submit', true);
 
         if ($achievement) {
             $redirect->with('achievement', [
