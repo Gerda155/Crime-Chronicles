@@ -137,36 +137,35 @@ class CaseController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        $attemptCount = $user->attempts()
-            ->where('case_id', $case->id)
-            ->count();
-
+        // Проверяем, завершал ли пользователь это дело
         $alreadyCompleted = $user->attempts()
             ->where('case_id', $case->id)
             ->where('is_correct', 1)
             ->exists();
 
+        if ($alreadyCompleted) {
+            return redirect()->route('cases.play', $case->id)
+                ->with('status', 'Tu jau atradi īsto aizdomās turamo šajā lietā!')
+                ->with('last_attempt_correct', true)
+                ->with('can_submit', false)
+                ->with('explanation', $case->solution_explanation);
+        }
 
         $attemptCount = $user->attempts()
             ->where('case_id', $case->id)
             ->count();
-
-        $alreadyCompleted = $user->attempts()
-            ->where('case_id', $case->id)
-            ->where('is_correct', 1)
-            ->exists();
 
         $isCorrect = $request->suspect_id == $case->answer_id;
 
-        $achievement = null;
-
+        // Сохраняем попытку
         $user->attempts()->create([
             'case_id' => $case->id,
             'suspect_id' => $request->suspect_id,
             'is_correct' => $isCorrect,
         ]);
 
-        if ($isCorrect && !$alreadyCompleted) {
+        $achievement = null;
+        if ($isCorrect) {
             $achievement = $this->checkAchievements($user);
         }
 
@@ -174,12 +173,11 @@ class CaseController extends Controller
             ? "Pareizi! Tu atradi īsto aizdomās turamo pēc " . ($attemptCount + 1) . " mēģinājumiem."
             : "Nepareizi. Tas bija " . ($attemptCount + 1) . " mēģinājums. Mēģini vēlreiz.";
 
-        $explanation = $case->solution_explanation;
-
         $redirect = redirect()->route('cases.play', $case->id)
             ->with('status', $status)
-            ->with('explanation', $explanation)
-            ->with('can_submit', true);
+            ->with('explanation', $case->solution_explanation)
+            ->with('can_submit', true)
+            ->with('last_attempt_correct', $isCorrect);
 
         if ($achievement) {
             $redirect->with('achievement', [

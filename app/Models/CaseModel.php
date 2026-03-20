@@ -23,6 +23,7 @@ class CaseModel extends Model
         'user_id',
         'statuss',
         'solution_explanation',
+        'type', 
     ];
 
     public function genre()

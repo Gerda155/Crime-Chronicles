@@ -31,12 +31,18 @@
                             Atvērt pierādījumu
                         </button>
                         <div class="evidence-content d-none">
-                            @if($item->type === 'image')
-                            <img src="{{ asset('storage/' . $item->content) }}"
-                                class="img-fluid rounded mb-2"
-                                style="max-height:200px; object-fit:cover;">
-                            @endif
                             <p>{{ $item->description }}</p>
+                            @if($item->type === 'image' && $item->image_path)
+                            <div class="evidence-img-wrapper mb-2" style="width:100%; height:200px; overflow:hidden; border-radius:8px;">
+                                <img src="{{ asset('storage/' . $item->image_path) }}"
+                                    class="w-100 h-100"
+                                    style="object-fit:contain;">
+                            </div>
+                            @elseif($item->type === 'report' && $item->image_path)
+                            <a href="{{ asset('storage/' . $item->image_path) }}" target="_blank" class="btn btn-outline-light btn-sm">
+                                Skatīt atskaiti
+                            </a>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -50,32 +56,63 @@
                 @csrf
                 <input type="hidden" name="opened_evidence_count" id="openedEvidenceCount" value="0">
 
-                <div class="row g-3">
-                    @foreach($suspects as $suspect)
-                    <div class="col-md-6">
-                        <label class="card suspect-card p-3 d-flex align-items-center gap-3 bg-secondary text-light" for="suspect-{{ $suspect->id }}">
-                            <input class="form-check-input mt-0" type="radio" name="suspect_id" value="{{ $suspect->id }}" id="suspect-{{ $suspect->id }}">
-                            <div>
-                                <strong>{{ $suspect->name }}</strong>
-                                <p class="mb-0">{{ $suspect->description }}</p>
-                            </div>
-                        </label>
+                <div class="suspect-carousel position-relative text-center">
+                    @foreach($suspects as $index => $suspect)
+                    <div class="suspect-slide {{ $index === 0 ? '' : 'd-none' }}" data-index="{{ $index }}">
+                        <div class="suspect-card p-3 d-flex flex-column align-items-center bg-secondary text-light shadow-sm border-2 rounded"
+                            style="cursor:pointer;"
+                            data-suspect-id="{{ $suspect->id }}">
+
+                            @if($suspect->image_path)
+                            <img src="{{ asset('storage/' . $suspect->image_path) }}"
+                                alt="{{ $suspect->name }}"
+                                class="rounded mb-3"
+                                style="width:500px; height:500px; object-fit:cover;">
+                            @endif
+
+                            <strong class="fs-5">{{ $suspect->name }}</strong>
+                            <p class="mb-0 text-light">{{ $suspect->description }}</p>
+                        </div>
                     </div>
                     @endforeach
+
+                    {{-- Стрелки --}}
+                    <button type="button" class="btn btn-outline-light position-absolute top-50 start-0 translate-middle-y" id="prevSuspect" style="z-index:10;">&#8592;</button>
+                    <button type="button" class="btn btn-outline-light position-absolute top-50 end-0 translate-middle-y" id="nextSuspect" style="z-index:10;">&#8594;</button>
+
+                    {{-- Хранение выбранного --}}
+                    <input type="hidden" name="suspect_id" id="selectedSuspectId" value="">
                 </div>
 
                 <button type="submit" class="btn btn-success btn-lg mt-4 w-100" id="submitBtn" disabled>Iesniegt atbildi</button>
             </form>
+        </section>
 
+        <section>
             @if(session('status'))
-            <div class="alert alert-info mt-4 text-center fw-bold">
+            <div class="alert mt-4 text-center fw-bold
+                @if(session('last_attempt_correct') === true) 
+                    alert-success
+                @elseif(session('last_attempt_correct') === false) 
+                    alert-danger
+                @else
+                    alert-info
+                @endif">
                 {{ session('status') }}
             </div>
             @endif
+
+            @if($case->solution_explanation && session('last_attempt_correct') === true)
+            <div class="alert alert-info mt-3 text-center">
+                <h5 class="fw-bold">Risinājuma skaidrojums:</h5>
+                <p class="mb-0">{{ $case->solution_explanation }}</p>
+            </div>
+            @endif
+
+
         </section>
     </main>
 
-    {{-- Achievement Modal --}}
     @if(session('achievement'))
     <div class="modal fade" id="achievementModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -124,6 +161,42 @@
                     submitBtn.disabled = opened < 2;
 
                     this.textContent = content.classList.contains('d-none') ? 'Atvērt pierādījumu' : 'Paslēpt';
+                });
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.suspect-slide');
+            let current = 0;
+
+            const showSlide = (index) => {
+                slides.forEach((slide, i) => slide.classList.toggle('d-none', i !== index));
+            };
+
+            document.getElementById('prevSuspect').addEventListener('click', () => {
+                current = (current - 1 + slides.length) % slides.length;
+                showSlide(current);
+            });
+
+            document.getElementById('nextSuspect').addEventListener('click', () => {
+                current = (current + 1) % slides.length;
+                showSlide(current);
+            });
+
+            // Выбор подозреваемого по клику
+            const cards = document.querySelectorAll('.suspect-card');
+            const selectedInput = document.getElementById('selectedSuspectId');
+
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    // Снимаем обводку со всех
+                    cards.forEach(c => c.classList.remove('border-warning'));
+                    // Добавляем обводку к выбранной
+                    card.classList.add('border-warning');
+                    // Сохраняем выбранного
+                    selectedInput.value = card.dataset.suspectId;
                 });
             });
         });
