@@ -35,7 +35,7 @@
                     <option value="name" {{ request('sort')=='name' ? 'selected' : '' }}>Vārds</option>
                     <option value="email" {{ request('sort')=='email' ? 'selected' : '' }}>E-pasts</option>
                     <option value="role" {{ request('sort')=='role' ? 'selected' : '' }}>Loma</option>
-                    <option value="status" {{ request('sort')=='status' ? 'selected' : '' }}>Statuss</option>
+                    <option value="status" {{ request('sort')=='status' ? 'selected' : '' }}>status</option>
                 </select>
                 <button type="submit" class="btn btn-primary rounded">Kārtot</button>
             </form>
@@ -103,12 +103,12 @@
                 </thead>
                 <tbody>
                     @foreach($users as $user)
-                    <tr class="{{ $user->statuss === 'neaktivs' ? 'text-secondary' : '' }}">
+                    <tr class="{{ $user->status === 'inactive' ? 'text-secondary' : '' }}">
                         <td>{{ $users->firstItem() + $loop->index }}</td>
                         <td class="fw-bold">{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>{{ ucfirst($user->role) }}</td>
-                        <td>{{ $user->statuss === 'neaktivs' ? 'Neaktīvs' : 'Aktīvs' }}</td>
+                        <td>{{ $user->status === 'inactive' ? 'Neaktīvs' : 'Aktīvs' }}</td>
                         <td class="d-flex gap-1">
                             <button type="button" class="btn btn-sm btn-outline-info rounded" data-bs-toggle="modal" data-bs-target="#userModal{{ $user->id }}">
                                 Skatīt
@@ -120,14 +120,14 @@
                             @endif
 
                             @if(Auth::user()->role === 'admin' || (Auth::user()->role === 'moderator' && $user->role === 'user'))
-                            <form action="{{ $user->statuss === 'neaktivs'
+                            <form action="{{ $user->status === 'inactive'
                                 ? route(Auth::user()->role.'.users.activate', $user->id)
                                 : route(Auth::user()->role.'.users.deactivate', $user->id) }}"
                                 method="POST">
                                 @csrf
                                 @method('PUT')
-                                <button class="btn btn-sm {{ $user->statuss === 'neaktivs' ? 'btn-outline-success' : 'btn-outline-danger' }} rounded">
-                                    {{ $user->statuss === 'neaktivs' ? 'Aktivēt' : 'Deaktivēt' }}
+                                <button class="btn btn-sm {{ $user->status === 'inactive' ? 'btn-outline-success' : 'btn-outline-danger' }} rounded">
+                                    {{ $user->status === 'inactive' ? 'Aktivēt' : 'Deaktivēt' }}
                                 </button>
                             </form>
                             @endif
@@ -208,10 +208,10 @@
                                             </select>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="statuss" class="form-label">Statuss</label>
-                                            <select name="statuss" class="form-select bg-secondary text-light border-0" required>
-                                                <option value="aktivs" {{ $user->statuss === 'aktivs' ? 'selected' : '' }}>Aktīvs</option>
-                                                <option value="neaktivs" {{ $user->statuss === 'neaktivs' ? 'selected' : '' }}>Neaktīvs</option>
+                                            <label for="status" class="form-label">status</label>
+                                            <select name="status" class="form-select bg-secondary text-light border-0" required>
+                                                <option value="active" {{ $user->status === 'active' ? 'selected' : '' }}>Aktīvs</option>
+                                                <option value="inactive" {{ $user->status === 'inactive' ? 'selected' : '' }}>Neaktīvs</option>
                                             </select>
                                         </div>
                                     </div>

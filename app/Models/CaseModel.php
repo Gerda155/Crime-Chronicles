@@ -21,7 +21,7 @@ class CaseModel extends Model
         'rating',
         'answer_id',
         'user_id',
-        'statuss',
+        'status',
         'solution_explanation',
         'type', 
     ];

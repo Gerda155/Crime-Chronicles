@@ -30,10 +30,33 @@
             Sveiki, {{ Auth::user()->name }}!
         </span>
 
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button class="btn btn-danger btn-sm">Iziet</button>
-        </form>
+        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#logoutModal">
+            Iziet
+        </button>
         @endauth
     </div>
 </nav>
+
+<form id="logout-form" method="POST" action="/logout">
+    @csrf
+</form>
+
+<div class="modal fade" id="logoutModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title">Apstiprinājums</h5>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Vai tu tiešām vēlies iziet?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Atcelt</button>
+                <button type="button" class="btn btn-danger" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    Iziet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

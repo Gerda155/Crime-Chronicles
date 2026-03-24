@@ -35,7 +35,7 @@ class AdminController extends Controller
     {
         $data = $request->validate([
             'role' => 'required|in:admin,moderator,user',
-            'statuss' => 'required|in:aktivs,neaktivs',
+            'status' => 'required|in:active,inactive',
         ]);
 
         $user->update($data);
@@ -46,13 +46,13 @@ class AdminController extends Controller
 
     public function deactivateUser(User $user)
     {
-        $user->update(['statuss' => 'neaktivs']);
+        $user->update(['status' => 'inactive']);
         return redirect()->back();
     }
 
     public function activateUser(User $user)
     {
-        $user->update(['statuss' => 'aktivs']);
+        $user->update(['status' => 'active']);
         return redirect()->back();
     }
 
@@ -71,7 +71,7 @@ class AdminController extends Controller
             'name' => $data['name'],
             'password' => bcrypt($data['password']),
             'role' => 'moderator',
-            'statuss' => 'aktivs',
+            'status' => 'active',
         ]);
 
         return redirect()->route('admin.users.index')->with('success', 'Moderators veiksmīgi pievienots');

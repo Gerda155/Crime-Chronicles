@@ -43,7 +43,7 @@ class AuthenticatedSessionController extends Controller
 
         $user = User::where($fieldType, $login)->first();
 
-        if ($user && $user->statuss !== 'aktivs') {
+        if ($user && $user->status !== 'active') {
             throw ValidationException::withMessages([
                 'login' => 'Tavs konts ir deaktivēts. Sazinieties ar mums, lai to aktivizētu.',
             ]);
@@ -52,7 +52,7 @@ class AuthenticatedSessionController extends Controller
         if (Auth::attempt([
             $fieldType => $login,
             'password' => $password,
-            'statuss' => 'aktivs',
+            'status' => 'active',
         ], $request->filled('remember'))) {
 
             $request->session()->regenerate();

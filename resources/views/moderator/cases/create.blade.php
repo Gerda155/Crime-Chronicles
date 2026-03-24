@@ -51,7 +51,6 @@
                 <input type="number" name="rating" class="form-control" value="{{ old('rating') }}" min="0" max="5" step="0.1">
             </div>
 
-            {{-- Превью изображения, чтобы полностью повторить стиль страницы достижений --}}
             <div class="mb-2">
                 <img id="iconPreview" src="{{ asset('storage/cases/default.png') }}" width="160" height="160" style="object-fit: contain;">
             </div>

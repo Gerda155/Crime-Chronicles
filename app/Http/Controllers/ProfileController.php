@@ -15,7 +15,9 @@ class ProfileController extends Controller
 {
     public function edit()
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
+        /** @var \Illuminate\Database\Eloquent\Relations\BelongsToMany $completedCases */
         $completedCount = $user->completedCases()->count();
 
         return view('profile.edit', compact('user', 'completedCount'));

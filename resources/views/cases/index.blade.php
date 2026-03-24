@@ -19,26 +19,37 @@
     <div class=" container my-5">
         <h1 class="text-center mb-4">Visas lietas</h1>
 
-        <form method="GET" action="{{ route('cases.index') }}" class="row g-3 mb-4">
-            <div class="col-md-6">
-                <input type="text"
-                    name="search"
-                    class="form-control"
-                    placeholder="Meklēt pēc nosaukuma..."
-                    value="{{ request('search') }}">
-            </div>
+        <div class="d-flex flex-wrap gap-2 mb-4">
 
-            <div class="col-md-6">
-                <select name="sort" class="form-select">
+            <form method="GET" action="{{ route('cases.index') }}" class="d-flex gap-2 flex-grow-1">
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ request('search') }}"
+                    class="form-control bg-secondary text-light border-0 rounded"
+                    placeholder="Meklēt pēc nosaukuma">
+
+                <input type="hidden" name="sort" value="{{ request('sort') }}">
+
+                <button type="submit" class="btn btn-primary rounded">Meklēt</button>
+            </form>
+
+            <form method="GET" action="{{ route('cases.index') }}" class="d-flex gap-2">
+                <select name="sort" class="form-select bg-secondary text-light border-0 rounded">
                     <option value="">Kārtot pēc...</option>
-                    <option value="newest" @selected(request('sort')==='newest' )>Jaunākie</option>
-                    <option value="oldest" @selected(request('sort')==='oldest' )>Vecākie</option>
-                    <option value="rating" @selected(request('sort')==='rating' )>Reitings</option>
-                    <option value="title" @selected(request('sort')==='title' )>Nosaukums</option>
-                    <option value="genre" @selected(request('sort')==='genre' )>Žanrs</option>
+                    <option value="newest" {{ request('sort')=='newest' ? 'selected' : '' }}>Jaunākie</option>
+                    <option value="oldest" {{ request('sort')=='oldest' ? 'selected' : '' }}>Vecākie</option>
+                    <option value="rating" {{ request('sort')=='rating' ? 'selected' : '' }}>Reitings</option>
+                    <option value="title" {{ request('sort')=='title' ? 'selected' : '' }}>Nosaukums</option>
+                    <option value="genre" {{ request('sort')=='genre' ? 'selected' : '' }}>Žanrs</option>
                 </select>
-            </div>
-        </form>
+
+                <input type="hidden" name="search" value="{{ request('search') }}">
+
+                <button type="submit" class="btn btn-primary rounded">Kārtot</button>
+            </form>
+
+        </div>
 
         <div class="row g-4">
             @forelse($cases as $case)

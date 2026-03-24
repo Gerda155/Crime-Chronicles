@@ -17,7 +17,7 @@ class CaseController extends Controller
     public function index(Request $request)
     {
         $query = CaseModel::with('genre')
-            ->where('statuss', 'aktīvs');
+            ->where('status', 'active');
 
         if ($request->filled('search')) {
             $query->where('title', 'like', '%' . $request->search . '%');

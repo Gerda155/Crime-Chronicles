@@ -27,7 +27,7 @@
                     <option value="rating" {{ request('sort')=='rating' ? 'selected' : '' }}>Vērtējums</option>
                     <option value="title" {{ request('sort')=='title' ? 'selected' : '' }}>Nosaukums</option>
                     <option value="genre" {{ request('sort')=='genre' ? 'selected' : '' }}>Žanrs</option>
-                    <option value="statuss" {{ request('sort')=='statuss' ? 'selected' : '' }}>Statuss</option>
+                    <option value="status" {{ request('sort')=='status' ? 'selected' : '' }}>status</option>
                 </select>
                 <button type="submit" class="btn btn-primary rounded">Kārtot</button>
             </form>
@@ -49,21 +49,21 @@
                 </thead>
                 <tbody>
                     @forelse($cases as $case)
-                    <tr class="{{ $case->statuss === 'neaktivs' ? 'text-secondary' : '' }}">
+                    <tr class="{{ $case->status === 'inactive' ? 'text-secondary' : '' }}">
                         <td>{{ $loop->iteration }}</td>
                         <td class="fw-bold">{{ $case->title }}</td>
                         <td>{{ Str::limit($case->description, 50) }}</td>
                         <td>{{ $case->genre->name ?? '-' }}</td>
-                        <td>{{ $case->statuss === 'neaktivs' ? 'Neaktīvs' : 'Aktīvs' }}</td>
+                        <td>{{ $case->status === 'inactive' ? 'Neaktīvs' : 'Aktīvs' }}</td>
                         <td class="d-flex flex-wrap gap-1">
                             <a href="{{ route('moderator.cases.edit', $case->id) }}" class="btn btn-sm btn-outline-primary rounded">Rediģēt</a>
-                            <form action="{{ $case->statuss === 'neaktivs' 
+                            <form action="{{ $case->status === 'inactive' 
                                 ? route('moderator.cases.activate', $case->id) 
                                 : route('moderator.cases.deactivate', $case->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
-                                <button type="submit" class="btn btn-sm {{ $case->statuss === 'neaktivs' ? 'btn-outline-success' : 'btn-outline-danger' }} rounded">
-                                    {{ $case->statuss === 'neaktivs' ? 'Aktivēt' : 'Deaktivēt' }}
+                                <button type="submit" class="btn btn-sm {{ $case->status === 'inactive' ? 'btn-outline-success' : 'btn-outline-danger' }} rounded">
+                                    {{ $case->status === 'inactive' ? 'Aktivēt' : 'Deaktivēt' }}
                                 </button>
                             </form>
                         </td>

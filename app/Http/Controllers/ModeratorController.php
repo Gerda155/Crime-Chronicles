@@ -48,7 +48,7 @@ class ModeratorController extends Controller
                 $query->orderBy('role', 'asc');
                 break;
             case 'status':
-                $query->orderBy('statuss', 'asc');
+                $query->orderBy('status', 'asc');
                 break;
             default:
                 $query->orderBy('id', 'desc');
@@ -68,7 +68,7 @@ class ModeratorController extends Controller
 
     public function deactivateUser(User $user)
     {
-        $user->update(['statuss' => 'neaktivs']);
+        $user->update(['status' => 'inactive']);
 
         return redirect()
             ->route('moderator.users.index')
@@ -77,7 +77,7 @@ class ModeratorController extends Controller
 
     public function activateUser(User $user)
     {
-        $user->update(['statuss' => 'aktivs']);
+        $user->update(['status' => 'active']);
 
         return redirect()
             ->route('moderator.users.index')
@@ -111,8 +111,8 @@ class ModeratorController extends Controller
                 case 'genre':
                     $query->orderBy('genre_id', 'asc');
                     break;
-                case 'statuss':
-                    $query->orderBy('statuss', 'asc');
+                case 'status':
+                    $query->orderBy('status', 'asc');
                     break;
             }
         } else {
@@ -166,13 +166,13 @@ class ModeratorController extends Controller
 
     public function deactivateCase(CaseModel $case)
     {
-        $case->update(['statuss' => 'neaktivs']);
+        $case->update(['status' => 'inactive']);
         return redirect()->route('moderator.cases.index')->with('success', 'Lieta deaktivēta');
     }
 
     public function activateCase(CaseModel $case)
     {
-        $case->update(['statuss' => 'aktivs']);
+        $case->update(['status' => 'active']);
         return redirect()->route('moderator.cases.index')->with('success', 'Lieta aktivēta');
     }
 
@@ -181,17 +181,17 @@ class ModeratorController extends Controller
     public function stats()
     {
         $totalCases = CaseModel::count();
-        $activeCases = CaseModel::where('statuss', 'aktivs')->count();
+        $activeCases = CaseModel::where('status', 'active')->count();
 
         $totalUsers = User::whereNotIn('role', ['moderator', 'administrator'])->count();
-        $activeUsers = User::where('statuss', 'aktivs')->count();
-        $activeUsers = User::where('statuss', 'aktivs')
+        $activeUsers = User::where('status', 'active')->count();
+        $activeUsers = User::where('status', 'active')
             ->where('role', '!=', 'administrator')
             ->where('role', '!=', 'moderator')
             ->count();
 
 
-        $casesByGenre = CaseModel::where('statuss', '!=', 'neaktivs')
+        $casesByGenre = CaseModel::where('status', '!=', 'inactive')
             ->selectRaw('genre_id, count(*) as count')
             ->groupBy('genre_id')
             ->with('genre')
@@ -203,7 +203,7 @@ class ModeratorController extends Controller
         $genreLabels = $casesByGenre->keys();
         $genreData = $casesByGenre->values();
 
-        $registrations = User::where('statuss', '!=', 'neaktivs')
+        $registrations = User::where('status', '!=', 'inactive')
             ->where('created_at', '>=', now()->subDays(7))
             ->selectRaw('DATE(created_at) as date, count(*) as total')
             ->groupBy('date')

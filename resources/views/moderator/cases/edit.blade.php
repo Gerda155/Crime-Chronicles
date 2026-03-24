@@ -52,7 +52,6 @@
                 <input type="number" name="rating" class="form-control" value="{{ old('rating', $case->rating) }}" min="0" max="5" step="0.1">
             </div>
 
-            {{-- Превью изображения, чтобы стиль был идентичным странице достижения --}}
             <div class="mb-2">
                 <img
                     id="iconPreview"

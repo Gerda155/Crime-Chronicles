@@ -87,31 +87,38 @@
                 <button type="submit" class="btn btn-success btn-lg mt-4 w-100" id="submitBtn" disabled>Iesniegt atbildi</button>
             </form>
         </section>
-
-        <section>
-            @if(session('status'))
-            <div class="alert mt-4 text-center fw-bold
-                @if(session('last_attempt_correct') === true) 
-                    alert-success
-                @elseif(session('last_attempt_correct') === false) 
-                    alert-danger
-                @else
-                    alert-info
-                @endif">
-                {{ session('status') }}
-            </div>
-            @endif
-
-            @if($case->solution_explanation && session('last_attempt_correct') === true)
-            <div class="alert alert-info mt-3 text-center">
-                <h5 class="fw-bold">Risinājuma skaidrojums:</h5>
-                <p class="mb-0">{{ $case->solution_explanation }}</p>
-            </div>
-            @endif
-
-
-        </section>
     </main>
+
+    @if(session('status'))
+    <div class="modal fade" id="answerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light border border-info">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title">{{ session('last_attempt_correct') ? 'Pareizi!' : 'Nepareizi' }}</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="fw-bold">{{ session('status') }}</p>
+                    @if($case->solution_explanation && session('last_attempt_correct') === true)
+                    <hr class="bg-light">
+                    <h6 class="fw-bold">Risinājuma skaidrojums:</h6>
+                    <p>{{ session('explanation') }}</p>
+                    @endif
+                </div>
+                <div class="modal-footer border-top-0 justify-content-center">
+                    <button type="button" class="btn btn-info" data-bs-dismiss="modal">Labi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var answerModal = new bootstrap.Modal(document.getElementById('answerModal'));
+            answerModal.show();
+        });
+    </script>
+    @endif
 
     @if(session('achievement'))
     <div class="modal fade" id="achievementModal" tabindex="-1" aria-hidden="true">
@@ -185,23 +192,18 @@
                 showSlide(current);
             });
 
-            // Выбор подозреваемого по клику
             const cards = document.querySelectorAll('.suspect-card');
             const selectedInput = document.getElementById('selectedSuspectId');
 
             cards.forEach(card => {
                 card.addEventListener('click', () => {
-                    // Снимаем обводку со всех
                     cards.forEach(c => c.classList.remove('border-warning'));
-                    // Добавляем обводку к выбранной
                     card.classList.add('border-warning');
-                    // Сохраняем выбранного
                     selectedInput.value = card.dataset.suspectId;
                 });
             });
         });
     </script>
-
     @include('partials.footer')
 </body>
 

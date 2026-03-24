@@ -20,7 +20,7 @@ class User extends Authenticatable
         'password',
         'bio',
         'avatar',
-        'statuss',
+        'status',
         'role',
     ];
 
