@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="lv">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 </head>
+
 <body class="bg-dark text-light">
     @include('partials.header')
     @include('partials.burger')
@@ -35,6 +37,10 @@
             <a href="{{ route('moderator.cases.create') }}" class="btn btn-success rounded">Izveidot jaunu lietu</a>
         </div>
 
+        @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
         <div class="table-responsive rounded shadow-sm">
             <table class="table table-dark table-hover align-middle mb-0">
                 <thead class="table-dark text-uppercase text-muted small">
@@ -57,16 +63,33 @@
                         <td>{{ $case->status === 'inactive' ? 'Neaktīvs' : 'Aktīvs' }}</td>
                         <td class="d-flex flex-wrap gap-1">
                             <a href="{{ route('moderator.cases.edit', $case->id) }}" class="btn btn-sm btn-outline-primary rounded">Rediģēt</a>
+
                             <form action="{{ $case->status === 'inactive' 
-                                ? route('moderator.cases.activate', $case->id) 
-                                : route('moderator.cases.deactivate', $case->id) }}" method="POST">
+                            ? route('moderator.cases.activate', $case->id) 
+                            : route('moderator.cases.deactivate', $case->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
-                                <button type="submit" class="btn btn-sm {{ $case->status === 'inactive' ? 'btn-outline-success' : 'btn-outline-danger' }} rounded">
+                                <button type="submit" class="btn btn-sm {{ $case->status === 'inactive' ? 'btn-outline-success' : 'btn-outline-warning' }} rounded">
                                     {{ $case->status === 'inactive' ? 'Aktivēt' : 'Deaktivēt' }}
                                 </button>
                             </form>
+
+                            <button type="button"
+                                class="btn btn-sm btn-outline-danger rounded"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteModal"
+                                data-action="{{ route('moderator.cases.destroy', $case->id) }}">
+                                Dzēst
+                            </button>
+
+                            @if($case->trashed())
+                            <form action="{{ route('moderator.cases.restore', $case->id) }}" method="POST">
+                                @csrf
+                                <button class="btn btn-sm btn-outline-success rounded">Atjaunot</button>
+                            </form>
+                            @endif
                         </td>
+
                     </tr>
                     @empty
                     <tr>
@@ -82,5 +105,41 @@
         </div>
     </main>
     @include('partials.footer')
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Apstiprināt dzēšanu</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Vai tiešām vēlies dzēst šo ierakstu? Šī darbība ir neatgriezeniska!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded" data-bs-dismiss="modal">Atcelt</button>
+                    <form id="deleteForm" method="POST" class="m-0">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger rounded">Dzēst</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteModal = document.getElementById('deleteModal');
+            deleteModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget; 
+                const action = button.getAttribute('data-action'); 
+                const form = deleteModal.querySelector('#deleteForm');
+                form.action = action; 
+            });
+        });
+    </script>
+
 </body>
+
 </html>

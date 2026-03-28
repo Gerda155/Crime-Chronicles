@@ -112,7 +112,6 @@
         </div>
     </div>
 
-    {{-- GUEST MODAL --}}
     <div class="modal fade" id="authModal">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content bg-dark text-light">

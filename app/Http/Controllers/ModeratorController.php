@@ -70,18 +70,27 @@ class ModeratorController extends Controller
     {
         $user->update(['status' => 'inactive']);
 
-        return redirect()
-            ->route('moderator.users.index')
-            ->with('success', 'Lietotājs deaktivēts');
+        return redirect()->route('moderator.users.index')->with('success', 'Lietotājs deaktivēts');
     }
 
     public function activateUser(User $user)
     {
         $user->update(['status' => 'active']);
 
-        return redirect()
-            ->route('moderator.users.index')
-            ->with('success', 'Lietotājs aktivēts');
+        return redirect()->route('moderator.users.index')->with('success', 'Lietotājs aktivēts');
+    }
+
+    public function destroyUser(User $user)
+    {
+        $user->delete();
+        return redirect()->route('moderator.users.index')->with('success', 'Lietotājs dzēsts!');
+    }
+
+    public function restoreUser($id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        $user->restore();
+        return redirect()->route('moderator.users.index')->with('success', 'Lietotājs atjaunots!');
     }
 
 
@@ -144,7 +153,6 @@ class ModeratorController extends Controller
         return redirect()->route('moderator.cases.index')->with('success', 'Lieta izveidota!');
     }
 
-
     public function editCase(CaseModel $case)
     {
         $genres = Genre::all();
@@ -174,6 +182,19 @@ class ModeratorController extends Controller
     {
         $case->update(['status' => 'active']);
         return redirect()->route('moderator.cases.index')->with('success', 'Lieta aktivēta');
+    }
+
+    public function destroyCase(CaseModel $case)
+    {
+        $case->delete();
+        return redirect()->route('moderator.cases.index')->with('success', 'Lieta dzēsta!');
+    }
+
+    public function restoreCase($id)
+    {
+        $case = CaseModel::withTrashed()->findOrFail($id);
+        $case->restore();
+        return redirect()->route('moderator.cases.index')->with('success', 'Lieta atjaunota!');
     }
 
 
@@ -257,7 +278,7 @@ class ModeratorController extends Controller
                 break;
         }
 
-        $achievements = $query->paginate(6)->withQueryString();
+        $achievements = Achievement::whereNull('deleted_at')->paginate(6);
 
         return view('moderator.achievements.index', compact('achievements'));
     }
@@ -282,8 +303,7 @@ class ModeratorController extends Controller
 
         Achievement::create($data);
 
-        return redirect()->route('moderator.achievements.index')
-            ->with('success', 'Sasniegums izveidots!');
+        return redirect()->route('moderator.achievements.index')->with('success', 'Sasniegums izveidots!');
     }
 
     public function editAchievement(Achievement $achievement)
@@ -311,8 +331,19 @@ class ModeratorController extends Controller
 
         $achievement->update($data);
 
-        return redirect()->route('moderator.achievements.index')
-            ->with('success', 'Sasniegums atjaunināts!');
+        return redirect()->route('moderator.achievements.index')->with('success', 'Sasniegums atjaunināts!');
+    }
+
+    public function deactivateAchievement(Achievement $achievement)
+    {
+        $achievement->update(['status' => 'inactive']);
+        return redirect()->route('moderator.achievements.index')->with('success', 'Sasniegums deaktivēts!');
+    }
+
+    public function activateAchievement(Achievement $achievement)
+    {
+        $achievement->update(['status' => 'active']);
+        return redirect()->route('moderator.achievements.index')->with('success', 'Sasniegums aktivēts!');
     }
 
     public function destroyAchievement(Achievement $achievement)
@@ -320,12 +351,10 @@ class ModeratorController extends Controller
         if ($achievement->icon) {
             Storage::disk('public')->delete($achievement->icon);
         }
-
         $achievement->delete();
-
-        return redirect()->route('moderator.achievements.index')
-            ->with('success', 'Sasniegums dzēsts!');
+        return redirect()->route('moderator.achievements.index')->with('success', 'Sasniegums dzēsts!');
     }
+
 
 
 
@@ -350,7 +379,7 @@ class ModeratorController extends Controller
                 break;
         }
 
-        $genres = $query->paginate(10)->withQueryString();
+        $genres = Genre::whereNull('deleted_at')->paginate(10);
 
         $editGenre = null;
 
@@ -365,8 +394,7 @@ class ModeratorController extends Controller
 
         Genre::create($data);
 
-        return redirect()->route('moderator.genres.index')
-            ->with('success', 'Žanrs izveidots!');
+        return redirect()->route('moderator.genres.index')->with('success', 'Žanrs izveidots!');
     }
 
     public function editGenre(Genre $genre)
@@ -387,15 +415,24 @@ class ModeratorController extends Controller
 
         $genre->update($data);
 
-        return redirect()->route('moderator.genres.index')
-            ->with('success', 'Žanrs atjaunināts!');
+        return redirect()->route('moderator.genres.index')->with('success', 'Žanrs atjaunināts!');
+    }
+
+    public function deactivateGenre(Genre $genre)
+    {
+        $genre->update(['status' => 'inactive']);
+        return redirect()->route('moderator.genres.index')->with('success', 'Žanrs deaktivēts!');
+    }
+
+    public function activateGenre(Genre $genre)
+    {
+        $genre->update(['status' => 'active']);
+        return redirect()->route('moderator.genres.index')->with('success', 'Žanrs aktivēts!');
     }
 
     public function destroyGenre(Genre $genre)
     {
         $genre->delete();
-
-        return redirect()->route('moderator.genres.index')
-            ->with('success', 'Žanrs dzēsts!');
+        return redirect()->route('moderator.genres.index')->with('success', 'Žanrs dzēsts!');
     }
 }

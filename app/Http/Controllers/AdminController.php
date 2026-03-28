@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -47,14 +48,29 @@ class AdminController extends Controller
     public function deactivateUser(User $user)
     {
         $user->update(['status' => 'inactive']);
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Lietotājs deaktivizēts!');
     }
 
     public function activateUser(User $user)
     {
         $user->update(['status' => 'active']);
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Lietotājs aktivizēts!');
     }
+
+
+    public function destroyUser(User $user)
+    {
+        $user->delete();
+        return redirect()->back()->with('success', 'Lietotājs dzēsts!');
+    }
+
+    public function restoreUser($id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        $user->restore();
+        return redirect()->back()->with('success', 'Lietotājs atjaunots');
+    }
+
 
     public function storeModerator(Request $request)
     {

@@ -89,6 +89,10 @@
         </div>
         @endif
 
+        @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
         <div class="table-responsive rounded shadow-sm">
             <table class="table table-dark table-hover align-middle mb-0">
                 <thead class="text-uppercase text-muted small">
@@ -113,23 +117,37 @@
                             <button type="button" class="btn btn-sm btn-outline-info rounded" data-bs-toggle="modal" data-bs-target="#userModal{{ $user->id }}">
                                 Skatīt
                             </button>
+
                             @if(Auth::user()->role === 'admin')
-                            <button type="button" class="btn btn-sm btn-outline-warning rounded" data-bs-toggle="modal" data-bs-target="#editUserModal{{ $user->id }}">
+                            <button type="button" class="btn btn-sm btn-outline-primary rounded" data-bs-toggle="modal" data-bs-target="#editUserModal{{ $user->id }}">
                                 Rediģēt
                             </button>
                             @endif
 
                             @if(Auth::user()->role === 'admin' || (Auth::user()->role === 'moderator' && $user->role === 'user'))
-                            <form action="{{ $user->status === 'inactive'
-                                ? route(Auth::user()->role.'.users.activate', $user->id)
-                                : route(Auth::user()->role.'.users.deactivate', $user->id) }}"
+                            <form action="{{ $user->status === 'inactive' ? route(Auth::user()->role.'.users.activate', $user->id) : route(Auth::user()->role.'.users.deactivate', $user->id) }}"
                                 method="POST">
                                 @csrf
                                 @method('PUT')
-                                <button class="btn btn-sm {{ $user->status === 'inactive' ? 'btn-outline-success' : 'btn-outline-danger' }} rounded">
+                                <button class="btn btn-sm {{ $user->status === 'inactive' ? 'btn-outline-success' : 'btn-outline-warning' }} rounded">
                                     {{ $user->status === 'inactive' ? 'Aktivēt' : 'Deaktivēt' }}
                                 </button>
                             </form>
+
+                            <button type="button"
+                                class="btn btn-sm btn-outline-danger rounded"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteModal"
+                                data-action="{{ route('moderator.users.destroy', $user->id) }}">
+                                Dzēst
+                            </button>
+
+                            @if($user->trashed())
+                            <form action="{{ route(Auth::user()->role.'.users.restore', $user->id) }}" method="POST">
+                                @csrf
+                                <button class="btn btn-sm btn-outline-success rounded">Atjaunot</button>
+                            </form>
+                            @endif
                             @endif
                         </td>
                     </tr>
@@ -208,7 +226,7 @@
                                             </select>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="status" class="form-label">status</label>
+                                            <label for="status" class="form-label">Statuss</label>
                                             <select name="status" class="form-select bg-secondary text-light border-0" required>
                                                 <option value="active" {{ $user->status === 'active' ? 'selected' : '' }}>Aktīvs</option>
                                                 <option value="inactive" {{ $user->status === 'inactive' ? 'selected' : '' }}>Neaktīvs</option>
@@ -237,6 +255,40 @@
     </main>
 
     @include('partials.footer')
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Apstiprināt dzēšanu</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Vai tiešām vēlies dzēst šo ierakstu? Šī darbība ir neatgriezeniska!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded" data-bs-dismiss="modal">Atcelt</button>
+                    <form id="deleteForm" method="POST" class="m-0">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger rounded">Dzēst</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteModal = document.getElementById('deleteModal');
+            deleteModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const action = button.getAttribute('data-action');
+                const form = deleteModal.querySelector('#deleteForm');
+                form.action = action;
+            });
+        });
+    </script>
 </body>
 
 </html>

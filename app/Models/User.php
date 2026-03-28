@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\PlayerAttempt;
 use App\Models\Achievement;
 use App\Models\CaseModel;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
+    use SoftDeletes;
     use HasFactory, Notifiable;
 
     protected $fillable = [

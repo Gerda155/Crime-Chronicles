@@ -9,7 +9,7 @@ class AchievementController extends Controller
 {
     public function index()
     {
-        $achievements = Achievement::all();
+        $achievements = Achievement::whereNull('deleted_at')->where('status', 'active')->paginate(9);
         return view('achievements.index', compact('achievements'));
     }
 }
