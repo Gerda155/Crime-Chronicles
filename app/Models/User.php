@@ -54,5 +54,14 @@ class User extends Authenticatable
             'case_id'
         )->wherePivot('is_correct', 1);
     }
-}
 
+    public function ratings()
+    {
+        return $this->hasMany(\App\Models\Rating::class);
+    }
+
+    public function hasRatedCase($caseId)
+    {
+        return $this->ratings()->where('case_id', $caseId)->exists();
+    }
+}

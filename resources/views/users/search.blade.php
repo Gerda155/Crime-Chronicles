@@ -74,7 +74,7 @@
                         Nav neviena sasnieguma
                     </p>
                     @endif
-                    <p class="text-secondary mb-2" style="font-size: 0.9rem;"> Pabeigtas lietas: {{ $user->completed_tasks_count ?? 0 }} </p>
+                    <p class="text-secondary mb-2" style="font-size: 0.9rem;"> Pabeigtas lietas: {{ $user->completed_cases_count ?? 0 }} </p>
                     <p class="text-secondary mb-2" style="font-size: 0.9rem;">Detektīvs kopš: {{ $user->created_at->format('d.m.Y') }}</p>
                 </div>
 

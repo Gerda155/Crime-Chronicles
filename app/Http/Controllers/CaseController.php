@@ -116,8 +116,9 @@ class CaseController extends Controller
     {
         $evidence = $case->evidence()->get();
         $suspects = $case->suspects()->get();
+        $questions = $case->questions()->get();
 
-        return view('cases.play', compact('case', 'evidence', 'suspects'));
+        return view('cases.play', compact('case', 'evidence', 'suspects', 'questions'));
     }
 
     public function submit(Request $request, CaseModel $case)
@@ -137,7 +138,6 @@ class CaseController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // Проверяем, завершал ли пользователь это дело
         $alreadyCompleted = $user->attempts()
             ->where('case_id', $case->id)
             ->where('is_correct', 1)
@@ -157,7 +157,6 @@ class CaseController extends Controller
 
         $isCorrect = $request->suspect_id == $case->answer_id;
 
-        // Сохраняем попытку
         $user->attempts()->create([
             'case_id' => $case->id,
             'suspect_id' => $request->suspect_id,

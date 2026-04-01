@@ -18,7 +18,7 @@ class UserController extends Controller
         $users = collect();
 
         if ($query !== '') {
-            $users = User::with('achievements') 
+            $users = User::query()->withCount('completedCases')->with('achievements')
                 ->where('username', 'LIKE', '%' . $query . '%')
                 ->where('id', '!=', Auth::id())
                 ->orderBy('username') 

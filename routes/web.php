@@ -8,6 +8,7 @@ use App\Http\Controllers\ModeratorController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\RatingController;
 use App\Http\Middleware\ModeratorMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +36,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard');
+
+    Route::post('/ratings', [RatingController::class, 'store'])->name('ratings.store');
 });
 
 Route::get('/cases', [CaseController::class, 'index'])->name('cases.index');

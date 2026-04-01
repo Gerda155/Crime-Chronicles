@@ -44,9 +44,9 @@
                         <div class="d-flex flex-wrap gap-3 justify-content-center">
                             @forelse($user->achievements as $ach)
                             <div class="card bg-secondary text-dark text-center p-2" style="width: 120px;">
-                                <img src="{{ $ach->icon 
-                                    ? asset('images/achievements/'.$ach->icon) 
-                                    : asset('images/achievements/default.png') }}"
+                                <img src="{{ $ach->icon
+                                    ? asset('storage/'.$ach->icon)
+                                    : asset('storage/achievements/default.png') }}"
                                     class="mb-2 mx-auto"
                                     style="width: 50px; height: 50px; object-fit: contain;">
                                 <div class="small fw-bold">{{ $ach->title }}</div>

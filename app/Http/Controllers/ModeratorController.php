@@ -18,7 +18,7 @@ class ModeratorController extends Controller
 {
     public function usersIndex(Request $request)
     {
-        $query = User::query();
+        $query = User::query()->withCount('completedCases')->with('achievements');
         $query->where('id', '!=', Auth::id());
 
         if (Auth::user()->role === 'moderator') {
