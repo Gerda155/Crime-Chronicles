@@ -114,7 +114,7 @@ class CaseController extends Controller
 
     public function play(CaseModel $case)
     {
-        $evidence = $case->evidence()->get();
+        $evidence = $case->evidence()->get(['id','description','type','image_path','key_object_area']);
         $suspects = $case->suspects()->get();
         $questions = $case->questions()->get();
 
