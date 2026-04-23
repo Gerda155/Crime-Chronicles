@@ -20,6 +20,7 @@
                 <a href="{{ route('moderator.users.index') }}" class="d-block text-light mb-1">Lietotāji</a>
                 <a href="{{ route('moderator.achievements.index') }}" class="d-block text-light mb-1">Sasniegumi</a>
                 <a href="{{ route('moderator.genres.index') }}" class="d-block text-light mb-1">Žanri</a>
+                <a href="{{ route('moderator.rangs.index') }}" class="d-block text-light mb-1">Rangi</a>
             </div>
         </div>
         @endif

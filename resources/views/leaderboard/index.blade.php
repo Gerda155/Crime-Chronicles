@@ -27,6 +27,7 @@
                     <tr>
                         <th>#</th>
                         <th>Detektīvs</th>
+                        <th>Rangs</th>
                         <th>Punkti</th>
                         <th>Pabeigtie līmeņi</th>
                         <th>Ačīvmenti</th>
@@ -61,7 +62,9 @@
                                 </div>
                             </div>
                         </td>
-                        
+
+                        <td>{{ $user->rang->name ?? 'Bez ranga' }}</td>
+
                         <td>{{ $user->total_score ?? 0 }}</td>
 
                         <td>{{ $user->completed_cases_count }}</td>

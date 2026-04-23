@@ -54,7 +54,7 @@
                     <h3 class="@if($user->role === 'admin') text-danger fw-bold
                     @elseif($user->role === 'moderator') text-warning fw-bold
                     @endif">
-                        {{ $user->name }}
+                        {{ $user->rang->name ?? 'Bez ranga' }} {{ $user->name }}
                     </h3>
                     <p class="mb-1">
                         {{ $user->bio ?? 'Lietotājs vēl nav pievienojis bio.' }}

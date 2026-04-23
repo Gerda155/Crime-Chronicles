@@ -39,7 +39,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard');
 
     Route::post('/ratings', [RatingController::class, 'store'])->name('ratings.store');
-
 });
 
 Route::get('/cases', [CaseController::class, 'index'])->name('cases.index');
@@ -94,6 +93,18 @@ Route::middleware(['auth', ModeratorMiddleware::class])
         });
 
         Route::get('/stats', [ModeratorController::class, 'stats'])->name('stats');
+
+        Route::prefix('rangs')->group(function () {
+            Route::get('/', [ModeratorController::class, 'rangsIndex'])->name('rangs.index');
+            Route::get('/create', [ModeratorController::class, 'createrang'])->name('rangs.create');
+            Route::post('/', [ModeratorController::class, 'storerang'])->name('rangs.store');
+            Route::get('/{rangs}/edit', [ModeratorController::class, 'editrang'])->name('rangs.edit');
+            Route::put('/{rangs}', [ModeratorController::class, 'updaterang'])->name('rangs.update');
+            Route::post('/{rangs}/deactivate', [ModeratorController::class, 'deactivaterang'])->name('rangs.deactivate');
+            Route::post('/{rangs}/activate', [ModeratorController::class, 'activaterang'])->name('rangs.activate');
+            Route::delete('/{rangs}', [ModeratorController::class, 'destroyrang'])->name('rangs.destroy');
+            Route::post('/{rangs}/restore', [ModeratorController::class, 'restorerang'])->name('rangs.restore');
+        });
     });
 
 

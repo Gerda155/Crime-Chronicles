@@ -12,11 +12,13 @@ use App\Models\Achievement;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
+
 class ProfileController extends Controller
 {
     public function edit()
     {
         $user = Auth::user();
+        $totalScore = $user->total_score;
         
         /** @var \App\Models\User $user */
         $completedCount = $user->completedCases()->count();

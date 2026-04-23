@@ -31,7 +31,7 @@
                             width="250" height="250"
                             style="object-fit: cover;">
 
-                        <h4 class="mb-0">{{ $user->username }}</h4>
+                        <h4 class="mb-0">{{ $user->rang->name ?? 'No rang' }} {{ $user->username }}</h4>
 
                         <hr class="border-secondary">
 
