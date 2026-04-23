@@ -60,6 +60,8 @@
                         {{ $user->bio ?? 'Lietotājs vēl nav pievienojis bio.' }}
                     </p>
 
+                    <p class="card-text">Punkti: {{ $user->total_score ?? 0 }}</p>
+
                     <h5 class="mb-2 mt-3">Sasniegumi</h5>
                     @if($user->achievements && $user->achievements->count())
                     <div class="d-flex flex-wrap gap-2">

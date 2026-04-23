@@ -21,6 +21,10 @@
             <p class="lead">{{ $case->description }}</p>
         </div>
 
+        <div id="scoreDisplay" style="font-weight: bold; margin-bottom: 10px;">
+            Punkti: 0
+        </div>
+
         <section>
             <h3 class="mb-4 border-bottom pb-2">Pierādījumi</h3>
             <div class="row g-4">
@@ -103,6 +107,7 @@
                     <button type="button" class="btn btn-outline-light position-absolute top-50 end-0 translate-middle-y" id="nextSuspect" style="z-index:10;">&#8594;</button>
 
                     <input type="hidden" name="suspect_id" id="selectedSuspectId" value="">
+                    <input type="hidden" name="score" id="scoreInput" value="0">
                 </div>
 
                 <button type="submit" class="btn btn-success btn-lg mt-4 w-100" id="submitBtn" disabled>Iesniegt atbildi</button>
@@ -247,6 +252,7 @@
         });
     </script>
     @endif
+
     <div class="modal fade" id="imageModal" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content bg-dark" style="height: 100vh;">
@@ -352,9 +358,17 @@
                     if (!currentWrapper.dataset.found) {
                         currentWrapper.dataset.found = 'true';
 
+                        const evidenceCard = currentWrapper.closest('.col-md-4');
+                        const evidenceContent = evidenceCard.querySelector('.evidence-content');
+                        if (evidenceContent) {
+                            evidenceContent.dataset.counted = 'true';
+                        }
+
                         let opened = parseInt(openedInput.value) || 0;
                         opened++;
                         openedInput.value = opened;
+                        addScore(20); 
+                        updateProgress(opened);
 
                         if (opened >= 2) {
                             document.querySelectorAll('.locked-question').forEach(q => q.classList.remove('d-none'));
@@ -365,7 +379,11 @@
 
                         if (submitBtn) submitBtn.disabled = opened < 2;
 
-                        showEvidenceNotification('Pierādījums atrasts!');
+                        showEvidenceNotification('Pierādījums atrasts! +20 punkti', 'success');
+
+                        setTimeout(() => {
+                            imageModal.hide();
+                        }, 1500);
                     } else {
                         showEvidenceNotification('Jūs jau atradāt šo pierādījumu!', 'warning');
                     }
@@ -387,6 +405,16 @@
             const submitBtn = document.getElementById('submitBtn');
             const openedInput = document.getElementById('openedEvidenceCount');
 
+            let score = 0;
+
+            function addScore(points) {
+                score += points;
+                const scoreInput = document.getElementById('scoreInput');
+                const scoreDisplay = document.getElementById('scoreDisplay');
+                if (scoreInput) scoreInput.value = score;
+                if (scoreDisplay) scoreDisplay.innerText = 'Punkti: ' + score;
+            }
+
             buttons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const content = btn.nextElementSibling;
@@ -397,17 +425,25 @@
                         btn.textContent = 'Paslēpt';
 
                         const img = content.querySelector('.evidence-img');
-                        let counted = false;
+                        let hasKeyArea = false;
 
                         if (img && img.dataset.keyArea && img.dataset.keyArea !== 'null' && img.dataset.keyArea !== '') {
-                            counted = true;
+                            try {
+                                const keyArea = JSON.parse(img.dataset.keyArea);
+                                hasKeyArea = keyArea && typeof keyArea.x === 'number';
+                            } catch (e) {
+                                console.error('Invalid key area data:', img.dataset.keyArea);
+                            }
                         }
 
-                        if (!counted && !content.dataset.counted) {
+                        if (!hasKeyArea && !content.dataset.counted) {
                             content.dataset.counted = 'true';
+                            addScore(15);
+
                             let opened = parseInt(openedInput.value) || 0;
                             opened++;
                             openedInput.value = opened;
+                            updateProgress(opened);
 
                             if (opened >= 2) {
                                 document.querySelectorAll('.locked-question').forEach(q => q.classList.remove('d-none'));
@@ -417,8 +453,11 @@
                             }
 
                             if (submitBtn) submitBtn.disabled = opened < 2;
-                        }
 
+                            showEvidenceNotification('Pierādījums atvērts! +15 punkti', 'success');
+                        } else if (hasKeyArea) {
+                            showEvidenceNotification('Šajā pierādījumā ir slēpta vieta! Atrodi to, lai iegūtu punktus!', 'info');
+                        }
                     } else {
                         content.classList.add('d-none');
                         btn.textContent = 'Atvērt pierādījumu';
@@ -426,6 +465,7 @@
                 });
             });
 
+            const askedQuestions = new Set(); 
 
             document.querySelectorAll('.ask-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -434,6 +474,20 @@
 
                     const answer = btn.nextElementSibling;
                     answer.classList.remove('d-none');
+
+                    const questionText = btn.textContent.trim();
+
+                    if (!askedQuestions.has(questionText)) {
+                        askedQuestions.add(questionText);
+                        addScore(10);
+                        showEvidenceNotification('Jautājums uzdots! +10 punkti', 'success');
+                    }
+
+                    answer.style.opacity = '0';
+                    answer.style.transition = 'opacity 0.3s ease';
+                    setTimeout(() => {
+                        answer.style.opacity = '1';
+                    }, 10);
                 });
             });
 
@@ -487,9 +541,9 @@
             notif.className = `evidence-notification ${type}`;
             notif.innerHTML = `
             ${message}
-                <br>
-                <button class="btn btn-sm btn-dark">Labi</button>
-            `;
+            <br>
+            <button class="btn btn-sm btn-dark">Labi</button>
+        `;
             document.body.appendChild(notif);
 
             setTimeout(() => notif.classList.add('show'), 50);
@@ -505,35 +559,22 @@
             }, 3000);
         }
 
-        function showDialog(message, buttons = [{
-            text: 'Labi',
-            callback: null
-        }]) {
-            const dialog = document.createElement('div');
-            dialog.className = 'dialog-box';
-            dialog.innerHTML = `<p>${message}</p>`;
+        function updateProgress(opened) {
+            const token = document.querySelector('input[name="_token"]');
+            if (!token) return;
 
-            buttons.forEach(btn => {
-                const buttonEl = document.createElement('button');
-                buttonEl.className = 'btn btn-outline-light';
-                buttonEl.textContent = btn.text;
-                buttonEl.addEventListener('click', () => {
-                    if (btn.callback) btn.callback();
-                    dialog.classList.remove('show');
-                    setTimeout(() => dialog.remove(), 400);
-                });
-                dialog.appendChild(buttonEl);
-            });
-
-            document.body.appendChild(dialog);
-            setTimeout(() => dialog.classList.add('show'), 50);
-
-            setTimeout(() => {
-                if (document.body.contains(dialog)) {
-                    dialog.classList.remove('show');
-                    setTimeout(() => dialog.remove(), 400);
-                }
-            }, 5000);
+            fetch('/progress/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token.value
+                },
+                body: JSON.stringify({
+                    case_id: Number(document.querySelector('meta[name="case-id"]')?.content || "{{ $case->id }}"),
+                    opened_evidence: opened,
+                    score: document.getElementById('scoreInput')?.value || 0
+                })
+            }).catch(err => console.error('Progress update error:', err));
         }
     </script>
 

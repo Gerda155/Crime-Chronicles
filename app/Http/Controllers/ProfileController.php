@@ -10,17 +10,22 @@ use Illuminate\Validation\Rules\Password;
 use App\Models\User;
 use App\Models\Achievement;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
     public function edit()
     {
-        /** @var \App\Models\User $user */
         $user = Auth::user();
-        /** @var \Illuminate\Database\Eloquent\Relations\BelongsToMany $completedCases */
+        
+        /** @var \App\Models\User $user */
         $completedCount = $user->completedCases()->count();
 
-        return view('profile.edit', compact('user', 'completedCount'));
+        $totalScore = DB::table('user_progress')
+            ->where('user_id', $user->id)
+            ->sum('score');
+
+        return view('profile.edit', compact('user', 'completedCount', 'totalScore'));
     }
 
     public function update(Request $request)

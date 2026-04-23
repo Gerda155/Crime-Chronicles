@@ -27,6 +27,7 @@
                     <tr>
                         <th>#</th>
                         <th>Detektīvs</th>
+                        <th>Punkti</th>
                         <th>Pabeigtie līmeņi</th>
                         <th>Ačīvmenti</th>
                         <th>Kopš</th>
@@ -60,10 +61,12 @@
                                 </div>
                             </div>
                         </td>
+                        
+                        <td>{{ $user->total_score ?? 0 }}</td>
 
                         <td>{{ $user->completed_cases_count }}</td>
 
-                        <td>{{ $user->achievements_count }}</td>
+                        <td>{{ $user->achievements_count ?? 0}}</td>
 
                         <td class="text-secondary">
                             {{ $user->created_at->format('d.m.Y') }}

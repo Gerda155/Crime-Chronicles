@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Achievement;
 use App\Models\PlayerAttempt;
+use App\Models\UserProgress;
 
 
 class CaseController extends Controller
@@ -114,11 +115,18 @@ class CaseController extends Controller
 
     public function play(CaseModel $case)
     {
-        $evidence = $case->evidence()->get(['id','description','type','image_path','key_object_area']);
+        $evidence = $case->evidence()->get(['id', 'description', 'type', 'image_path', 'key_object_area']);
         $suspects = $case->suspects()->get();
         $questions = $case->questions()->get();
 
-        return view('cases.play', compact('case', 'evidence', 'suspects', 'questions'));
+        $progress = UserProgress::firstOrCreate(
+            [
+                'user_id' => Auth::id(),
+                'case_id' => $case->id
+            ]
+        );
+
+        return view('cases.play', compact('case', 'evidence', 'suspects', 'questions', 'progress'));
     }
 
     public function submit(Request $request, CaseModel $case)
@@ -186,7 +194,35 @@ class CaseController extends Controller
             ]);
         }
 
+        UserProgress::updateOrCreate(
+            [
+                'user_id' => $user->id,
+                'case_id' => $case->id
+            ],
+            [
+                'score' => $request->score,
+                'opened_evidence' => $opened,
+                'completed' => $isCorrect
+            ]
+        );
+
         return $redirect;
+    }
+
+    public function updateProgress(Request $request)
+    {
+        UserProgress::updateOrCreate(
+            [
+                'user_id' => Auth::id(),
+                'case_id' => $request->case_id
+            ],
+            [
+                'opened_evidence' => $request->opened_evidence,
+                'score' => $request->score
+            ]
+        );
+
+        return response()->json(['status' => 'ok']);
     }
 
     public function checkAchievements($user)

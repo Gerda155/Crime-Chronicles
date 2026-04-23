@@ -32,12 +32,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/cases/{id}/edit', [CaseController::class, 'edit'])->name('cases.edit');
     Route::put('/cases/{id}', [CaseController::class, 'update'])->name('cases.update');
     Route::delete('/cases/{id}', [CaseController::class, 'destroy'])->name('cases.destroy');
+    Route::post('/progress/update', [CaseController::class, 'updateProgress']);
 
     Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard');
 
     Route::post('/ratings', [RatingController::class, 'store'])->name('ratings.store');
+
 });
 
 Route::get('/cases', [CaseController::class, 'index'])->name('cases.index');

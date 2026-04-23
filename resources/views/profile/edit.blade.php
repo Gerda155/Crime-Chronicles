@@ -35,9 +35,9 @@
 
                         <hr class="border-secondary">
 
-                        <p class="small">
-                            {{ $user->bio ?: 'Nav apraksta' }}
-                        </p>
+                        <p class="small">{{ $user->bio ?: 'Nav apraksta' }}</p>
+
+                        <p class="card-text mt-4">Punkti: {{ $totalScore }}</p>
 
                         <h6 class="text-uppercase card-text mt-4 mb-3">Sasniegumi</h6>
 

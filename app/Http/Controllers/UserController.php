@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -18,10 +19,18 @@ class UserController extends Controller
         $users = collect();
 
         if ($query !== '') {
-            $users = User::query()->withCount('completedCases')->with('achievements')
+            $users = User::query()
+                ->leftJoin('user_progress', 'users.id', '=', 'user_progress.user_id')
+                ->select(
+                    'users.*',
+                    DB::raw('COALESCE(SUM(user_progress.score), 0) as total_score')
+                )
+                ->withCount('completedCases')
+                ->withCount('achievements')
                 ->where('username', 'LIKE', '%' . $query . '%')
-                ->where('id', '!=', Auth::id())
-                ->orderBy('username') 
+                ->where('users.id', '!=', Auth::id())
+                ->groupBy('users.id')
+                ->orderBy('username')
                 ->limit(15)
                 ->get();
         }
