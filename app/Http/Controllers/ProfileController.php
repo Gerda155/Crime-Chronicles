@@ -2,38 +2,73 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
-use App\Models\User;
-use App\Models\Achievement;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
+use App\Models\User;
+use App\Models\PlayerAttempt;
+use App\Models\CaseModel;
 
 class ProfileController extends Controller
 {
     public function edit()
     {
         $user = Auth::user();
-        $totalScore = $user->total_score;
-        
-        /** @var \App\Models\User $user */
-        $completedCount = $user->completedCases()->count();
 
+        /* 🎯 завершённые дела (уникальные успешные кейсы) */
+        $completedCount = PlayerAttempt::where('user_id', $user->id)
+            ->where('is_correct', 1)
+            ->distinct('case_id')
+            ->count('case_id');
+
+        /* ⭐ очки */
         $totalScore = DB::table('user_progress')
             ->where('user_id', $user->id)
             ->sum('score');
 
-        return view('profile.edit', compact('user', 'completedCount', 'totalScore'));
+        /* 📊 всего кейсов, где участвовал */
+        $totalCases = PlayerAttempt::where('user_id', $user->id)
+            ->distinct('case_id')
+            ->count('case_id');
+
+        /* 🧠 успешные кейсы */
+        $successfulCases = PlayerAttempt::where('user_id', $user->id)
+            ->where('is_correct', 1)
+            ->distinct('case_id')
+            ->count('case_id');
+
+        /* 📈 процент успеха */
+        $successRate = $totalCases > 0
+            ? round(($successfulCases / $totalCases) * 100, 1)
+            : 0;
+
+        /* ❌ ошибки */
+        $errorCount = PlayerAttempt::where('user_id', $user->id)
+            ->where('is_correct', 0)
+            ->count();
+
+        /* 🧩 созданные кейсы */
+        $createdCases = CaseModel::where('user_id', $user->id)->count();
+
+        return view('profile.edit', compact(
+            'user',
+            'completedCount',
+            'totalScore',
+            'successRate',
+            'errorCount',
+            'createdCases'
+        ));
     }
 
     public function update(Request $request)
     {
-        /** @var User $user */
+        /** @var \App\Models\User $user */
         $user = Auth::user();
+
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -55,43 +90,54 @@ class ProfileController extends Controller
         }
 
         if ($request->filled('avatar_cropped')) {
-            $imageData = $request->input('avatar_cropped');
-            $imageData = str_replace('data:image/jpeg;base64,', '', $imageData);
+            $imageData = str_replace(
+                'data:image/jpeg;base64,',
+                '',
+                $request->input('avatar_cropped')
+            );
             $imageData = str_replace(' ', '+', $imageData);
+
             $imageName = 'avatar_' . $user->id . '_' . time() . '.jpg';
-            Storage::disk('public')->put('avatars/' . $imageName, base64_decode($imageData));
+
+            Storage::disk('public')->put(
+                'avatars/' . $imageName,
+                base64_decode($imageData)
+            );
+
             $user->avatar = 'avatars/' . $imageName;
         }
 
-
         $user->save();
 
-        $user->save();
-
-        return redirect()->route('profile.edit')->with('success', 'Profils veiksmīgi atjaunināts!');
+        return redirect()
+            ->route('profile.edit')
+            ->with('success', 'Profils veiksmīgi atjaunināts!');
     }
 
     public function destroy(Request $request)
     {
-        /** @var User $user */
+        /** @var \App\Models\User $user */
         $user = Auth::user();
+
 
         $request->validate([
             'password' => 'required|string',
         ]);
 
         if (!Hash::check($request->password, $user->password)) {
-            return back()->withErrors(['password' => 'Parole nav pareiza']);
+            return back()->withErrors([
+                'password' => 'Parole nav pareiza'
+            ]);
         }
 
-        $user->achievements()->delete();
-
+        $user->achievements()->detach();
         $user->delete();
 
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'Profils dzēsts veiksmīgi!');
+        return redirect('/')
+            ->with('success', 'Profils dzēsts veiksmīgi!');
     }
 }

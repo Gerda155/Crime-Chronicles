@@ -30,7 +30,9 @@
                         <th>Rangs</th>
                         <th>Punkti</th>
                         <th>Pabeigtie līmeņi</th>
-                        <th>Ačīvmenti</th>
+                        <th>Kļūdas</th>
+                        <th>Veiksmīgums</th>
+                        <th>Sasniegumi</th>
                         <th>Kopš</th>
                     </tr>
                 </thead>
@@ -67,8 +69,12 @@
 
                         <td>{{ $user->total_score ?? 0 }}</td>
 
-                        <td>{{ $user->completed_cases_count }}</td>
+                        <td>{{ $user->completed_cases_count ?? 0 }}</td>
 
+                        <td>{{ $user->error_count ?? 0 }}</td>
+
+                        <td>{{ $user->success_rate ?? 0 }}%</td>
+                        
                         <td>{{ $user->achievements_count ?? 0}}</td>
 
                         <td class="text-secondary">

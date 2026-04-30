@@ -37,7 +37,29 @@
 
                         <p class="small">{{ $user->bio ?: 'Nav apraksta' }}</p>
 
-                        <p class="card-text mt-4">Punkti: {{ $totalScore }}</p>
+                        <div class="border-0 w-100 p-3">
+
+                            <div class="d-flex justify-content-between">
+                                <span>Punkti</span>
+                                <span>{{ $totalScore }}</span>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <span>Veiksmīgums</span>
+                                <span>{{ $successRate }}%</span>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <span>Kļūdas</span>
+                                <span>{{ $errorCount }}</span>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <span>Izveidoti gadījumi</span>
+                                <span>{{ $createdCases }}</span>
+                            </div>
+
+                        </div>
 
                         <h6 class="text-uppercase card-text mt-4 mb-3">Sasniegumi</h6>
 

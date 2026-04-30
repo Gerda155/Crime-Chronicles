@@ -76,8 +76,13 @@
                         Nav neviena sasnieguma
                     </p>
                     @endif
-                    <p class="text-secondary mb-2" style="font-size: 0.9rem;"> Pabeigtas lietas: {{ $user->completed_cases_count ?? 0 }} </p>
-                    <p class="text-secondary mb-2" style="font-size: 0.9rem;">Detektīvs kopš: {{ $user->created_at->format('d.m.Y') }}</p>
+                    <p class="text-secondary mb-2" style="font-size: 0.9rem;"> Detektīvs kopš: {{ $user->created_at->format('d.m.Y') }}</p>
+                </div>
+                <div class="flex-grow-1 text-white">
+                    <p class="mb-1"> Pabeigtas lietas: {{ $user->completed_cases_count ?? 0 }} </p>
+                    <p class="mb-1"> {{ $user->name }} lietas: {{ $user->created_cases ?? 0 }} </p>
+                    <p class="mb-1"> Veiksmīgums: {{ $user->success_rate ?? 0 }}% </p>
+                    <p class="mb-1"> Kļūdas: {{ $user->error_count ?? 0 }} </p>
                 </div>
 
             </div>

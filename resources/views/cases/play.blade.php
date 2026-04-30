@@ -884,12 +884,10 @@
                 }).catch(function(err) { console.error('Progress update error:', err); });
             }
         });
-        
-        // Маленькие уведомления
+
         function showSmallNotification(message, type) {
             if (type === undefined) type = 'info';
-            
-            // Удаляем старые уведомления
+
             const oldNotifs = document.querySelectorAll('.evidence-notification');
             oldNotifs.forEach(function(notif) {
                 notif.remove();
@@ -914,19 +912,15 @@
     </script>
 
 <script>
-    // Управление подсветкой для режима поиска скрытых объектов
     (function() {
         let isSearchMode = false;
         let originalCursor = '';
         
-        // Функция для отключения подсветки на время поиска
         function disableHighlightForSearch() {
             if (!isSearchMode) return;
-            
-            // Находим все элементы с подсветкой
+
             const highlightedElements = document.querySelectorAll('.tutorial-highlight');
             
-            // Сохраняем их и временно убираем подсветку
             highlightedElements.forEach(function(el) {
                 el.dataset.wasHighlighted = 'true';
                 el.classList.remove('tutorial-highlight');
