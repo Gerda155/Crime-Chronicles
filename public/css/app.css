@@ -3456,6 +3456,10 @@ li{
     margin-top: 10px;
 }
 
+.progress-bar {
+    transition: width 0.4s ease;
+}
+
 @media (prefers-color-scheme: dark) {
   .dark\:\[\&_svg\]\:\!text-white svg {
     --tw-text-opacity: 1 !important;

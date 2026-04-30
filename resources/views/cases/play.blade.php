@@ -22,7 +22,16 @@
         </div>
 
         <div id="scoreDisplay" style="font-weight: bold; margin-bottom: 10px;">
-            Punkti: 0
+            Punkti: {{ $progress->score ?? 0 }}
+        </div>
+
+        <div class="progress mb-3">
+            <div
+                class="progress-bar bg-info"
+                role="progressbar"
+                style="width: {{ isset($progressPercent) ? $progressPercent : 0 }}%;">
+                {{ isset($progressPercent) ? round($progressPercent) : 0 }}%
+            </div>
         </div>
 
         <section>
@@ -59,7 +68,11 @@
             <h3 class="mb-4 border-bottom pb-2">Aizdomās turamie</h3>
             <form action="{{ route('cases.submit', $case->id) }}" method="POST" id="caseForm">
                 @csrf
-                <input type="hidden" name="opened_evidence_count" id="openedEvidenceCount" value="0">
+                <input type="hidden"
+                    name="opened_evidence_count"
+                    id="openedEvidenceCount"
+                    value="{{ $progress->opened_evidence ?? 0 }}">
+
                 <div class="suspect-carousel position-relative text-center">
                     @foreach($suspects as $index => $suspect)
                     <div class="suspect-slide {{ $index === 0 ? '' : 'd-none' }}" data-index="{{ $index }}">
@@ -367,8 +380,9 @@
                         let opened = parseInt(openedInput.value) || 0;
                         opened++;
                         openedInput.value = opened;
-                        addScore(20); 
-                        updateProgress(opened);
+                        addScore(20);
+                        let questionsUsed = askedQuestions.size;
+                        updateProgress(opened, questionsUsed);
 
                         if (opened >= 2) {
                             document.querySelectorAll('.locked-question').forEach(q => q.classList.remove('d-none'));
@@ -443,7 +457,9 @@
                             let opened = parseInt(openedInput.value) || 0;
                             opened++;
                             openedInput.value = opened;
-                            updateProgress(opened);
+
+                                let questionsUsed = askedQuestions.size;
+                                updateProgress(opened, questionsUsed);
 
                             if (opened >= 2) {
                                 document.querySelectorAll('.locked-question').forEach(q => q.classList.remove('d-none'));
@@ -465,7 +481,7 @@
                 });
             });
 
-            const askedQuestions = new Set(); 
+            const askedQuestions = new Set();
 
             document.querySelectorAll('.ask-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -481,6 +497,11 @@
                         askedQuestions.add(questionText);
                         addScore(10);
                         showEvidenceNotification('Jautājums uzdots! +10 punkti', 'success');
+
+                        let opened = parseInt(openedInput.value) || 0;
+                        let questionsUsed = askedQuestions.size;
+                        updateProgress(opened, questionsUsed);
+
                     }
 
                     answer.style.opacity = '0';
@@ -559,8 +580,23 @@
             }, 3000);
         }
 
-        function updateProgress(opened) {
+        function updateProgress(opened, questionsUsed=0) {
+            const totalEvidence = {{ count($evidence) }};
+            const totalQuestions = {{ count($questions) }};
             const token = document.querySelector('input[name="_token"]');
+            
+            const total = totalEvidence + totalQuestions;
+            const completed = opened + questionsUsed;
+            
+            let percent = total > 0 ? (completed / total) * 100 : 0;
+
+            const bar = document.querySelector('.progress-bar');
+
+            if (bar) {
+                bar.style.width = percent + '%';
+                bar.innerText = Math.round(percent) + '%';
+            }
+
             if (!token) return;
 
             fetch('/progress/update', {
@@ -570,10 +606,12 @@
                     'X-CSRF-TOKEN': token.value
                 },
                 body: JSON.stringify({
-                    case_id: Number(document.querySelector('meta[name="case-id"]')?.content || "{{ $case->id }}"),
-                    opened_evidence: opened,
-                    score: document.getElementById('scoreInput')?.value || 0
-                })
+                case_id: {{ json_encode($case->id) }},
+                opened_evidence: opened,
+                questions_used: questionsUsed,
+                score: document.getElementById('scoreInput')?.value || 0
+            })
+
             }).catch(err => console.error('Progress update error:', err));
         }
     </script>

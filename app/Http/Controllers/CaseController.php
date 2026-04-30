@@ -118,7 +118,10 @@ class CaseController extends Controller
         $evidence = $case->evidence()->get(['id', 'description', 'type', 'image_path', 'key_object_area']);
         $suspects = $case->suspects()->get();
         $questions = $case->questions()->get();
+        $totalEvidence = $case->evidence()->count();
+        $totalQuestions = $case->questions()->count();
 
+        // ПЕРЕНЕСИТЕ СЮДА!
         $progress = UserProgress::firstOrCreate(
             [
                 'user_id' => Auth::id(),
@@ -126,7 +129,24 @@ class CaseController extends Controller
             ]
         );
 
-        return view('cases.play', compact('case', 'evidence', 'suspects', 'questions', 'progress'));
+        $openedEvidence = $progress->opened_evidence ?? 0;
+        $usedQuestions = $progress->questions_used ?? 0;
+
+        $totalItems = $totalEvidence + $totalQuestions;
+        $completedItems = $openedEvidence + $usedQuestions;
+
+        $progressPercent = $totalItems > 0
+            ? ($completedItems / $totalItems) * 100
+            : 0;
+
+        return view('cases.play', compact(
+            'case',
+            'evidence',
+            'suspects',
+            'questions',
+            'progress',
+            'progressPercent'
+        ));
     }
 
     public function submit(Request $request, CaseModel $case)
@@ -218,6 +238,7 @@ class CaseController extends Controller
             ],
             [
                 'opened_evidence' => $request->opened_evidence,
+                'questions_used' => $request->questions_used,
                 'score' => $request->score
             ]
         );
