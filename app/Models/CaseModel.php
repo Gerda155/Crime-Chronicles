@@ -48,7 +48,6 @@ class CaseModel extends Model
         return $this->hasMany(Suspect::class, 'case_id');
     }
 
-
     public function attempts()
     {
         return $this->hasMany(PlayerAttempt::class);

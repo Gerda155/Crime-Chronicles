@@ -282,7 +282,6 @@
     </div>
 
     <script>
-        // Полная система обучения на латышском языке
         const TutorialSystem = {
             isActive: {{ isset($isTutorial) && $isTutorial ? 'true' : 'false' }},
             currentStep: 0,
@@ -293,50 +292,50 @@
             
             steps: [
                 {
-                    title: "👮‍♂️ Sveicināts!",
+                    title: "Sveicināts!",
                     text: "Šī ir mācību lieta. Es Tevi iepazīstināšu ar spēli.",
                     trigger: null,
                     highlightElement: null,
                     position: "center"
                 },
                 {
-                    title: "📋 1. solis",
+                    title: "1. solis",
                     text: "Noklikšķini uz pogas 'Atvērt pierādījumu'",
                     trigger: "evidence_click",
                     highlightSelector: ".reveal-btn",
                     position: "bottom"
                 },
                 {
-                    title: "🔍 2. solis",
+                    title: "2. solis",
                     text: "Atrodi slēpto objektu bildē un noklikšķini uz tā",
                     trigger: "hidden_object",
                     highlightSelector: ".evidence-img-wrapper",
                     position: "top"
                 },
                 {
-                    title: "📚 3. solis",
+                    title: "3. solis",
                     text: "Atver vēl vienu pierādījumu (vajag 2)",
                     trigger: "evidence_count_2",
                     highlightSelector: ".reveal-btn",
                     position: "bottom"
                 },
                 {
-                    title: "❓ 4. solis",
+                    title: "4. solis",
                     text: "Noklikšķini uz aizdomās turamā un uzdod jautājumu",
                     trigger: "ask_question",
                     highlightSelector: ".ask-btn",
                     position: "right"
                 },
                 {
-                    title: "🎯 5. solis",
+                    title: "5. solis",
                     text: "Izvēlies aizdomās turamo (noklikšķini uz kartītes)",
                     trigger: "select_suspect",
                     highlightSelector: ".suspect-card",
                     position: "bottom"
                 },
                 {
-                    title: "✅ Apsveicu!",
-                    text: "Tagad esi gatavs risināt īstas lietas! Veiksmi! 🕵️‍♂️",
+                    title: "Apsveicu!",
+                    text: "Tagad esi gatavs risināt īstas lietas! Veiksmi!",
                     trigger: null,
                     highlightElement: null,
                     position: "center"
@@ -374,7 +373,7 @@
                         buttonsHtml = '<button class="tutorial-next">Nākamais ➜</button>';
                     }
                 } else {
-                    buttonsHtml = '<button class="tutorial-finish">Sākt spēli! 🎮</button>';
+                    buttonsHtml = '<button class="tutorial-finish">Sākt spēli!</button>';
                 }
                 
                 this.tutorialBox.innerHTML = '<h4>' + step.title + '</h4><p>' + step.text + '</p>' + buttonsHtml;
@@ -397,7 +396,6 @@
                     });
                 }
                 
-                // Подсвечиваем элемент
                 if (step.highlightSelector) {
                     const element = document.querySelector(step.highlightSelector);
                     if (element) {
@@ -405,7 +403,6 @@
                         this.positionBox(element, step.position);
                     } else {
                         this.positionBox(null, 'center');
-                        // Если элемент не найден, возможно он появится позже
                         if (step.trigger) {
                             this.waitForElement(step.highlightSelector, step.position);
                         }
@@ -466,7 +463,6 @@
                 this.tutorialBox.style.position = 'fixed';
                 this.tutorialBox.style.transform = 'none';
                 
-                // Проверяем, помещается ли окно
                 switch(position) {
                     case 'top':
                         if (rect.top - boxRect.height - spacing > 0) {
@@ -559,8 +555,7 @@
                 if (this.overlay) this.overlay.remove();
                 if (this.tutorialBox) this.tutorialBox.remove();
                 this.removeHighlight();
-                
-                // Убираем все плавающие подсказки
+
                 document.querySelectorAll('.floating-tip').forEach(function(tip) {
                     tip.remove();
                 });
@@ -568,9 +563,7 @@
             }
         };
         
-        // Основной код игры
         document.addEventListener('DOMContentLoaded', function() {
-            // Запускаем туториал
             TutorialSystem.init();
             
             const wrappers = document.querySelectorAll('.evidence-img-wrapper');
@@ -927,61 +920,48 @@
             });
         }
         
-        // Функция для восстановления подсветки после поиска
         function restoreHighlightAfterSearch() {
             if (!isSearchMode) return;
-            
-            // Восстанавливаем подсветку на сохраненных элементах
+
             const elements = document.querySelectorAll('[data-was-highlighted="true"]');
             elements.forEach(function(el) {
                 el.classList.add('tutorial-highlight');
                 delete el.dataset.wasHighlighted;
             });
         }
-        
-        // Отслеживаем открытие модального окна с картинкой
+
         const imageModal = document.getElementById('imageModal');
         const modalImg = document.getElementById('modalImage');
         
         if (imageModal && modalImg) {
-            // Перед открытием модального окна
-            imageModal.addEventListener('show.bs.modal', function() {
-                // Проверяем, есть ли у картинки скрытая область (режим поиска)
+            imageModal.addEventListener('show.bs.modal', function() {)
                 const hasKeyArea = modalImg.src && 
                     document.querySelector('.evidence-img[src="' + modalImg.src + '"]')?.dataset.keyArea;
                 
                 if (hasKeyArea && hasKeyArea !== 'null' && hasKeyArea !== '') {
                     isSearchMode = true;
-                    // Временно убираем подсветку
                     disableHighlightForSearch();
                 }
             });
             
-            // После закрытия модального окна
             imageModal.addEventListener('hidden.bs.modal', function() {
                 if (isSearchMode) {
                     isSearchMode = false;
-                    // Восстанавливаем подсветку
                     restoreHighlightAfterSearch();
                 }
             });
         }
         
-        // Также отслеживаем клик по обертке картинки
         const wrappers = document.querySelectorAll('.evidence-img-wrapper');
         wrappers.forEach(function(wrapper) {
             wrapper.addEventListener('click', function() {
                 const img = wrapper.querySelector('.evidence-img');
                 if (img && img.dataset.keyArea && img.dataset.keyArea !== 'null' && img.dataset.keyArea !== '') {
-                    // Если есть скрытая область, подсветка уберется при открытии модального окна
-                    // через событие выше
                 }
             });
         });
-        
-        // Функция для ручного управления подсветкой (можно вызывать из других мест)
+
         window.TutorialHighlight = {
-            // Временно отключить подсветку
             disable: function() {
                 const highlighted = document.querySelectorAll('.tutorial-highlight');
                 highlighted.forEach(function(el) {
@@ -992,7 +972,6 @@
                 });
             },
             
-            // Включить подсветку обратно
             enable: function() {
                 const saved = document.querySelectorAll('[data-saved-highlight="true"]');
                 saved.forEach(function(el) {
@@ -1000,8 +979,7 @@
                     delete el.dataset.savedHighlight;
                 });
             },
-            
-            // Проверить, активен ли режим поиска
+
             isSearchModeActive: function() {
                 return isSearchMode;
             }
@@ -1010,30 +988,24 @@
 </script>
 
 <script>
-    // Управление подсветкой для режима поиска скрытых объектов
     (function() {
         let isSearchMode = false;
         let originalCursor = '';
         
-        // Функция для отключения подсветки на время поиска
         function disableHighlightForSearch() {
             if (!isSearchMode) return;
             
-            // Находим все элементы с подсветкой
             const highlightedElements = document.querySelectorAll('.tutorial-highlight');
-            
-            // Сохраняем их и временно убираем подсветку
+
             highlightedElements.forEach(function(el) {
                 el.dataset.wasHighlighted = 'true';
                 el.classList.remove('tutorial-highlight');
             });
         }
         
-        // Функция для восстановления подсветки после поиска
         function restoreHighlightAfterSearch() {
             if (!isSearchMode) return;
             
-            // Восстанавливаем подсветку на сохраненных элементах
             const elements = document.querySelectorAll('[data-was-highlighted="true"]');
             elements.forEach(function(el) {
                 el.classList.add('tutorial-highlight');
@@ -1041,49 +1013,38 @@
             });
         }
         
-        // Отслеживаем открытие модального окна с картинкой
         const imageModal = document.getElementById('imageModal');
         const modalImg = document.getElementById('modalImage');
         
         if (imageModal && modalImg) {
-            // Перед открытием модального окна
             imageModal.addEventListener('show.bs.modal', function() {
-                // Проверяем, есть ли у картинки скрытая область (режим поиска)
                 const hasKeyArea = modalImg.src && 
                     document.querySelector('.evidence-img[src="' + modalImg.src + '"]')?.dataset.keyArea;
                 
                 if (hasKeyArea && hasKeyArea !== 'null' && hasKeyArea !== '') {
                     isSearchMode = true;
-                    // Временно убираем подсветку
                     disableHighlightForSearch();
                 }
             });
             
-            // После закрытия модального окна
             imageModal.addEventListener('hidden.bs.modal', function() {
                 if (isSearchMode) {
                     isSearchMode = false;
-                    // Восстанавливаем подсветку
                     restoreHighlightAfterSearch();
                 }
             });
         }
-        
-        // Также отслеживаем клик по обертке картинки
+
         const wrappers = document.querySelectorAll('.evidence-img-wrapper');
         wrappers.forEach(function(wrapper) {
             wrapper.addEventListener('click', function() {
                 const img = wrapper.querySelector('.evidence-img');
                 if (img && img.dataset.keyArea && img.dataset.keyArea !== 'null' && img.dataset.keyArea !== '') {
-                    // Если есть скрытая область, подсветка уберется при открытии модального окна
-                    // через событие выше
                 }
             });
         });
         
-        // Функция для ручного управления подсветкой (можно вызывать из других мест)
         window.TutorialHighlight = {
-            // Временно отключить подсветку
             disable: function() {
                 const highlighted = document.querySelectorAll('.tutorial-highlight');
                 highlighted.forEach(function(el) {
@@ -1094,7 +1055,6 @@
                 });
             },
             
-            // Включить подсветку обратно
             enable: function() {
                 const saved = document.querySelectorAll('[data-saved-highlight="true"]');
                 saved.forEach(function(el) {
@@ -1103,7 +1063,6 @@
                 });
             },
             
-            // Проверить, активен ли режим поиска
             isSearchModeActive: function() {
                 return isSearchMode;
             }

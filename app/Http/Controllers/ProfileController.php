@@ -19,39 +19,32 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        /* 🎯 завершённые дела (уникальные успешные кейсы) */
         $completedCount = PlayerAttempt::where('user_id', $user->id)
             ->where('is_correct', 1)
             ->distinct('case_id')
             ->count('case_id');
 
-        /* ⭐ очки */
         $totalScore = DB::table('user_progress')
             ->where('user_id', $user->id)
             ->sum('score');
 
-        /* 📊 всего кейсов, где участвовал */
         $totalCases = PlayerAttempt::where('user_id', $user->id)
             ->distinct('case_id')
             ->count('case_id');
 
-        /* 🧠 успешные кейсы */
         $successfulCases = PlayerAttempt::where('user_id', $user->id)
             ->where('is_correct', 1)
             ->distinct('case_id')
             ->count('case_id');
 
-        /* 📈 процент успеха */
         $successRate = $totalCases > 0
             ? round(($successfulCases / $totalCases) * 100, 1)
             : 0;
 
-        /* ❌ ошибки */
         $errorCount = PlayerAttempt::where('user_id', $user->id)
             ->where('is_correct', 0)
             ->count();
 
-        /* 🧩 созданные кейсы */
         $createdCases = CaseModel::where('user_id', $user->id)->count();
 
         return view('profile.edit', compact(

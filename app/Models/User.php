@@ -31,12 +31,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
-
     public function attempts()
     {
         return $this->hasMany(PlayerAttempt::class);
@@ -57,28 +51,21 @@ class User extends Authenticatable
         return $this->hasMany(CaseModel::class, 'user_id');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | STATS (ВАЖНО)
-    |--------------------------------------------------------------------------
-    */
-
-    // очки
     public function getTotalScoreAttribute()
     {
         return $this->progress()->sum('score');
     }
 
-    // завершённые дела (успешные кейсы)
-    public function getCompletedCasesCountAttribute()
+    public function completedCases()
     {
-        return $this->attempts()
-            ->where('is_correct', 1)
-            ->distinct('case_id')
-            ->count('case_id');
+        return $this->belongsToMany(
+            CaseModel::class,
+            'player_attempts',
+            'user_id',
+            'case_id'
+        )->wherePivot('is_correct', 1);
     }
 
-    // ошибки
     public function getErrorCountAttribute()
     {
         return $this->attempts()
@@ -86,7 +73,6 @@ class User extends Authenticatable
             ->count();
     }
 
-    // попытки всего (по кейсам)
     public function getTotalAttemptsCountAttribute()
     {
         return $this->attempts()
@@ -94,7 +80,6 @@ class User extends Authenticatable
             ->count('case_id');
     }
 
-    // процент успеха
     public function getSuccessRateAttribute()
     {
         $total = $this->total_attempts_count;
@@ -103,17 +88,10 @@ class User extends Authenticatable
         return round(($this->completed_cases_count / $total) * 100, 1);
     }
 
-    // созданные кейсы
     public function getCreatedCasesCountAttribute()
     {
         return $this->createdCases()->count();
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | RANK SYSTEM
-    |--------------------------------------------------------------------------
-    */
 
     public function getRangAttribute()
     {
@@ -123,7 +101,7 @@ class User extends Authenticatable
             ->where('min_score', '<=', $score)
             ->where(function ($q) use ($score) {
                 $q->whereNull('max_score')
-                  ->orWhere('max_score', '>=', $score);
+                    ->orWhere('max_score', '>=', $score);
             })
             ->first();
     }
@@ -131,5 +109,17 @@ class User extends Authenticatable
     public function getRangNameAttribute()
     {
         return $this->rang?->name ?? 'Bez ranga';
+    }
+
+    public function hasRatedCase($caseId)
+    {
+        return $this->ratings()
+            ->where('case_id', $caseId)
+            ->exists();
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(\App\Models\Rating::class);
     }
 }

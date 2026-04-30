@@ -11,10 +11,6 @@ use App\Models\Rang;
 
 class UserController extends Controller
 {
-    /**
-     * Lietotāju meklēšana pēc lietotājvārda
-     */
-    // app/Http/Controllers/UserController.php
 
 public function search(Request $request)
 {
@@ -37,8 +33,7 @@ public function search(Request $request)
             ->orderBy('username')
             ->limit(15)
             ->get();
-            
-        // Загружаем ранги для каждого пользователя
+
         foreach ($users as $user) {
             $user->rank = Rang::where('status', 'active')
                 ->where('min_score', '<=', $user->total_score)
