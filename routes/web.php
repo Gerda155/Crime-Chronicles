@@ -39,6 +39,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard');
 
     Route::post('/ratings', [RatingController::class, 'store'])->name('ratings.store');
+
+    Route::get('/tutorial', [CaseController::class, 'tutorial'])->name('cases.tutorial');
+
 });
 
 Route::get('/cases', [CaseController::class, 'index'])->name('cases.index');

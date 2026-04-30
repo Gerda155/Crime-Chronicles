@@ -34,13 +34,13 @@
             </div>
         </div>
 
-        <section>
+        <section id="evidence-section">
             <h3 class="mb-4 border-bottom pb-2">Pierādījumi</h3>
             <div class="row g-4">
-                @foreach($evidence as $item)
-                <div class="col-md-4">
+                @foreach($evidence as $index => $item)
+                <div class="col-md-4" data-evidence-index="{{ $index }}">
                     <div class="card bg-secondary text-light evidence-card h-100 p-3">
-                        <button type="button" class="btn btn-outline-light btn-sm reveal-btn mb-2">
+                        <button type="button" class="btn btn-outline-light btn-sm reveal-btn mb-2" data-evidence-btn="{{ $index }}">
                             Atvērt pierādījumu
                         </button>
                         <div class="evidence-content d-none">
@@ -64,7 +64,7 @@
             </div>
         </section>
 
-        <section class="mt-4">
+        <section class="mt-4" id="suspects-section">
             <h3 class="mb-4 border-bottom pb-2">Aizdomās turamie</h3>
             <form action="{{ route('cases.submit', $case->id) }}" method="POST" id="caseForm">
                 @csrf
@@ -75,9 +75,9 @@
 
                 <div class="suspect-carousel position-relative text-center">
                     @foreach($suspects as $index => $suspect)
-                    <div class="suspect-slide {{ $index === 0 ? '' : 'd-none' }}" data-index="{{ $index }}">
+                    <div class="suspect-slide {{ $index === 0 ? '' : 'd-none' }}" data-index="{{ $index }}" data-suspect-index="{{ $index }}">
                         <div class="suspect-card p-3 d-flex flex-column align-items-center bg-secondary text-light shadow-sm border-2 rounded"
-                            style="cursor:pointer;" data-suspect-id="{{ $suspect->id }}">
+                            style="cursor:pointer;" data-suspect-id="{{ $suspect->id }}" data-suspect-name="{{ $suspect->name }}">
                             @if($suspect->image_path)
                             <img src="{{ asset('storage/' . $suspect->image_path) }}" alt="{{ $suspect->name }}" class="rounded mb-3" style="width:500px; height:500px; object-fit:cover;">
                             @endif
@@ -99,7 +99,7 @@
 
                                 <div class="d-flex flex-wrap gap-2 mb-3 question-buttons" style="justify-content:center; display:none;">
                                     @foreach($questions as $q)
-                                    <div class="question {{ $q->is_locked ? 'locked-question d-none' : '' }}">
+                                    <div class="question {{ $q->is_locked ? 'locked-question d-none' : '' }}" data-question-id="{{ $q->id }}">
                                         <button type="button" class="btn btn-outline-info ask-btn" style="margin-top: 10px">
                                             {{ $q->question_text }}
                                         </button>
@@ -151,7 +151,7 @@
         </div>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
             new bootstrap.Modal(document.getElementById('answerModal')).show();
         });
     </script>
@@ -187,22 +187,22 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
             const stars = document.querySelectorAll('.rating-stars .star');
             let selectedValue = 0;
 
-            stars.forEach(star => {
+            stars.forEach(function(star) {
                 const value = parseInt(star.dataset.value);
 
-                star.addEventListener('mouseenter', () => {
+                star.addEventListener('mouseenter', function() {
                     highlightStars(value);
                 });
 
-                star.addEventListener('mouseleave', () => {
+                star.addEventListener('mouseleave', function() {
                     highlightStars(selectedValue);
                 });
 
-                star.addEventListener('click', () => {
+                star.addEventListener('click', function() {
                     selectedValue = value;
                     star.querySelector('input').checked = true;
                     highlightStars(selectedValue);
@@ -210,7 +210,7 @@
             });
 
             function highlightStars(rating) {
-                stars.forEach(star => {
+                stars.forEach(function(star) {
                     const value = parseInt(star.dataset.value);
                     star.style.color = value <= rating ? '#ffc107' : '#555';
                 });
@@ -219,7 +219,7 @@
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
             const ratingModalEl = document.getElementById('ratingModal');
             const ratingModal = new bootstrap.Modal(ratingModalEl);
             ratingModal.show();
@@ -233,7 +233,9 @@
                         'X-CSRF-TOKEN': formData.get('_token')
                     },
                     body: formData
-                }).then(() => ratingModal.hide());
+                }).then(function() {
+                    ratingModal.hide();
+                });
             });
         });
     </script>
@@ -260,7 +262,7 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
             new bootstrap.Modal(document.getElementById('achievementModal')).show();
         });
     </script>
@@ -280,41 +282,329 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        // Полная система обучения на латышском языке
+        const TutorialSystem = {
+            isActive: {{ isset($isTutorial) && $isTutorial ? 'true' : 'false' }},
+            currentStep: 0,
+            overlay: null,
+            tutorialBox: null,
+            highlightedElement: null,
+            stepsCompleted: [],
+            
+            steps: [
+                {
+                    title: "👮‍♂️ Sveicināts!",
+                    text: "Šī ir mācību lieta. Es Tevi iepazīstināšu ar spēli.",
+                    trigger: null,
+                    highlightElement: null,
+                    position: "center"
+                },
+                {
+                    title: "📋 1. solis",
+                    text: "Noklikšķini uz pogas 'Atvērt pierādījumu'",
+                    trigger: "evidence_click",
+                    highlightSelector: ".reveal-btn",
+                    position: "bottom"
+                },
+                {
+                    title: "🔍 2. solis",
+                    text: "Atrodi slēpto objektu bildē un noklikšķini uz tā",
+                    trigger: "hidden_object",
+                    highlightSelector: ".evidence-img-wrapper",
+                    position: "top"
+                },
+                {
+                    title: "📚 3. solis",
+                    text: "Atver vēl vienu pierādījumu (vajag 2)",
+                    trigger: "evidence_count_2",
+                    highlightSelector: ".reveal-btn",
+                    position: "bottom"
+                },
+                {
+                    title: "❓ 4. solis",
+                    text: "Noklikšķini uz aizdomās turamā un uzdod jautājumu",
+                    trigger: "ask_question",
+                    highlightSelector: ".ask-btn",
+                    position: "right"
+                },
+                {
+                    title: "🎯 5. solis",
+                    text: "Izvēlies aizdomās turamo (noklikšķini uz kartītes)",
+                    trigger: "select_suspect",
+                    highlightSelector: ".suspect-card",
+                    position: "bottom"
+                },
+                {
+                    title: "✅ Apsveicu!",
+                    text: "Tagad esi gatavs risināt īstas lietas! Veiksmi! 🕵️‍♂️",
+                    trigger: null,
+                    highlightElement: null,
+                    position: "center"
+                }
+            ],
+            
+            init: function() {
+                if (!this.isActive) return;
+                
+                this.overlay = document.createElement('div');
+                this.overlay.className = 'tutorial-overlay';
+                document.body.appendChild(this.overlay);
+                
+                this.createTutorialBox();
+                this.start();
+            },
+            
+            createTutorialBox: function() {
+                this.tutorialBox = document.createElement('div');
+                this.tutorialBox.className = 'tutorial-box';
+                document.body.appendChild(this.tutorialBox);
+            },
+            
+            showStep: function(stepIndex) {
+                const step = this.steps[stepIndex];
+                if (!step) return;
+                
+                this.removeHighlight();
+                
+                let buttonsHtml = '';
+                if (stepIndex < this.steps.length - 1) {
+                    if (step.trigger) {
+                        buttonsHtml = '<button class="tutorial-skip">Izlaist</button>';
+                    } else {
+                        buttonsHtml = '<button class="tutorial-next">Nākamais ➜</button>';
+                    }
+                } else {
+                    buttonsHtml = '<button class="tutorial-finish">Sākt spēli! 🎮</button>';
+                }
+                
+                this.tutorialBox.innerHTML = '<h4>' + step.title + '</h4><p>' + step.text + '</p>' + buttonsHtml;
+                
+                const nextBtn = this.tutorialBox.querySelector('.tutorial-next');
+                const finishBtn = this.tutorialBox.querySelector('.tutorial-finish');
+                const skipBtn = this.tutorialBox.querySelector('.tutorial-skip');
+                const self = this;
+                
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', function() { self.nextStep(); });
+                }
+                if (finishBtn) {
+                    finishBtn.addEventListener('click', function() { self.end(); });
+                }
+                if (skipBtn) {
+                    skipBtn.addEventListener('click', function() { 
+                        self.currentStep = self.steps.length - 1;
+                        self.nextStep();
+                    });
+                }
+                
+                // Подсвечиваем элемент
+                if (step.highlightSelector) {
+                    const element = document.querySelector(step.highlightSelector);
+                    if (element) {
+                        this.highlightElement(element);
+                        this.positionBox(element, step.position);
+                    } else {
+                        this.positionBox(null, 'center');
+                        // Если элемент не найден, возможно он появится позже
+                        if (step.trigger) {
+                            this.waitForElement(step.highlightSelector, step.position);
+                        }
+                    }
+                } else {
+                    this.positionBox(null, step.position);
+                }
+            },
+            
+            waitForElement: function(selector, position) {
+                const self = this;
+                let attempts = 0;
+                const checkInterval = setInterval(function() {
+                    attempts++;
+                    const element = document.querySelector(selector);
+                    if (element) {
+                        clearInterval(checkInterval);
+                        self.highlightElement(element);
+                        self.positionBox(element, position);
+                    } else if (attempts > 50) {
+                        clearInterval(checkInterval);
+                    }
+                }, 100);
+            },
+            
+            highlightElement: function(element) {
+                this.removeHighlight();
+                this.highlightedElement = element;
+                element.classList.add('tutorial-highlight');
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            },
+        
+            removeHighlight: function() {
+                if (this.highlightedElement) {
+                    this.highlightedElement.classList.remove('tutorial-highlight');
+                    this.highlightedElement = null;
+                }
+            },
+            
+            positionBox: function(targetElement, position) {
+                if (!this.tutorialBox) return;
+                
+                this.tutorialBox.style.display = 'block';
+                
+                if (!targetElement || position === 'center') {
+                    this.tutorialBox.style.position = 'fixed';
+                    this.tutorialBox.style.top = '50%';
+                    this.tutorialBox.style.left = '50%';
+                    this.tutorialBox.style.transform = 'translate(-50%, -50%)';
+                    this.removeArrow();
+                    return;
+                }
+                
+                const rect = targetElement.getBoundingClientRect();
+                const boxRect = this.tutorialBox.getBoundingClientRect();
+                const spacing = 15;
+                
+                this.tutorialBox.style.position = 'fixed';
+                this.tutorialBox.style.transform = 'none';
+                
+                // Проверяем, помещается ли окно
+                switch(position) {
+                    case 'top':
+                        if (rect.top - boxRect.height - spacing > 0) {
+                            this.tutorialBox.style.bottom = window.innerHeight - rect.top + spacing + 'px';
+                        } else {
+                            this.tutorialBox.style.top = rect.bottom + spacing + 'px';
+                            position = 'bottom';
+                        }
+                        this.tutorialBox.style.left = Math.max(10, Math.min(rect.left + (rect.width / 2) - (boxRect.width / 2), window.innerWidth - boxRect.width - 10)) + 'px';
+                        this.addArrow(position === 'top' ? 'bottom' : 'top', rect);
+                        break;
+                    case 'bottom':
+                        if (rect.bottom + boxRect.height + spacing < window.innerHeight) {
+                            this.tutorialBox.style.top = rect.bottom + spacing + 'px';
+                        } else {
+                            this.tutorialBox.style.bottom = window.innerHeight - rect.top + spacing + 'px';
+                            position = 'top';
+                        }
+                        this.tutorialBox.style.left = Math.max(10, Math.min(rect.left + (rect.width / 2) - (boxRect.width / 2), window.innerWidth - boxRect.width - 10)) + 'px';
+                        this.addArrow(position === 'bottom' ? 'top' : 'bottom', rect);
+                        break;
+                    case 'left':
+                    case 'right':
+                        const isRight = position === 'right';
+                        if ((isRight && rect.right + boxRect.width + spacing < window.innerWidth) ||
+                            (!isRight && rect.left - boxRect.width - spacing > 0)) {
+                            if (isRight) {
+                                this.tutorialBox.style.left = rect.right + spacing + 'px';
+                            } else {
+                                this.tutorialBox.style.right = window.innerWidth - rect.left + spacing + 'px';
+                            }
+                        } else {
+                            if (isRight) {
+                                this.tutorialBox.style.right = window.innerWidth - rect.left + spacing + 'px';
+                            } else {
+                                this.tutorialBox.style.left = rect.right + spacing + 'px';
+                            }
+                            position = isRight ? 'left' : 'right';
+                        }
+                        this.tutorialBox.style.top = Math.max(10, Math.min(rect.top + (rect.height / 2) - (boxRect.height / 2), window.innerHeight - boxRect.height - 10)) + 'px';
+                        this.addArrow(position === 'right' ? 'left' : 'right', rect);
+                        break;
+                }
+            },
+            
+            addArrow: function(direction, targetRect) {
+                this.removeArrow();
+                const arrow = document.createElement('div');
+                arrow.className = 'tutorial-arrow ' + direction;
+                this.tutorialBox.appendChild(arrow);
+            },
+            
+            removeArrow: function() {
+                const existingArrow = this.tutorialBox.querySelector('.tutorial-arrow');
+                if (existingArrow) existingArrow.remove();
+            },
+            
+            trigger: function(triggerName) {
+                if (!this.isActive) return;
+                
+                const currentStep = this.steps[this.currentStep];
+                if (currentStep && currentStep.trigger === triggerName && !this.stepsCompleted[this.currentStep]) {
+                    this.stepsCompleted[this.currentStep] = true;
+                    this.currentStep++;
+                    if (this.currentStep >= this.steps.length) {
+                        this.end();
+                    } else {
+                        this.showStep(this.currentStep);
+                    }
+                }
+            },
+            
+            nextStep: function() {
+                if (this.currentStep < this.steps.length - 1) {
+                    this.currentStep++;
+                    this.showStep(this.currentStep);
+                } else {
+                    this.end();
+                }
+            },
+            
+            start: function() {
+                this.currentStep = 0;
+                this.stepsCompleted = [];
+                this.showStep(0);
+            },
+            
+            end: function() {
+                this.isActive = false;
+                if (this.overlay) this.overlay.remove();
+                if (this.tutorialBox) this.tutorialBox.remove();
+                this.removeHighlight();
+                
+                // Убираем все плавающие подсказки
+                document.querySelectorAll('.floating-tip').forEach(function(tip) {
+                    tip.remove();
+                });
+                
+            }
+        };
+        
+        // Основной код игры
+        document.addEventListener('DOMContentLoaded', function() {
+            // Запускаем туториал
+            TutorialSystem.init();
+            
             const wrappers = document.querySelectorAll('.evidence-img-wrapper');
             const imageModalEl = document.getElementById('imageModal');
             const imageModal = new bootstrap.Modal(imageModalEl);
             const modalImg = document.getElementById('modalImage');
-
+            
             let currentKeyArea = null;
             let currentImg = null;
             let currentWrapper = null;
-
-            wrappers.forEach(wrapper => {
+            
+            wrappers.forEach(function(wrapper) {
                 const img = wrapper.querySelector('.evidence-img');
                 let keyArea = null;
-
+                
                 if (img.dataset.keyArea && img.dataset.keyArea !== 'null' && img.dataset.keyArea !== '') {
                     try {
                         keyArea = JSON.parse(img.dataset.keyArea);
-                        console.log('Key area loaded for:', img.src, keyArea);
                     } catch (e) {
                         console.error('Invalid key area data:', img.dataset.keyArea);
                     }
                 }
-
-                wrapper.addEventListener('click', (e) => {
+                
+                wrapper.addEventListener('click', function(e) {
                     e.stopPropagation();
-
+                    
                     currentKeyArea = keyArea;
                     currentImg = modalImg;
                     currentWrapper = wrapper;
-
                     modalImg.src = img.src;
-
+                    
                     modalImg.removeEventListener('mousemove', handleModalMouseMove);
                     modalImg.removeEventListener('click', handleModalClick);
-
+                    
                     if (keyArea) {
                         modalImg.style.cursor = 'crosshair';
                         modalImg.addEventListener('mousemove', handleModalMouseMove);
@@ -322,26 +612,26 @@
                     } else {
                         modalImg.style.cursor = 'zoom-in';
                     }
-
+                    
                     imageModal.show();
                 });
             });
-
+            
             function handleModalMouseMove(e) {
                 if (!currentKeyArea || !currentImg) return;
-
+                
                 const rect = currentImg.getBoundingClientRect();
                 const clickX = e.clientX - rect.left;
                 const clickY = e.clientY - rect.top;
-
+                
                 const scaleX = currentImg.clientWidth / currentImg.naturalWidth;
                 const scaleY = currentImg.clientHeight / currentImg.naturalHeight;
-
+                
                 const keyAreaX = currentKeyArea.x * scaleX;
                 const keyAreaY = currentKeyArea.y * scaleY;
                 const keyAreaW = currentKeyArea.width * scaleX;
                 const keyAreaH = currentKeyArea.height * scaleY;
-
+                
                 if (clickX >= keyAreaX && clickX <= keyAreaX + keyAreaW &&
                     clickY >= keyAreaY && clickY <= keyAreaY + keyAreaH) {
                     currentImg.style.cursor = 'pointer';
@@ -349,62 +639,59 @@
                     currentImg.style.cursor = 'crosshair';
                 }
             }
-
+            
             function handleModalClick(e) {
                 if (!currentKeyArea || !currentImg || !currentWrapper) return;
-
+                
                 const rect = currentImg.getBoundingClientRect();
                 const clickX = e.clientX - rect.left;
                 const clickY = e.clientY - rect.top;
-
+                
                 const scaleX = currentImg.clientWidth / currentImg.naturalWidth;
                 const scaleY = currentImg.clientHeight / currentImg.naturalHeight;
-
+                
                 const keyAreaX = currentKeyArea.x * scaleX;
                 const keyAreaY = currentKeyArea.y * scaleY;
                 const keyAreaW = currentKeyArea.width * scaleX;
                 const keyAreaH = currentKeyArea.height * scaleY;
-
+                
                 if (clickX >= keyAreaX && clickX <= keyAreaX + keyAreaW &&
                     clickY >= keyAreaY && clickY <= keyAreaY + keyAreaH) {
-
+                    
                     if (!currentWrapper.dataset.found) {
                         currentWrapper.dataset.found = 'true';
-
-                        const evidenceCard = currentWrapper.closest('.col-md-4');
-                        const evidenceContent = evidenceCard.querySelector('.evidence-content');
-                        if (evidenceContent) {
-                            evidenceContent.dataset.counted = 'true';
-                        }
-
+                        
                         let opened = parseInt(openedInput.value) || 0;
                         opened++;
                         openedInput.value = opened;
                         addScore(20);
                         let questionsUsed = askedQuestions.size;
                         updateProgress(opened, questionsUsed);
-
+                        
+                        TutorialSystem.trigger('hidden_object');
+                        
                         if (opened >= 2) {
-                            document.querySelectorAll('.locked-question').forEach(q => q.classList.remove('d-none'));
-                            document.querySelectorAll('.question-buttons').forEach(q => q.style.display = 'flex');
-                            document.querySelectorAll('.question-message').forEach(m => m.classList.add('d-none'));
-                            document.querySelectorAll('.msg').forEach(m => m.classList.remove('d-none'));
+                            TutorialSystem.trigger('evidence_count_2');
+                            document.querySelectorAll('.locked-question').forEach(function(q) { q.classList.remove('d-none'); });
+                            document.querySelectorAll('.question-buttons').forEach(function(q) { q.style.display = 'flex'; });
+                            document.querySelectorAll('.question-message').forEach(function(m) { m.classList.add('d-none'); });
+                            document.querySelectorAll('.msg').forEach(function(m) { m.classList.remove('d-none'); });
                         }
-
+                        
                         if (submitBtn) submitBtn.disabled = opened < 2;
-
-                        showEvidenceNotification('Pierādījums atrasts! +20 punkti', 'success');
-
-                        setTimeout(() => {
+                        
+                        showSmallNotification('Pierādījums atrasts! +20 punkti', 'success');
+                        
+                        setTimeout(function() {
                             imageModal.hide();
                         }, 1500);
                     } else {
-                        showEvidenceNotification('Jūs jau atradāt šo pierādījumu!', 'warning');
+                        showSmallNotification('Jūs jau atradāt šo pierādījumu!', 'warning');
                     }
                 }
             }
-
-            imageModalEl.addEventListener('hidden.bs.modal', () => {
+            
+            imageModalEl.addEventListener('hidden.bs.modal', function() {
                 if (modalImg) {
                     modalImg.removeEventListener('mousemove', handleModalMouseMove);
                     modalImg.removeEventListener('click', handleModalClick);
@@ -414,13 +701,13 @@
                 currentImg = null;
                 currentWrapper = null;
             });
-
+            
             const buttons = document.querySelectorAll('.reveal-btn');
             const submitBtn = document.getElementById('submitBtn');
             const openedInput = document.getElementById('openedEvidenceCount');
-
+            const askedQuestions = new Set();
             let score = 0;
-
+            
             function addScore(points) {
                 score += points;
                 const scoreInput = document.getElementById('scoreInput');
@@ -428,19 +715,21 @@
                 if (scoreInput) scoreInput.value = score;
                 if (scoreDisplay) scoreDisplay.innerText = 'Punkti: ' + score;
             }
-
-            buttons.forEach(btn => {
-                btn.addEventListener('click', () => {
+            
+            buttons.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    TutorialSystem.trigger('evidence_click');
+                    
                     const content = btn.nextElementSibling;
                     const isHidden = content.classList.contains('d-none');
-
+                    
                     if (isHidden) {
                         content.classList.remove('d-none');
                         btn.textContent = 'Paslēpt';
-
+                        
                         const img = content.querySelector('.evidence-img');
                         let hasKeyArea = false;
-
+                        
                         if (img && img.dataset.keyArea && img.dataset.keyArea !== 'null' && img.dataset.keyArea !== '') {
                             try {
                                 const keyArea = JSON.parse(img.dataset.keyArea);
@@ -449,30 +738,30 @@
                                 console.error('Invalid key area data:', img.dataset.keyArea);
                             }
                         }
-
+                        
                         if (!hasKeyArea && !content.dataset.counted) {
                             content.dataset.counted = 'true';
                             addScore(15);
-
+                            
                             let opened = parseInt(openedInput.value) || 0;
                             opened++;
                             openedInput.value = opened;
-
-                                let questionsUsed = askedQuestions.size;
-                                updateProgress(opened, questionsUsed);
-
+                            let questionsUsed = askedQuestions.size;
+                            updateProgress(opened, questionsUsed);
+                            
                             if (opened >= 2) {
-                                document.querySelectorAll('.locked-question').forEach(q => q.classList.remove('d-none'));
-                                document.querySelectorAll('.question-buttons').forEach(q => q.style.display = 'flex');
-                                document.querySelectorAll('.question-message').forEach(m => m.classList.add('d-none'));
-                                document.querySelectorAll('.msg').forEach(m => m.classList.remove('d-none'));
+                                TutorialSystem.trigger('evidence_count_2');
+                                document.querySelectorAll('.locked-question').forEach(function(q) { q.classList.remove('d-none'); });
+                                document.querySelectorAll('.question-buttons').forEach(function(q) { q.style.display = 'flex'; });
+                                document.querySelectorAll('.question-message').forEach(function(m) { m.classList.add('d-none'); });
+                                document.querySelectorAll('.msg').forEach(function(m) { m.classList.remove('d-none'); });
                             }
-
+                            
                             if (submitBtn) submitBtn.disabled = opened < 2;
-
-                            showEvidenceNotification('Pierādījums atvērts! +15 punkti', 'success');
+                            
+                            showSmallNotification('Pierādījums atvērts! +15 punkti', 'success');
                         } else if (hasKeyArea) {
-                            showEvidenceNotification('Šajā pierādījumā ir slēpta vieta! Atrodi to, lai iegūtu punktus!', 'info');
+                            showSmallNotification('Šeit ir slēpta vieta! Atrodi to!', 'info');
                         }
                     } else {
                         content.classList.add('d-none');
@@ -480,141 +769,353 @@
                     }
                 });
             });
-
-            const askedQuestions = new Set();
-
-            document.querySelectorAll('.ask-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
+            
+            document.querySelectorAll('.ask-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    TutorialSystem.trigger('ask_question');
+                    
                     const allAnswers = btn.closest('.questions').querySelectorAll('.answer');
-                    allAnswers.forEach(a => a.classList.add('d-none'));
-
+                    allAnswers.forEach(function(a) { a.classList.add('d-none'); });
+                    
                     const answer = btn.nextElementSibling;
                     answer.classList.remove('d-none');
-
+                    
                     const questionText = btn.textContent.trim();
-
+                    
                     if (!askedQuestions.has(questionText)) {
                         askedQuestions.add(questionText);
                         addScore(10);
-                        showEvidenceNotification('Jautājums uzdots! +10 punkti', 'success');
-
+                        showSmallNotification('Jautājums uzdots! +10 punkti', 'success');
+                        
                         let opened = parseInt(openedInput.value) || 0;
                         let questionsUsed = askedQuestions.size;
                         updateProgress(opened, questionsUsed);
-
                     }
-
+                    
                     answer.style.opacity = '0';
                     answer.style.transition = 'opacity 0.3s ease';
-                    setTimeout(() => {
+                    setTimeout(function() {
                         answer.style.opacity = '1';
                     }, 10);
                 });
             });
-
-            const cards = document.querySelectorAll('.suspect-card');
-
-            cards.forEach(card => {
-                card.addEventListener('click', () => {
-                    document.querySelectorAll('.questions').forEach(q => q.classList.add('d-none'));
-
-                    const questions = card.querySelector('.questions');
-                    if (questions) questions.classList.remove('d-none');
-                });
-            });
-
-            const slides = document.querySelectorAll('.suspect-slide');
-            let current = 0;
-
-            const showSlide = (index) => slides.forEach((s, i) => s.classList.toggle('d-none', i !== index));
-
-            const prevBtn = document.getElementById('prevSuspect');
-            const nextBtn = document.getElementById('nextSuspect');
-
-            if (prevBtn && nextBtn) {
-                prevBtn.addEventListener('click', () => {
-                    current = (current - 1 + slides.length) % slides.length;
-                    showSlide(current);
-                });
-
-                nextBtn.addEventListener('click', () => {
-                    current = (current + 1) % slides.length;
-                    showSlide(current);
-                });
-            }
-
+            
             const suspectCards = document.querySelectorAll('.suspect-card');
             const selectedInput = document.getElementById('selectedSuspectId');
-
-            suspectCards.forEach(card => {
-                card.addEventListener('click', () => {
-                    suspectCards.forEach(c => c.classList.remove('border-warning'));
+            
+            suspectCards.forEach(function(card) {
+                card.addEventListener('click', function() {
+                    TutorialSystem.trigger('select_suspect');
+                    
+                    suspectCards.forEach(function(c) { c.classList.remove('border-warning'); });
                     card.classList.add('border-warning');
                     if (selectedInput) {
                         selectedInput.value = card.dataset.suspectId;
                     }
                 });
             });
-        });
-
-        function showEvidenceNotification(message, type = 'info') {
-            const notif = document.createElement('div');
-            notif.className = `evidence-notification ${type}`;
-            notif.innerHTML = `
-            ${message}
-            <br>
-            <button class="btn btn-sm btn-dark">Labi</button>
-        `;
-            document.body.appendChild(notif);
-
-            setTimeout(() => notif.classList.add('show'), 50);
-
-            notif.querySelector('button').addEventListener('click', () => {
-                notif.classList.remove('show');
-                setTimeout(() => notif.remove(), 500);
-            });
-
-            setTimeout(() => {
-                notif.classList.remove('show');
-                setTimeout(() => notif.remove(), 500);
-            }, 3000);
-        }
-
-        function updateProgress(opened, questionsUsed=0) {
-            const totalEvidence = {{ count($evidence) }};
-            const totalQuestions = {{ count($questions) }};
-            const token = document.querySelector('input[name="_token"]');
             
-            const total = totalEvidence + totalQuestions;
-            const completed = opened + questionsUsed;
+            const slides = document.querySelectorAll('.suspect-slide');
+            let current = 0;
             
-            let percent = total > 0 ? (completed / total) * 100 : 0;
-
-            const bar = document.querySelector('.progress-bar');
-
-            if (bar) {
-                bar.style.width = percent + '%';
-                bar.innerText = Math.round(percent) + '%';
+            const showSlide = function(index) {
+                slides.forEach(function(s, i) {
+                    s.classList.toggle('d-none', i !== index);
+                });
+            };
+            
+            const prevBtn = document.getElementById('prevSuspect');
+            const nextBtn = document.getElementById('nextSuspect');
+            
+            if (prevBtn && nextBtn) {
+                prevBtn.addEventListener('click', function() {
+                    current = (current - 1 + slides.length) % slides.length;
+                    showSlide(current);
+                });
+                
+                nextBtn.addEventListener('click', function() {
+                    current = (current + 1) % slides.length;
+                    showSlide(current);
+                });
             }
-
-            if (!token) return;
-
-            fetch('/progress/update', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': token.value
-                },
-                body: JSON.stringify({
-                case_id: {{ json_encode($case->id) }},
-                opened_evidence: opened,
-                questions_used: questionsUsed,
-                score: document.getElementById('scoreInput')?.value || 0
-            })
-
-            }).catch(err => console.error('Progress update error:', err));
+            
+            const cards = document.querySelectorAll('.suspect-card');
+            cards.forEach(function(card) {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.questions').forEach(function(q) { q.classList.add('d-none'); });
+                    const questions = card.querySelector('.questions');
+                    if (questions) questions.classList.remove('d-none');
+                });
+            });
+            
+            function updateProgress(opened, questionsUsed) {
+                if (questionsUsed === undefined) questionsUsed = 0;
+                const totalEvidence = {{ count($evidence) }};
+                const totalQuestions = {{ count($questions) }};
+                const token = document.querySelector('input[name="_token"]');
+                
+                const total = totalEvidence + totalQuestions;
+                const completed = opened + questionsUsed;
+                
+                let percent = total > 0 ? (completed / total) * 100 : 0;
+                percent = Math.min(percent, 100);
+                
+                const bar = document.querySelector('.progress-bar');
+                
+                if (bar) {
+                    bar.style.width = percent + '%';
+                    bar.innerText = Math.round(percent) + '%';
+                }
+                
+                if (!token) return;
+                
+                fetch('/progress/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token.value
+                    },
+                    body: JSON.stringify({
+                        case_id: {{ json_encode($case->id) }},
+                        opened_evidence: opened,
+                        questions_used: questionsUsed,
+                        score: document.getElementById('scoreInput')?.value || 0
+                    })
+                }).catch(function(err) { console.error('Progress update error:', err); });
+            }
+        });
+        
+        // Маленькие уведомления
+        function showSmallNotification(message, type) {
+            if (type === undefined) type = 'info';
+            
+            // Удаляем старые уведомления
+            const oldNotifs = document.querySelectorAll('.evidence-notification');
+            oldNotifs.forEach(function(notif) {
+                notif.remove();
+            });
+            
+            const notif = document.createElement('div');
+            notif.className = 'evidence-notification ' + type;
+            notif.innerHTML = message;
+            document.body.appendChild(notif);
+            
+            setTimeout(function() { 
+                notif.classList.add('show'); 
+            }, 10);
+            
+            setTimeout(function() {
+                notif.classList.remove('show');
+                setTimeout(function() { 
+                    if (notif && notif.remove) notif.remove(); 
+                }, 300);
+            }, 2000);
         }
     </script>
+
+<script>
+    // Управление подсветкой для режима поиска скрытых объектов
+    (function() {
+        let isSearchMode = false;
+        let originalCursor = '';
+        
+        // Функция для отключения подсветки на время поиска
+        function disableHighlightForSearch() {
+            if (!isSearchMode) return;
+            
+            // Находим все элементы с подсветкой
+            const highlightedElements = document.querySelectorAll('.tutorial-highlight');
+            
+            // Сохраняем их и временно убираем подсветку
+            highlightedElements.forEach(function(el) {
+                el.dataset.wasHighlighted = 'true';
+                el.classList.remove('tutorial-highlight');
+            });
+        }
+        
+        // Функция для восстановления подсветки после поиска
+        function restoreHighlightAfterSearch() {
+            if (!isSearchMode) return;
+            
+            // Восстанавливаем подсветку на сохраненных элементах
+            const elements = document.querySelectorAll('[data-was-highlighted="true"]');
+            elements.forEach(function(el) {
+                el.classList.add('tutorial-highlight');
+                delete el.dataset.wasHighlighted;
+            });
+        }
+        
+        // Отслеживаем открытие модального окна с картинкой
+        const imageModal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        
+        if (imageModal && modalImg) {
+            // Перед открытием модального окна
+            imageModal.addEventListener('show.bs.modal', function() {
+                // Проверяем, есть ли у картинки скрытая область (режим поиска)
+                const hasKeyArea = modalImg.src && 
+                    document.querySelector('.evidence-img[src="' + modalImg.src + '"]')?.dataset.keyArea;
+                
+                if (hasKeyArea && hasKeyArea !== 'null' && hasKeyArea !== '') {
+                    isSearchMode = true;
+                    // Временно убираем подсветку
+                    disableHighlightForSearch();
+                }
+            });
+            
+            // После закрытия модального окна
+            imageModal.addEventListener('hidden.bs.modal', function() {
+                if (isSearchMode) {
+                    isSearchMode = false;
+                    // Восстанавливаем подсветку
+                    restoreHighlightAfterSearch();
+                }
+            });
+        }
+        
+        // Также отслеживаем клик по обертке картинки
+        const wrappers = document.querySelectorAll('.evidence-img-wrapper');
+        wrappers.forEach(function(wrapper) {
+            wrapper.addEventListener('click', function() {
+                const img = wrapper.querySelector('.evidence-img');
+                if (img && img.dataset.keyArea && img.dataset.keyArea !== 'null' && img.dataset.keyArea !== '') {
+                    // Если есть скрытая область, подсветка уберется при открытии модального окна
+                    // через событие выше
+                }
+            });
+        });
+        
+        // Функция для ручного управления подсветкой (можно вызывать из других мест)
+        window.TutorialHighlight = {
+            // Временно отключить подсветку
+            disable: function() {
+                const highlighted = document.querySelectorAll('.tutorial-highlight');
+                highlighted.forEach(function(el) {
+                    if (!el.dataset.savedHighlight) {
+                        el.dataset.savedHighlight = 'true';
+                        el.classList.remove('tutorial-highlight');
+                    }
+                });
+            },
+            
+            // Включить подсветку обратно
+            enable: function() {
+                const saved = document.querySelectorAll('[data-saved-highlight="true"]');
+                saved.forEach(function(el) {
+                    el.classList.add('tutorial-highlight');
+                    delete el.dataset.savedHighlight;
+                });
+            },
+            
+            // Проверить, активен ли режим поиска
+            isSearchModeActive: function() {
+                return isSearchMode;
+            }
+        };
+    })();
+</script>
+
+<script>
+    // Управление подсветкой для режима поиска скрытых объектов
+    (function() {
+        let isSearchMode = false;
+        let originalCursor = '';
+        
+        // Функция для отключения подсветки на время поиска
+        function disableHighlightForSearch() {
+            if (!isSearchMode) return;
+            
+            // Находим все элементы с подсветкой
+            const highlightedElements = document.querySelectorAll('.tutorial-highlight');
+            
+            // Сохраняем их и временно убираем подсветку
+            highlightedElements.forEach(function(el) {
+                el.dataset.wasHighlighted = 'true';
+                el.classList.remove('tutorial-highlight');
+            });
+        }
+        
+        // Функция для восстановления подсветки после поиска
+        function restoreHighlightAfterSearch() {
+            if (!isSearchMode) return;
+            
+            // Восстанавливаем подсветку на сохраненных элементах
+            const elements = document.querySelectorAll('[data-was-highlighted="true"]');
+            elements.forEach(function(el) {
+                el.classList.add('tutorial-highlight');
+                delete el.dataset.wasHighlighted;
+            });
+        }
+        
+        // Отслеживаем открытие модального окна с картинкой
+        const imageModal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        
+        if (imageModal && modalImg) {
+            // Перед открытием модального окна
+            imageModal.addEventListener('show.bs.modal', function() {
+                // Проверяем, есть ли у картинки скрытая область (режим поиска)
+                const hasKeyArea = modalImg.src && 
+                    document.querySelector('.evidence-img[src="' + modalImg.src + '"]')?.dataset.keyArea;
+                
+                if (hasKeyArea && hasKeyArea !== 'null' && hasKeyArea !== '') {
+                    isSearchMode = true;
+                    // Временно убираем подсветку
+                    disableHighlightForSearch();
+                }
+            });
+            
+            // После закрытия модального окна
+            imageModal.addEventListener('hidden.bs.modal', function() {
+                if (isSearchMode) {
+                    isSearchMode = false;
+                    // Восстанавливаем подсветку
+                    restoreHighlightAfterSearch();
+                }
+            });
+        }
+        
+        // Также отслеживаем клик по обертке картинки
+        const wrappers = document.querySelectorAll('.evidence-img-wrapper');
+        wrappers.forEach(function(wrapper) {
+            wrapper.addEventListener('click', function() {
+                const img = wrapper.querySelector('.evidence-img');
+                if (img && img.dataset.keyArea && img.dataset.keyArea !== 'null' && img.dataset.keyArea !== '') {
+                    // Если есть скрытая область, подсветка уберется при открытии модального окна
+                    // через событие выше
+                }
+            });
+        });
+        
+        // Функция для ручного управления подсветкой (можно вызывать из других мест)
+        window.TutorialHighlight = {
+            // Временно отключить подсветку
+            disable: function() {
+                const highlighted = document.querySelectorAll('.tutorial-highlight');
+                highlighted.forEach(function(el) {
+                    if (!el.dataset.savedHighlight) {
+                        el.dataset.savedHighlight = 'true';
+                        el.classList.remove('tutorial-highlight');
+                    }
+                });
+            },
+            
+            // Включить подсветку обратно
+            enable: function() {
+                const saved = document.querySelectorAll('[data-saved-highlight="true"]');
+                saved.forEach(function(el) {
+                    el.classList.add('tutorial-highlight');
+                    delete el.dataset.savedHighlight;
+                });
+            },
+            
+            // Проверить, активен ли режим поиска
+            isSearchModeActive: function() {
+                return isSearchMode;
+            }
+        };
+    })();
+</script>
 
     @include('partials.footer')
 </body>

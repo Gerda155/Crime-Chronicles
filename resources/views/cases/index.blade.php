@@ -21,6 +21,10 @@
 
         <div class="d-flex flex-wrap gap-2 mb-4">
 
+            <a href="{{ route('cases.tutorial') }}" class="btn btn-warning rounded">
+                Apmācība
+            </a>
+
             <form method="GET" action="{{ route('cases.index') }}" class="d-flex gap-2 flex-grow-1">
                 <input
                     type="text"

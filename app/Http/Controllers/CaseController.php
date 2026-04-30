@@ -113,6 +113,30 @@ class CaseController extends Controller
         return redirect()->route('cases.my-cases');
     }
 
+    public function tutorial()
+    {
+        $case = CaseModel::where('is_tutorial', true)->firstOrFail();
+
+        $evidence = $case->evidence()->get(['id', 'description', 'type', 'image_path', 'key_object_area']);
+        $suspects = $case->suspects()->get();
+        $questions = $case->questions()->get();
+
+        $progress = UserProgress::firstOrCreate([
+            'user_id' => Auth::id(),
+            'case_id' => $case->id
+        ]);
+
+        return view('cases.play', [
+            'case' => $case,
+            'evidence' => $evidence,
+            'suspects' => $suspects,
+            'questions' => $questions,
+            'progress' => $progress,
+            'progressPercent' => 0,
+            'isTutorial' => true
+        ]);
+    }
+
     public function play(CaseModel $case)
     {
         $evidence = $case->evidence()->get(['id', 'description', 'type', 'image_path', 'key_object_area']);
@@ -121,7 +145,6 @@ class CaseController extends Controller
         $totalEvidence = $case->evidence()->count();
         $totalQuestions = $case->questions()->count();
 
-        // ПЕРЕНЕСИТЕ СЮДА!
         $progress = UserProgress::firstOrCreate(
             [
                 'user_id' => Auth::id(),
@@ -132,7 +155,8 @@ class CaseController extends Controller
         $openedEvidence = $progress->opened_evidence ?? 0;
         $usedQuestions = $progress->questions_used ?? 0;
 
-        $totalItems = $totalEvidence + $totalQuestions;
+        $totalItems = $case->evidence()->count() + $case->questions()->count();
+
         $completedItems = $openedEvidence + $usedQuestions;
 
         $progressPercent = $totalItems > 0
@@ -146,7 +170,7 @@ class CaseController extends Controller
             'questions',
             'progress',
             'progressPercent'
-        ));
+        ))->with('isTutorial', $case->is_tutorial);
     }
 
     public function submit(Request $request, CaseModel $case)
