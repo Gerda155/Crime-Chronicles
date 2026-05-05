@@ -118,7 +118,7 @@ class CaseController extends Controller
         $case = CaseModel::where('is_tutorial', true)->firstOrFail();
 
         $evidence = $case->evidence()->get(['id', 'description', 'type', 'image_path', 'key_object_area']);
-        $suspects = $case->suspects()->get();
+        $suspects = $case->suspects()->latest()->get();
         $questions = $case->questions()->get();
 
         $progress = UserProgress::firstOrCreate([
@@ -333,10 +333,10 @@ class CaseController extends Controller
 
         if ($request->hasFile('image')) {
 
-    $path = $request->file('image')->store('cases/suspects', 'public');
+            $path = $request->file('image')->store('cases/suspects', 'public');
 
-    $imagePath = 'storage/' . $path;
-}
+            $imagePath = 'storage/' . $path;
+        }
 
         $case->suspects()->create([
             'name' => $request->name,
@@ -344,6 +344,95 @@ class CaseController extends Controller
             'image_path' => $imagePath,
         ]);
 
-        return redirect()->route('cases.suspects', $case->id);
+        return redirect()
+            ->route('cases.suspects', $case->id)
+            ->with('status', 'Aizdomās turamais pievienots!');
+    }
+
+    public function setAnswer(Request $request, CaseModel $case)
+    {
+        $request->validate([
+            'answer_id' => 'required|exists:suspects,id',
+        ]);
+
+        $case->update([
+            'answer_id' => $request->answer_id,
+        ]);
+
+        return redirect()->route('cases.evidence', $case->id);
+    }
+
+    public function evidence(CaseModel $case)
+    {
+        $evidence = $case->evidence()->get();
+
+        return view('cases.wizard.evidence', compact('case', 'evidence'));
+    }
+
+    public function storeEvidence(Request $request, CaseModel $case)
+    {
+        $request->validate([
+            'description' => 'required|string',
+            'type' => 'nullable|string',
+            'file' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx',
+            'key_object_area' => 'nullable|json',
+        ]);
+
+        $filePath = null;
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $path = $file->store('cases/evidence', 'public');
+            $filePath = 'storage/' . $path;
+        }
+
+        $case->evidence()->create([
+            'description' => $request->description,
+            'type' => $request->type ?? 'image',
+            'image_path' => $filePath,
+            'key_object_area' => $request->key_object_area,
+        ]);
+
+        return redirect()->route('cases.evidence', $case->id);
+    }
+
+    public function questions(CaseModel $case)
+    {
+        $questions = $case->questions()->with('suspect')->get();
+        $suspects = $case->suspects;
+
+        return view('cases.wizard.questions', compact('case', 'questions', 'suspects'));
+    }
+
+    public function storeQuestion(Request $request, CaseModel $case)
+    {
+        $request->validate([
+            'suspect_id' => 'required|exists:suspects,id',
+            'question_text' => 'required|string',
+            'answer_text' => 'nullable|string',
+        ]);
+
+        $case->questions()->create([
+            'suspect_id' => $request->suspect_id,
+            'question_text' => $request->question_text,
+            'answer_text' => $request->answer_text,
+        ]);
+
+        return redirect()->route('cases.questions', $case->id);
+    }
+
+    public function submitFinal(CaseModel $case)
+    {
+        if ($case->status !== 'draft') {
+            return redirect()->route('cases.my-cases')
+                ->with('status', 'Šī lieta jau ir iesniegta.');
+        }
+
+        $case->update([
+            'status' => 'pending'
+        ]);
+
+        return redirect()->route('cases.my-cases')
+            ->with('status', 'Lieta nosūtīta uz moderāciju. Drīz tā parādīsies vietnē!');
     }
 }

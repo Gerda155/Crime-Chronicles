@@ -37,6 +37,12 @@
             <a href="{{ route('user.cases.create') }}" class="btn btn-success rounded">Izveidot jaunu lietu</a>
         </div>
 
+        @if(session('status'))
+        <div class="alert alert-info">
+            {{ session('status') }}
+        </div>
+        @endif
+
         <div class="table-responsive rounded shadow-sm">
             <table class="table table-dark table-hover align-middle mb-0">
                 <thead class="table-dark text-uppercase text-muted small">

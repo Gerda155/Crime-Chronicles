@@ -29,31 +29,49 @@
             <div class="col-md-8">
 
                 {{-- СПИСОК --}}
-                <div class="card bg-secondary text-light border-0 mb-4">
-                    <div class="card-body">
+                <form method="POST" action="{{ route('cases.suspects.setAnswer', $case->id) }}">
+                    @csrf
 
-                        <h5>Esošie aizdomās turamie</h5>
+                    <div class="card bg-secondary text-light border-0 mb-4">
+                        <div class="card-body">
 
-                        @foreach($suspects as $suspect)
-                        <div class="border-bottom py-3 d-flex gap-3 align-items-center">
+                            <h5>Esošie aizdomās turamie</h5>
 
-                            @if($suspect->image_path)
-                            <img src="{{ asset($suspect->image_path) }}"
-                                class="rounded"
-                                width="60"
-                                height="60">
-                            @endif
+                            @foreach($suspects as $suspect)
+                            <div class="border-bottom py-3 d-flex gap-3 align-items-center">
 
-                            <div>
-                                <strong>{{ $suspect->name }}</strong><br>
-                                <small class="text-muted">{{ $suspect->description }}</small>
+                                @if($suspect->image_path)
+                                <img src="{{ asset($suspect->image_path) }}"
+                                    class="rounded"
+                                    width="60"
+                                    height="60">
+                                @endif
+
+                                <div class="flex-grow-1">
+                                    <strong>{{ $suspect->name }}</strong><br>
+                                    <small class="text-muted">{{ $suspect->description }}</small>
+                                </div>
+
+                                {{-- 👇 ВЫБОР ВИНОВНОГО --}}
+                                <div>
+                                    <input type="radio"
+                                        name="answer_id"
+                                        value="{{ $suspect->id }}"
+                                        {{ $case->answer_id == $suspect->id ? 'checked' : '' }}>
+                                </div>
+
                             </div>
+                            @endforeach
 
                         </div>
-                        @endforeach
-
                     </div>
-                </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">
+                            Saglabāt vainīgo
+                        </button>
+                    </div>
+                </form>
 
                 {{-- ФОРМА --}}
                 <div class="card bg-secondary text-light border-0">

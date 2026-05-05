@@ -47,6 +47,15 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/cases/{case}/suspects', [CaseController::class, 'suspects'])->name('cases.suspects');
     Route::post('/cases/{case}/suspects', [CaseController::class, 'storeSuspect'])->name('cases.suspects.store');
+    Route::post('/cases/{case}/set-answer', [CaseController::class, 'setAnswer'])->name('cases.suspects.setAnswer');
+
+    Route::get('/cases/{case}/evidence', [CaseController::class, 'evidence'])->name('cases.evidence');
+    Route::post('/cases/{case}/evidence', [CaseController::class, 'storeEvidence'])->name('cases.evidence.store');
+
+    Route::get('/cases/{case}/questions', [CaseController::class, 'questions'])->name('cases.questions');
+    Route::post('/cases/{case}/questions', [CaseController::class, 'storeQuestion'])->name('cases.questions.store');
+
+    Route::post('/cases/{case}/submit-final', [CaseController::class, 'submitFinal'])->name('cases.submit.final');
 });
 
 Route::get('/cases', [CaseController::class, 'index'])->name('cases.index');

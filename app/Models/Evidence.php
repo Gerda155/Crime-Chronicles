@@ -9,7 +9,17 @@ class Evidence extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['case_id', 'type', 'content'];
+    protected $fillable = [
+        'case_id',
+        'description',
+        'type',
+        'image_path',
+        'key_object_area',
+    ];
+
+    protected $casts = [
+        'key_object_area' => 'array',
+    ];
 
     public function case()
     {
