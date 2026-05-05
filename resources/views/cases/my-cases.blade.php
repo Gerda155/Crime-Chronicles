@@ -34,6 +34,7 @@
                 </select>
                 <button type="submit" class="btn btn-primary rounded">Kārtot</button>
             </form>
+            <a href="{{ route('user.cases.create') }}" class="btn btn-success rounded">Izveidot jaunu lietu</a>
         </div>
 
         <div class="table-responsive rounded shadow-sm">

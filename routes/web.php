@@ -42,6 +42,11 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/tutorial', [CaseController::class, 'tutorial'])->name('cases.tutorial');
 
+    Route::get('/cases/create', [CaseController::class, 'create'])->name('user.cases.create');
+    Route::post('/cases', [CaseController::class, 'store'])->name('user.cases.store');
+
+    Route::get('/cases/{case}/suspects', [CaseController::class, 'suspects'])->name('cases.suspects');
+    Route::post('/cases/{case}/suspects', [CaseController::class, 'storeSuspect'])->name('cases.suspects.store');
 });
 
 Route::get('/cases', [CaseController::class, 'index'])->name('cases.index');

@@ -9,7 +9,12 @@ class Suspect extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['case_id', 'name', 'description'];
+    protected $fillable = [
+        'case_id',
+        'name',
+        'description',
+        'image_path',
+    ];
 
     public function case()
     {

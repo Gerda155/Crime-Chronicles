@@ -285,4 +285,65 @@ class CaseController extends Controller
 
         return null;
     }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'genre_id' => 'required|exists:genres,id',
+        ]);
+
+        $case = CaseModel::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'genre_id' => $request->genre_id,
+            'user_id' => Auth::id(),
+            'status' => 'draft',
+            'rating' => 0,
+            'is_tutorial' => false,
+        ]);
+
+        return redirect()->route('cases.suspects', $case->id);
+    }
+
+    public function create()
+    {
+        $genres = Genre::all();
+
+        return view('cases.wizard.create', compact('genres'));
+    }
+
+    public function suspects(CaseModel $case)
+    {
+        $suspects = $case->suspects()->get();
+
+        return view('cases.wizard.suspects', compact('case', 'suspects'));
+    }
+
+    public function storeSuspect(Request $request, CaseModel $case)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        $imagePath = null;
+
+        if ($request->hasFile('image')) {
+
+    $path = $request->file('image')->store('cases/suspects', 'public');
+
+    $imagePath = 'storage/' . $path;
+}
+
+        $case->suspects()->create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'image_path' => $imagePath,
+        ]);
+
+        return redirect()->route('cases.suspects', $case->id);
+    }
 }

@@ -36,6 +36,7 @@
                 <input type="hidden" name="sort" value="{{ request('sort') }}">
 
                 <button type="submit" class="btn btn-primary rounded">Meklēt</button>
+
             </form>
 
             <form method="GET" action="{{ route('cases.index') }}" class="d-flex gap-2">
@@ -52,7 +53,7 @@
 
                 <button type="submit" class="btn btn-primary rounded">Kārtot</button>
             </form>
-
+            
         </div>
 
         <div class="row g-4">
