@@ -9,61 +9,7 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
-    <style>
-        .image-wrapper {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-            background: #1a1d20;
-            border-radius: 8px;
-            overflow: hidden;
-            min-height: 200px;
-        }
-        
-        #previewImage {
-            max-width: 100%;
-            cursor: crosshair;
-            display: block;
-            width: 100%;
-            height: auto;
-        }
-        
-        .selection-box {
-            position: absolute;
-            border: 3px solid #ffc107;
-            background: rgba(255, 193, 7, 0.3);
-            pointer-events: none;
-            cursor: crosshair;
-            box-shadow: 0 0 0 1px rgba(0,0,0,0.3);
-            display: none;
-        }
-        
-        .selection-box.active {
-            display: block;
-        }
-        
-        .suspect-card {
-            background: #2c3034;
-            transition: all 0.2s ease;
-            border: 1px solid #495057;
-        }
-        
-        .suspect-card:hover {
-            background: #3a3f44;
-            border-color: #86b7fe;
-        }
-        
-        .text-pink {
-            color: #d63384;
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: #d63384;
-            box-shadow: 0 0 0 0.25rem rgba(214, 51, 132, 0.25);
-            background-color: #1a1d20 !important;
-            color: #fff;
-        }
-    </style>
+
 </head>
 
 <body class="bg-dark text-light">
@@ -72,7 +18,7 @@
 
     <main class="container my-5">
 
-        <h1 class="text-center mb-4 fw-bold text-pink">
+        <h1 class="text-center mb-4 fw-bold">
             Lietas: <strong class="text-light">"{{ $case->title }}"</strong> pierādījumi
         </h1>
 
@@ -86,17 +32,17 @@
             </div>
         </div>
 
-        <div class="alert alert-dark border-0 mb-4" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-left: 4px solid #d63384 !important;">
+        <div class="alert alert-dark border-0 mb-4">
             <div class="d-flex align-items-center gap-3">
                 <div class="display-6"><i class="fa-solid fa-magnifying-glass"></i></div>
                 <div>
                     <strong>Detektīv, ir pienācis laiks vākt pierādījumus!</strong><br>
-                    Katrai lietai ir vajadzīgi <strong class="text-pink">pierādījumi</strong>, kas palīdzēs atklāt patiesību.
-                    Pievieno vismaz <strong class="text-pink">2 pierādījumus</strong> - tie var būt attēli, PDF vai dokumenti.<br>
-                    Ja pievieno attēlu, vari <strong class="text-pink">iezīmēt svarīgāko vietu</strong> ar peli - spēlētājs to noteikti pamanīs!<br>
+                    Katrai lietai ir vajadzīgi <strong>pierādījumi</strong>, kas palīdzēs atklāt patiesību.
+                    Pievieno vismaz <strong>2 pierādījumus</strong> - tie var būt attēli, teksts, PDF vai dokumenti.<br>
+                    Ja pievieno attēlu, vari <strong>iezīmēt svarīgāko vietu</strong> ar peli - spēlētājs to noteikti pamanīs!<br>
                     <small class="text-secondary"><i class="fa-solid fa-lightbulb" style="color: #dabe69;"></i> Padoms: Jo interesantāki un noslēpumaināki pierādījumi, jo aizraujošāka būs spēle!</small>
                     <div class="mt-2">
-                        <small class="text-pink"><i class="fa-solid fa-circle-info"></i> Pašlaik pievienoti: {{ count($evidence) }} / 2</small>
+                        <small> Pašlaik pievienoti: <span id="evidenceCount">{{ count($evidence) }}</span></small>
                     </div>
                 </div>
             </div>
@@ -134,7 +80,7 @@
                         </div>
                         @endif
                         @if($item->key_object_area)
-                        <small class="text-warning d-block mt-1">
+                        <small class="text-dark d-block mt-1">
                             <i class="fa-solid fa-magnifying-glass"></i> Ir atzīmēta svarīga zona
                         </small>
                         @endif
@@ -163,7 +109,7 @@
                             rows="3"
                             required
                             placeholder="Piem., 'Asins traips uz paklāja' vai 'Aizdomīga vēstule'..."></textarea>
-                        <small class="text-secondary mt-1 d-block">
+                        <small class="text-light mt-1 d-block">
                             <i class="fa-solid fa-info-circle"></i> Apraksti, kas šis ir par pierādījumu, kur tas atrasts un kāpēc tas ir svarīgs
                         </small>
                     </div>
@@ -175,7 +121,7 @@
                             name="file"
                             class="form-control bg-dark text-light border-0"
                             accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-                        <small class="text-secondary mt-1 d-block">
+                        <small class="text-light mt-1 d-block">
                             <i class="fa-solid fa-upload"></i> Vari pievienot attēlus (JPG, PNG, GIF), PDF vai Word dokumentus
                         </small>
                     </div>
@@ -224,7 +170,8 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // DOM elementi
+            console.log('DOM ielādēts');
+            
             const fileInput = document.getElementById('fileInput');
             const previewImg = document.getElementById('previewImage');
             const selectionBox = document.getElementById('selectionBox');
@@ -232,156 +179,183 @@
             const imageBlock = document.getElementById('imageBlock');
             const nextBtn = document.getElementById('nextBtn');
             const evidenceCountSpan = document.getElementById('evidenceCount');
-            const imageWrapper = document.getElementById('imageWrapper');
 
-            let evidenceCount = parseInt(evidenceCountSpan.textContent);
+            // Pārbaude vai elements eksistē
+            if (!evidenceCountSpan) {
+                console.error('Element with id "evidenceCount" not found!');
+            } else {
+                console.log('evidenceCount elements atrasts');
+            }
+
+            let evidenceCount = evidenceCountSpan ? parseInt(evidenceCountSpan.textContent) : 0;
             let startX = 0, startY = 0;
-            let isSelecting = false;
-            let isImageLoaded = false;
+            let isDrawing = false;
+            let imgRect = null;
 
             // Iezīmēšanas atiestatīšana
             function resetSelection() {
-                selectionBox.classList.remove('active');
-                selectionBox.style.left = '0px';
-                selectionBox.style.top = '0px';
-                selectionBox.style.width = '0px';
-                selectionBox.style.height = '0px';
-                hiddenArea.value = '';
-                isSelecting = false;
+                if (selectionBox) {
+                    selectionBox.classList.remove('visible');
+                    selectionBox.style.left = '0px';
+                    selectionBox.style.top = '0px';
+                    selectionBox.style.width = '0px';
+                    selectionBox.style.height = '0px';
+                }
+                if (hiddenArea) {
+                    hiddenArea.value = '';
+                }
+                isDrawing = false;
             }
 
             // Faila izvēle
-            fileInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) {
-                    imageBlock.classList.add('d-none');
-                    previewImg.style.display = 'none';
-                    resetSelection();
-                    return;
-                }
-
-                if (file.type.startsWith('image/')) {
-                    imageBlock.classList.remove('d-none');
-                    const reader = new FileReader();
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    console.log('Fails izvēlēts:', file?.name);
                     
-                    reader.onload = function(event) {
-                        previewImg.src = event.target.result;
-                        previewImg.style.display = 'block';
-                        isImageLoaded = false;
+                    if (!file) {
+                        if (imageBlock) imageBlock.classList.add('d-none');
+                        if (previewImg) previewImg.style.display = 'none';
+                        resetSelection();
+                        return;
+                    }
+
+                    if (file.type.startsWith('image/')) {
+                        console.log('Attēla fails');
+                        if (imageBlock) imageBlock.classList.remove('d-none');
+                        const reader = new FileReader();
                         
-                        previewImg.onload = function() {
-                            isImageLoaded = true;
+                        reader.onload = function(event) {
+                            if (previewImg) {
+                                previewImg.src = event.target.result;
+                                previewImg.style.display = 'block';
+                            }
                             resetSelection();
-                            console.log('Attēls ielādēts, izmēri:', previewImg.naturalWidth, 'x', previewImg.naturalHeight);
+                            console.log('Attēls ielādēts');
                         };
+                        
+                        reader.readAsDataURL(file);
+                    } else {
+                        console.log('Ne-attēla fails');
+                        if (imageBlock) imageBlock.classList.add('d-none');
+                        if (previewImg) previewImg.style.display = 'none';
+                        resetSelection();
+                    }
+                });
+            }
+
+            // Mousedown - sākt zīmēšanu
+            if (previewImg) {
+                previewImg.addEventListener('mousedown', function(e) {
+                    if (previewImg.style.display === 'none') return;
+                    
+                    imgRect = previewImg.getBoundingClientRect();
+                    startX = (e.clientX - imgRect.left) / imgRect.width;
+                    startY = (e.clientY - imgRect.top) / imgRect.height;
+                    
+                    startX = Math.min(1, Math.max(0, startX));
+                    startY = Math.min(1, Math.max(0, startY));
+                    
+                    isDrawing = true;
+                    
+                    if (selectionBox) {
+                        selectionBox.classList.add('visible');
+                        selectionBox.style.left = (startX * 100) + '%';
+                        selectionBox.style.top = (startY * 100) + '%';
+                        selectionBox.style.width = '0%';
+                        selectionBox.style.height = '0%';
+                    }
+                    
+                    console.log('Sākts zīmēt:', startX, startY);
+                    e.preventDefault();
+                });
+
+                // Mousemove - zīmēšana
+                previewImg.addEventListener('mousemove', function(e) {
+                    if (!isDrawing) return;
+                    
+                    imgRect = previewImg.getBoundingClientRect();
+                    let currentX = (e.clientX - imgRect.left) / imgRect.width;
+                    let currentY = (e.clientY - imgRect.top) / imgRect.height;
+                    
+                    currentX = Math.min(1, Math.max(0, currentX));
+                    currentY = Math.min(1, Math.max(0, currentY));
+                    
+                    const left = Math.min(startX, currentX);
+                    const top = Math.min(startY, currentY);
+                    const width = Math.abs(currentX - startX);
+                    const height = Math.abs(currentY - startY);
+                    
+                    if (selectionBox) {
+                        selectionBox.style.left = (left * 100) + '%';
+                        selectionBox.style.top = (top * 100) + '%';
+                        selectionBox.style.width = (width * 100) + '%';
+                        selectionBox.style.height = (height * 100) + '%';
+                    }
+                });
+
+                // Mouseup - beigt zīmēšanu un saglabāt
+                previewImg.addEventListener('mouseup', function(e) {
+                    if (!isDrawing) return;
+                    
+                    imgRect = previewImg.getBoundingClientRect();
+                    let endX = (e.clientX - imgRect.left) / imgRect.width;
+                    let endY = (e.clientY - imgRect.top) / imgRect.height;
+                    
+                    endX = Math.min(1, Math.max(0, endX));
+                    endY = Math.min(1, Math.max(0, endY));
+                    
+                    let finalLeft = Math.min(startX, endX);
+                    let finalTop = Math.min(startY, endY);
+                    let finalWidth = Math.abs(endX - startX);
+                    let finalHeight = Math.abs(endY - startY);
+                    
+                    // Ja minimāla kustība (klikšķis), izveido 10% laukumu
+                    if (finalWidth < 0.05 && finalHeight < 0.05) {
+                        finalLeft = Math.max(0, startX - 0.05);
+                        finalTop = Math.max(0, startY - 0.05);
+                        finalWidth = 0.1;
+                        finalHeight = 0.1;
+                        
+                        if (finalLeft + finalWidth > 1) finalLeft = 1 - finalWidth;
+                        if (finalTop + finalHeight > 1) finalTop = 1 - finalHeight;
+                        
+                        if (selectionBox) {
+                            selectionBox.style.left = (finalLeft * 100) + '%';
+                            selectionBox.style.top = (finalTop * 100) + '%';
+                            selectionBox.style.width = (finalWidth * 100) + '%';
+                            selectionBox.style.height = (finalHeight * 100) + '%';
+                        }
+                    }
+                    
+                    const areaData = {
+                        x: finalLeft,
+                        y: finalTop,
+                        width: finalWidth,
+                        height: finalHeight
                     };
                     
-                    reader.readAsDataURL(file);
-                } else {
-                    imageBlock.classList.add('d-none');
-                    previewImg.style.display = 'none';
-                    resetSelection();
-                }
-            });
-
-            // Iezīmēšana - mousedown
-            previewImg.addEventListener('mousedown', function(e) {
-                if (!isImageLoaded || !previewImg.src || previewImg.style.display === 'none') {
-                    return;
-                }
-                
-                const rect = previewImg.getBoundingClientRect();
-                const scaleX = previewImg.naturalWidth / rect.width;
-                const scaleY = previewImg.naturalHeight / rect.height;
-                
-                startX = (e.clientX - rect.left) / rect.width;
-                startY = (e.clientY - rect.top) / rect.height;
-                startX = Math.min(1, Math.max(0, startX));
-                startY = Math.min(1, Math.max(0, startY));
-                
-                isSelecting = true;
-                selectionBox.classList.add('active');
-                selectionBox.style.left = (startX * 100) + '%';
-                selectionBox.style.top = (startY * 100) + '%';
-                selectionBox.style.width = '0%';
-                selectionBox.style.height = '0%';
-                
-                e.preventDefault();
-            });
-
-            // Iezīmēšana - mousemove
-            previewImg.addEventListener('mousemove', function(e) {
-                if (!isSelecting || !isImageLoaded) return;
-                
-                const rect = previewImg.getBoundingClientRect();
-                let currentX = (e.clientX - rect.left) / rect.width;
-                let currentY = (e.clientY - rect.top) / rect.height;
-                currentX = Math.min(1, Math.max(0, currentX));
-                currentY = Math.min(1, Math.max(0, currentY));
-
-                const left = Math.min(startX, currentX);
-                const top = Math.min(startY, currentY);
-                const width = Math.abs(currentX - startX);
-                const height = Math.abs(currentY - startY);
-
-                selectionBox.style.left = (left * 100) + '%';
-                selectionBox.style.top = (top * 100) + '%';
-                selectionBox.style.width = (width * 100) + '%';
-                selectionBox.style.height = (height * 100) + '%';
-            });
-
-            // Iezīmēšana - mouseup
-            previewImg.addEventListener('mouseup', function(e) {
-                if (!isSelecting || !isImageLoaded) return;
-                
-                const rect = previewImg.getBoundingClientRect();
-                let endX = (e.clientX - rect.left) / rect.width;
-                let endY = (e.clientY - rect.top) / rect.height;
-                endX = Math.min(1, Math.max(0, endX));
-                endY = Math.min(1, Math.max(0, endY));
-
-                let finalLeft = Math.min(startX, endX);
-                let finalTop = Math.min(startY, endY);
-                let finalWidth = Math.abs(endX - startX);
-                let finalHeight = Math.abs(endY - startY);
-
-                // Ja lietotājs tikai klikšķināja (bez vilkšanas), izveido nelielu laukumu 5%
-                if (finalWidth < 0.02 && finalHeight < 0.02) {
-                    finalLeft = Math.max(0, startX - 0.025);
-                    finalTop = Math.max(0, startY - 0.025);
-                    finalWidth = 0.05;
-                    finalHeight = 0.05;
+                    if (hiddenArea) {
+                        hiddenArea.value = JSON.stringify(areaData);
+                    }
+                    isDrawing = false;
                     
-                    if (finalLeft + finalWidth > 1) finalLeft = 1 - finalWidth;
-                    if (finalTop + finalHeight > 1) finalTop = 1 - finalHeight;
-                    
-                    // Atjaunot vizuālo rāmi
-                    selectionBox.style.left = (finalLeft * 100) + '%';
-                    selectionBox.style.top = (finalTop * 100) + '%';
-                    selectionBox.style.width = (finalWidth * 100) + '%';
-                    selectionBox.style.height = (finalHeight * 100) + '%';
-                }
+                    console.log('Iezīmēts:', areaData);
+                    console.log('Hidden value:', hiddenArea?.value);
+                });
 
-                const areaData = {
-                    x: finalLeft,
-                    y: finalTop,
-                    width: finalWidth,
-                    height: finalHeight
-                };
-                hiddenArea.value = JSON.stringify(areaData);
-                isSelecting = false;
-                
-                console.log('Iezīmētā zona:', areaData);
-            });
+                // Ja pele iziet no attēla
+                previewImg.addEventListener('mouseleave', function() {
+                    if (isDrawing) {
+                        isDrawing = false;
+                        if (hiddenArea && hiddenArea.value === '') {
+                            if (selectionBox) selectionBox.classList.remove('visible');
+                        }
+                    }
+                });
+            }
 
-            // Ja pele iziet no attēla - pārtrauc iezīmēšanu
-            previewImg.addEventListener('mouseleave', function() {
-                if (isSelecting) {
-                    isSelecting = false;
-                }
-            });
-
-            // Tālāk pogas pārbaude
+            // Tālāk poga
             if (nextBtn) {
                 nextBtn.addEventListener('click', function(e) {
                     if (evidenceCount < 2) {
@@ -390,6 +364,8 @@
                     }
                 });
             }
+            
+            console.log('JavaScript gatavs');
         });
     </script>
 </body>

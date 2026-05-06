@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
-    </style>
+
 </head>
 
 <body class="bg-dark text-light">
@@ -18,11 +18,10 @@
 
     <main class="container my-5">
 
-        <h1 class="text-center mb-4 fw-bold text-pink">
+        <h1 class="text-center mb-4 fw-bold">
             Lietas: <strong class="text-light">"{{ $case->title }}"</strong> aizdomās turamie
         </h1>
 
-        {{-- STEP INFO --}}
         <div class="mb-4">
             <div class="d-flex justify-content-between mb-2">
                 <span>2. solis no 4</span>
@@ -33,30 +32,32 @@
             </div>
         </div>
 
-        {{-- EXPLANATION --}}
         <div class="alert alert-dark border-0 mb-4">
             <div class="d-flex align-items-center gap-3">
-                <div class="display-6"><i class="fa-solid fa-user-secret"></i></div>
+                <div class="display-6"><i class="fa-solid fa-people-group"></i></div>
                 <div>
-                    Katrai lietai ir vajadzīgi <strong class="text-pink">aizdomās turamie</strong>. Tev jāpievieno vismaz 2 cilvēki,
+                    <strong>Detektīv, šeit tu vari izveidot varoņus!</strong><br>
+                    Katrai lietai ir vajadzīgi <strong>aizdomās turamie</strong>. Tev jāpievieno vismaz 2 cilvēki,
                     kurus spēlētāji turēs aizdomās par noziegumu.<br>
-                    Viens no viņiem ir <strong class="text-pink">īstais vainīgais</strong> - atzīmē viņu zemāk esošajā sarakstā.<br>
+                    Viens no viņiem ir <strong>īstais vainīgais</strong> - vienkārši <strong>uzklikšķini</strong> uz viņa kartītes, lai atzīmētu!<br>
+                <small> Pašlaik pievienoti: <span id="suspectCount">{{ count($suspects) }}</span></small>
                 </div>
             </div>
         </div>
 
         <div class="alert alert-secondary border-0 mb-4">
-            Izvēlētais vainīgais:
+            <i class="fa-solid fa-gavel"></i> Izvēlētais vainīgais:
             <strong id="selectedName">
                 {{ $case->answer_id ? $suspects->firstWhere('id', $case->answer_id)->name : 'Nav izvēlēts' }}
             </strong>
         </div>
 
-        {{-- AIZDOMĀS TURAMO SARAKSTS (ĀRPUS FORMAS) --}}
         <div class="card bg-secondary text-light border-0 mb-4">
             <div class="card-body">
-                <h5 class="mb-3">Aizdomās turamie</h5>
-
+                <h5 class="mb-3"><i class="fa-solid fa-list"></i> Aizdomās turamie</h5>
+                @if(count($suspects) == 0)
+                <p class="text-muted text-center py-3"><i class="fa-solid fa-folder-open"></i> Nav pievienotu aizdomās turamie</p>
+                @endif
                 @foreach($suspects as $suspect)
                 <div class="suspect-card w-100 mb-3 p-3 rounded d-flex gap-3 align-items-center"
                     data-id="{{ $suspect->id }}"
@@ -72,12 +73,12 @@
                     @else
                     <div class="rounded bg-dark d-flex align-items-center justify-content-center"
                         style="width:60px; height:60px;">
-                        <span class="text-secondary">📷</span>
+                        <span class="text-secondary"><i class="fa-solid fa-user"></i></span>
                     </div>
                     @endif
 
                     <div class="flex-grow-1">
-                        <strong>{{ $suspect->name }}</strong><br>
+                        <strong> {{ $suspect->name }}</strong><br>
                         <small class="text-light opacity-75">
                             {{ $suspect->description }}
                         </small>
@@ -88,34 +89,9 @@
             </div>
         </div>
 
-        {{-- FORMA VAINĪGĀ SAGLABĀŠANAI --}}
-        <div class="card bg-secondary text-light border-0 mb-4">
-            <div class="card-body">
-                <form method="POST" action="{{ route('cases.suspects.setAnswer', $case->id) }}" id="answerForm">
-                    @csrf
-
-                    @foreach($suspects as $suspect)
-                    <input type="radio"
-                        name="answer_id"
-                        value="{{ $suspect->id }}"
-                        id="suspect_{{ $suspect->id }}"
-                        class="d-none"
-                        {{ $case->answer_id == $suspect->id ? 'checked' : '' }}>
-                    @endforeach
-
-                    <div class="text-end">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fa-solid fa-floppy-disk"></i> Saglabāt vainīgo
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        {{-- FORMA JAUNU AIZDOMĀS TURAMO PIEVIENOŠANAI --}}
         <div class="card bg-secondary text-light border-0">
             <div class="card-body">
-                <h5 class="mb-3">Pievienot jaunu aizdomās turamo</h5>
+                <h5 class="mb-3"><i class="fa-solid fa-plus-circle"></i> Pievienot jaunu aizdomās turamo</h5>
 
                 <form method="POST"
                     action="{{ route('cases.suspects.store', $case->id) }}"
@@ -123,25 +99,25 @@
                     @csrf
 
                     <div class="mb-3">
-                        <label class="form-label">Vārds</label>
+                        <label class="form-label"><i class="fa-solid fa-user"></i> Vārds</label>
                         <input type="text" name="name"
                             class="form-control bg-dark text-light border-0"
                             required>
-                        <small class="text-light mt-1 d-block"> Iedomājies aizdomīgu tēlu. Vārds ir pirmais, ko spēlētājs ieraudzīs</small>
+                        <small class="text-light mt-1 d-block"><i class="fa-solid fa-info-circle"></i> Iedomājies aizdomīgu tēlu. Vārds ir pirmais, ko spēlētājs ieraudzīs</small>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Apraksts</label>
+                        <label class="form-label"><i class="fa-solid fa-align-left"></i> Apraksts</label>
                         <textarea name="description"
                             class="form-control bg-dark text-light border-0"
                             rows="3"></textarea>
                         <small class="text-light mt-1 d-block">
-                            Apraksti viņa izskatu, raksturu, uzvedību un iespējamo saistību ar noziegumu
+                            <i class="fa-solid fa-info-circle"></i> Apraksti viņa izskatu, raksturu, uzvedību un iespējamo saistību ar noziegumu
                         </small>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Attēls</label>
+                        <label class="form-label"><i class="fa-solid fa-image"></i> Attēls</label>
                         <div class="custom-file-input">
                             <input type="file"
                                 name="image"
@@ -152,19 +128,19 @@
                                 <span>Izvēlies failu</span>
                                 <span class="file-name">Nav izvēlēts fails</span>
                             </label>
-                            <small class="text-light mt-1 d-block">
-                                Pievieno attēlu, lai aizdomās turamais izskatītos reālistisks (JPG, PNG, GIF, max. 5MB) <br> Atbalstītie formāti: JPG, PNG, GIF (max. 5MB)
-                            </small>
                         </div>
+                        <small class="text-light mt-1 d-block">
+                            <i class="fa-solid fa-camera"></i> Pievieno attēlu, lai aizdomās turamais izskatītos reālistisks (JPG, PNG, GIF, max. 5MB)
+                        </small>
                     </div>
 
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between mt-4">
                         <a href="{{ route('cases.suspects', $case->id) }}"
                             class="btn btn-outline-light">
                             <i class="fa-solid fa-circle-arrow-left"></i> Atpakaļ
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            <i class="fa-solid fa-circle-plus"></i> Pievienot
+                            <i class="fa-solid fa-circle-plus"></i> Pievienot aizdomās turamo
                         </button>
                     </div>
 
@@ -172,7 +148,6 @@
             </div>
         </div>
 
-        {{-- NEXT STEP --}}
         <div class="text-end mt-4 d-flex justify-content-between">
             <a href="{{ route('cases.my-cases') }}"
                 class="btn btn-outline-light">
@@ -191,47 +166,60 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Saglabāt vainīgo formu apstrāde ar AJAX, lai nerodas redirect
-            const answerForm = document.getElementById('answerForm');
-            if (answerForm) {
-                answerForm.addEventListener('submit', function(e) {
-                    e.preventDefault(); // Nekoļauj formai atstāt lapu
+            const cards = document.querySelectorAll('.suspect-card');
+            const nextBtn = document.getElementById('nextBtn');
+            const selectedName = document.getElementById('selectedName');
+            let suspectsCount = parseInt('{{ count($suspects) }}');
 
-                    const formData = new FormData(this);
+            cards.forEach((card) => {
+                const suspectId = card.dataset.id;
+                const currentAnswerId = '{{ $case->answer_id }}';
+                if (suspectId == currentAnswerId) {
+                    card.classList.add('selected');
+                }
+            });
 
-                    fetch(this.action, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
+            function saveGuilty(suspectId, suspectName) {
+                fetch('{{ route("cases.suspects.setAnswer", $case->id) }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            answer_id: suspectId
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Parādām paziņojumu
-                                showToast('success', 'Vainīgais saglabāts!');
-                            } else {
-                                showToast('error', 'Kļūda saglabājot vainīgo');
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showToast('success', `"${suspectName}" atzīmēts kā vainīgais!`);
+                            selectedName.textContent = suspectName;
+
+                            if (suspectsCount >= 2) {
+                                nextBtn.classList.remove('disabled');
+                                nextBtn.removeAttribute('disabled');
                             }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
+                        } else {
                             showToast('error', 'Kļūda saglabājot vainīgo');
-                        });
-                });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToast('error', 'Kļūda saglabājot vainīgo');
+                    });
             }
 
-            // Paziņojumu funkcija
             function showToast(type, message) {
                 const toast = document.createElement('div');
                 toast.className = `toast-notification ${type}`;
                 toast.innerHTML = `
-        <div class="toast-content">
-            <i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
-            <span>${message}</span>
-        </div>
-    `;
+                    <div class="toast-content">
+                        <i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
                 document.body.appendChild(toast);
 
                 setTimeout(() => {
@@ -243,59 +231,26 @@
                     setTimeout(() => toast.remove(), 300);
                 }, 3000);
             }
-            const cards = document.querySelectorAll('.suspect-card');
-            const nextBtn = document.getElementById('nextBtn');
-            const selectedName = document.getElementById('selectedName');
-            const suspectsCount = parseInt('{{ count($suspects) }}');
-            const radios = document.querySelectorAll('input[name="answer_id"]');
 
-            // Ja jau ir izvēlēts (pie ielādes)
-            cards.forEach((card, index) => {
-                const suspectId = card.dataset.id;
-                const radio = document.getElementById(`suspect_${suspectId}`);
-                if (radio && radio.checked) {
-                    card.classList.add('selected');
-                }
-            });
-
-            // Kartīšu klikšķu apstrāde (tikai vizuāla, bez formas submit)
             cards.forEach(card => {
                 card.addEventListener('click', function(e) {
-                    // Neaktivizēt, ja klikšķis uz pogas vai formas elementiem
                     if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'A') {
                         return;
                     }
 
                     const suspectId = this.dataset.id;
-                    const radio = document.getElementById(`suspect_${suspectId}`);
+                    const suspectName = this.dataset.name;
 
-                    if (radio) {
-                        // Noņem 'selected' no visām kartītēm
-                        cards.forEach(c => c.classList.remove('selected'));
+                    cards.forEach(c => c.classList.remove('selected'));
 
-                        // Pievieno 'selected' klikšķinātajai kartītei
-                        this.classList.add('selected');
+                    this.classList.add('selected');
 
-                        // Atzīmē radio pogu
-                        radios.forEach(r => r.checked = false);
-                        radio.checked = true;
-
-                        // Atjauno tekstu par izvēlēto vainīgo
-                        if (selectedName) {
-                            selectedName.textContent = this.dataset.name;
-                        }
-                    }
-
-                    // Atjauno pogas "Tālāk" stāvokli
-                    updateNextButton();
+                    saveGuilty(suspectId, suspectName);
                 });
             });
 
-            // Funkcija pogas "Tālāk" atjaunošanai
             function updateNextButton() {
-                const selected = document.querySelector('input[name="answer_id"]:checked');
-
-                if (suspectsCount >= 2 && selected) {
+                if (suspectsCount >= 2 && '{{ $case->answer_id }}' !== '') {
                     nextBtn.classList.remove('disabled');
                     nextBtn.removeAttribute('disabled');
                 } else {
@@ -304,10 +259,8 @@
                 }
             }
 
-            // Sākotnējais pogas stāvoklis
             updateNextButton();
 
-            // File input name display
             const fileInput = document.getElementById('imageInput');
             if (fileInput) {
                 fileInput.addEventListener('change', function(e) {

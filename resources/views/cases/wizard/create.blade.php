@@ -17,7 +17,7 @@
 
     <main class="container my-5">
 
-        <h1 class="text-center mb-4 fw-bold text-pink">
+        <h1 class="text-center mb-4 fw-bold">
             Jaunas lietas izveide
         </h1>
 
@@ -37,7 +37,7 @@
                 <div>
                     <strong>Sveicināts, detektīv!</strong><br>
                     Tu esi uzsācis jaunas krimināllietas izveidi. Šis būs noslēpums, ko citi spēlētāji centīsies atrisināt.<br>
-                    Vispirms piešķir lietai <strong class="text-pink">nosaukumu</strong>, uzraksti <strong class="text-pink">apsaucošu aprakstu</strong> un izvēlies atbilstošu <strong class="text-pink">žanru</strong>.<br>
+                    Vispirms piešķir lietai <strong>nosaukumu</strong>, uzraksti <strong>apsaucošu aprakstu</strong> un izvēlies atbilstošu <strong>žanru</strong>.<br>
                     <small class="text-secondary"><i class="fa-solid fa-lightbulb" style="color: #dabe69;"></i> Padoms: Jo detaļām bagātāks stāsts, jo interesantāka būs spēle!</small>
                 </div>
             </div>
@@ -50,31 +50,31 @@
                     @csrf
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Nosaukums</label>
+                        <label class="form-label fw-bold"><i class="fa-solid fa-pen"></i> Nosaukums</label>
                         <input type="text"
                             name="title"
                             class="form-control bg-dark text-light border-0 rounded"
                             placeholder="Ievadi lietas nosaukumu, piem., 'Rīgas noslēpums'"
                             required>
                         <small class="text-light mt-1 d-block">
-                            Nosaukumam jābūt oriģinālam un atmiņā paliekošam
+                            <i class="fa-solid fa-info-circle"></i> Nosaukumam jābūt oriģinālam un atmiņā paliekošam
                         </small>
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Apraksts</label>
+                        <label class="form-label fw-bold"><i class="fa-solid fa-align-left"></i> Apraksts</label>
                         <textarea name="description"
                             rows="5"
                             class="form-control bg-dark text-light border-0 rounded"
                             placeholder="Apraksti lietas sižetu, noziegumu un galvenos notikumus..."
                             required></textarea>
                         <small class="text-light mt-1 d-block">
-                            Detalizēts apraksts palīdzēs spēlētājam iegrimt stāstā
+                            <i class="fa-solid fa-info-circle"></i> Detalizēts apraksts palīdzēs spēlētājam iegrimt stāstā
                         </small>
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Žanrs</label>
+                        <label class="form-label fw-bold"><i class="fa-solid fa-film"></i> Žanrs</label>
                         <select name="genre_id"
                             class="form-select bg-dark text-light border-0 rounded"
                             required>
@@ -86,7 +86,7 @@
                             @endforeach
                         </select>
                         <small class="text-light mt-1 d-block">
-                            Žanrs noteiks lietas atmosfēru un stilu
+                            <i class="fa-solid fa-info-circle"></i> Žanrs noteiks lietas atmosfēru un stilu
                         </small>
                     </div>
 

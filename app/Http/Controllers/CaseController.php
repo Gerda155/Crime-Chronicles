@@ -350,14 +350,22 @@ class CaseController extends Controller
     public function setAnswer(Request $request, CaseModel $case)
     {
         $request->validate([
-            'answer_id' => 'required|exists:suspects,id',
+            'answer_id' => 'required|exists:suspects,id'
         ]);
 
-        $case->update([
-            'answer_id' => $request->answer_id,
-        ]);
+        $case->answer_id = $request->answer_id;
+        $case->save();
 
-        return redirect()->route('cases.evidence', $case->id);
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Vainīgais saglabāts!',
+                'answer_id' => $case->answer_id,
+                'suspect_name' => $case->suspect->name ?? null
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Vainīgais saglabāts!');
     }
 
     public function evidence(CaseModel $case)
