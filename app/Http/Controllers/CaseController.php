@@ -332,9 +332,7 @@ class CaseController extends Controller
         $imagePath = null;
 
         if ($request->hasFile('image')) {
-
             $path = $request->file('image')->store('cases/suspects', 'public');
-
             $imagePath = 'storage/' . $path;
         }
 
@@ -373,7 +371,6 @@ class CaseController extends Controller
     {
         $request->validate([
             'description' => 'required|string',
-            'type' => 'nullable|string',
             'file' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx',
             'key_object_area' => 'nullable|json',
         ]);
@@ -381,8 +378,7 @@ class CaseController extends Controller
         $filePath = null;
 
         if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $path = $file->store('cases/evidence', 'public');
+            $path = $request->file('file')->store('cases/evidence', 'public');
             $filePath = 'storage/' . $path;
         }
 
@@ -393,7 +389,9 @@ class CaseController extends Controller
             'key_object_area' => $request->key_object_area,
         ]);
 
-        return redirect()->route('cases.evidence', $case->id);
+        return redirect()
+            ->route('cases.evidence', $case->id)
+            ->with('status', 'Pierādījums pievienots!');
     }
 
     public function questions(CaseModel $case)

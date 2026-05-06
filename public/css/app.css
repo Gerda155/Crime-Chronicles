@@ -3707,6 +3707,42 @@ li {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
+.suspect-card {
+  transition: 0.2s;
+}
+
+.suspect-card:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.suspect-card.selected {
+  border: 2px solid #0d6efd !important;
+  background-color: rgba(13, 110, 253, 0.15);
+  box-shadow: 0 0 10px rgba(13, 110, 253, 0.5);
+}
+
+.image-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+#previewImage {
+    width: 100%;
+    display: block;
+    cursor: crosshair;
+    border-radius: 8px;
+}
+
+.selection-box {
+    position: absolute;
+    border: 2px solid #ff4da6;
+    background: rgba(255, 77, 166, 0.25);
+    pointer-events: none;
+    z-index: 10;
+}
+
+
 
 @media (prefers-color-scheme: dark) {
   .dark\:\[\&_svg\]\:\!text-white svg {
