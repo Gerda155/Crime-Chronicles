@@ -20,7 +20,7 @@
 
     <main class="container my-5">
 
-        <h1 class="text-center mb-4 fw-bold text-pink">
+        <h1 class="text-center mb-4 fw-bold">
             <i class="fa-solid fa-folder-open me-2"></i>
             Manas lietas
         </h1>
