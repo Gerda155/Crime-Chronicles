@@ -152,46 +152,23 @@
 
         {{-- TABULA --}}
         <div class="table-responsive rounded shadow-sm">
-
             <table class="table table-dark table-hover align-middle mb-0">
-
                 <thead class="table-dark text-uppercase text-muted small">
                     <tr>
                         <th>#</th>
-                        <th>
-                            <i class="fa-solid fa-folder me-1"></i>
-                            Nosaukums
-                        </th>
+                        <th><i class="fa-solid fa-folder me-1"></i>Nosaukums</th>
 
-                        <th>
-                            <i class="fa-solid fa-align-left me-1"></i>
-                            Apraksts
-                        </th>
+                        <th><i class="fa-solid fa-align-left me-1"></i>Apraksts</th>
 
-                        <th>
-                            <i class="fa-solid fa-masks-theater me-1"></i>
-                            Žanrs
-                        </th>
+                        <th><i class="fa-solid fa-masks-theater me-1"></i>Žanrs</th>
 
-                        <th>
-                            <i class="fa-solid fa-star me-1"></i>
-                            Vērtējums
-                        </th>
+                        <th><i class="fa-solid fa-star me-1"></i>Vērtējums</th>
 
-                        <th>
-                            <i class="fa-solid fa-calendar me-1"></i>
-                            Izveidots
-                        </th>
+                        <th><i class="fa-solid fa-calendar me-1"></i>Izveidots</th>
 
-                        <th>
-                            <i class="fa-solid fa-toggle-on me-1"></i>
-                            Statuss
-                        </th>
+                        <th><i class="fa-solid fa-toggle-on me-1"></i>Statuss</th>
 
-                        <th>
-                            <i class="fa-solid fa-gear me-1"></i>
-                            Darbības
-                        </th>
+                        <th><i class="fa-solid fa-gear me-1"></i>Darbības</th>
                     </tr>
                 </thead>
 
@@ -203,17 +180,11 @@
 
                         <td>{{ $loop->iteration }}</td>
 
-                        <td class="fw-bold">
-                            {{ $case->title }}
-                        </td>
+                        <td class="fw-bold">{{ $case->title }}</td>
 
-                        <td>
-                            {{ Str::limit($case->description, 60) }}
-                        </td>
+                        <td>{{ Str::limit($case->description, 60) }}</td>
 
-                        <td>
-                            {{ $case->genre->name ?? '-' }}
-                        </td>
+                        <td>{{ $case->genre->name ?? '-' }}</td>
 
                         <td>
 
@@ -228,17 +199,11 @@
 
                                     @endfor
                             </div>
-
-                            <small class="text-secondary">
-                                {{ number_format($case->rating ?? 0, 1) }}
-                            </small>
-
+                            <small class="text-secondary">{{ number_format($case->rating ?? 0, 1) }}</small>
                         </td>
 
                         <td>
-                            <small>
-                                {{ $case->created_at->format('d.m.Y') }}
-                            </small>
+                            <small>{{ $case->created_at->format('d.m.Y') }}</small>
                         </td>
 
                         <td>
@@ -248,8 +213,7 @@
                             <form method="POST" action="{{ route('cases.toggle-status', $case->id) }}">
                                 @csrf
                                 @method('PATCH')
-
-                                <button class="status-switch {{ $case->status === 'active' ? 'active' : '' }}"type="submit">
+                                <button class="status-switch {{ $case->status === 'active' ? 'active' : '' }}" type="submit">
                                     <span class="switch-circle"></span>
                                 </button>
 
@@ -271,102 +235,75 @@
                             <a href="{{ route('cases.edit', $case->id) }}"
                                 class="btn btn-sm btn-outline-primary rounded"
                                 title="Rediģēt">
-
                                 <i class="fa-solid fa-pen"></i>
                             </a>
 
                             <button type="button"
                                 class="btn btn-sm btn-outline-danger rounded"
+                                data-url="{{ route('cases.destroy', $case->id) }}"
+                                data-title="{{ $case->title }}"
                                 data-bs-toggle="modal"
-                                data-bs-target="#deleteModal{{ $case->id }}"
+                                data-bs-target="#deleteModal"
                                 title="Dzēst">
-
                                 <i class="fa-solid fa-trash"></i>
                             </button>
 
-                            {{-- DELETE MODAL --}}
-                            <div class="modal fade"
-                                id="deleteModal{{ $case->id }}"
-                                tabindex="-1"
-                                aria-hidden="true">
-
-                                <div class="modal-dialog modal-dialog-centered">
-
-                                    <div class="modal-content bg-secondary text-light rounded">
-
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">
-                                                <i class="fa-solid fa-trash me-2 text-danger"></i>
-                                                Apstiprināt dzēšanu
-                                            </h5>
-
-                                            <button type="button"
-                                                class="btn-close btn-close-white"
-                                                data-bs-dismiss="modal">
-                                            </button>
-                                        </div>
-
-                                        <div class="modal-body">
-                                            Vai tiešām vēlies dzēst lietu
-                                            <strong>"{{ $case->title }}"</strong>?
-                                        </div>
-
-                                        <div class="modal-footer">
-
-                                            <button type="button"
-                                                class="btn btn-outline-light rounded"
-                                                data-bs-dismiss="modal">
-                                                Atcelt
-                                            </button>
-
-                                            <form action="{{ route('cases.destroy', $case->id) }}"
-                                                method="POST">
-
-                                                @csrf
-                                                @method('DELETE')
-
-                                                <button type="submit"
-                                                    class="btn btn-outline-danger rounded">
-
-                                                    <i class="fa-solid fa-trash me-1"></i>
-                                                    Dzēst
-                                                </button>
-                                            </form>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
                         </td>
-
                     </tr>
 
                     @empty
 
                     <tr>
                         <td colspan="8" class="text-center text-secondary py-5">
-
-                            <i class="fa-solid fa-folder-open fa-3x mb-3 d-block"></i>
-
-                            Nav izveidotu lietu
-
+                            <i class="fa-solid fa-folder-open fa-3x mb-3 d-block"></i> Nav izveidotu lietu
                         </td>
                     </tr>
 
                     @endforelse
 
                 </tbody>
-
             </table>
-
         </div>
-
     </main>
 
+    {{-- МОДАЛКА ПОДТВЕРЖДЕНИЯ УДАЛЕНИЯ --}}
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Apstiprināt dzēšanu</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Vai tiešām vēlies dzēst šo ierakstu? Šī darbība ir neatgriezeniska!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded" data-bs-dismiss="modal">Atcelt</button>
+                    <form id="deleteForm" method="POST" class="m-0">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger rounded">Dzēst</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteForm = document.getElementById('deleteForm');
+            const deleteModal = document.getElementById('deleteModal');
+
+            // Обработчик события перед показом модалки
+            deleteModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const deleteUrl = button.getAttribute('data-url');
+
+                // Устанавливаем action формы
+                deleteForm.action = deleteUrl;
+            });
+        });
+    </script>
     @include('partials.footer')
 
 </body>
