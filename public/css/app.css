@@ -2487,11 +2487,6 @@ main {
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-}
-
 .card-title {
   font-size: 1.2rem;
   font-weight: 600;
@@ -2507,12 +2502,6 @@ main {
 
 .search-sort {
   margin-bottom: 30px;
-}
-
-.card:hover {
-  cursor: pointer;
-  transform: translateY(-5px);
-  transition: 0.3s;
 }
 
 li {
@@ -3722,24 +3711,70 @@ li {
 }
 
 .image-wrapper {
-    position: relative;
-    display: inline-block;
-    width: 100%;
+  position: relative;
+  display: inline-block;
+  width: 100%;
 }
 
 #previewImage {
-    width: 100%;
-    display: block;
-    cursor: crosshair;
-    border-radius: 8px;
+  width: 100%;
+  display: block;
+  cursor: crosshair;
+  border-radius: 8px;
 }
 
 .selection-box {
+  position: absolute;
+  border: 2px solid #ff4da6;
+  background: rgba(255, 77, 166, 0.25);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.status-switch {
+    width: 58px;
+    height: 30px;
+    border-radius: 50px;
+    border: none;
+    position: relative;
+    background: #dc3545;
+    transition: .3s ease;
+    cursor: pointer;
+}
+
+.status-switch.active {
+    background: #198754;
+}
+
+.switch-circle {
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
     position: absolute;
-    border: 2px solid #ff4da6;
-    background: rgba(255, 77, 166, 0.25);
-    pointer-events: none;
-    z-index: 10;
+    top: 3px;
+    left: 4px;
+    transition: .3s ease;
+}
+
+.status-switch.active .switch-circle {
+    left: 30px;
+}
+
+.status-switch:hover {
+    transform: scale(1.05);
+}
+
+.status-pending {
+  background: rgba(207, 201, 36, 0.15);
+  color: #ffc107;
+  border-radius: 10px;
+  padding: 4px 8px;
+}
+
+.rating-stars {
+  color: #ffc107;
+  font-size: 14px;
 }
 
 

@@ -441,4 +441,20 @@ class CaseController extends Controller
         return redirect()->route('cases.my-cases')
             ->with('status', 'Lieta nosūtīta uz moderāciju. Drīz tā parādīsies vietnē!');
     }
+
+    public function toggleStatus(CaseModel $case)
+    {
+        if ($case->status === 'pending') {
+            return back();
+        }
+
+        $case->status =
+            $case->status === 'active'
+            ? 'inactive'
+            : 'active';
+
+        $case->save();
+
+        return back()->with('status', 'Statuss atjaunināts');
+    }
 }

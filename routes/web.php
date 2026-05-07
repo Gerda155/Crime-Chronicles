@@ -56,6 +56,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/cases/{case}/questions', [CaseController::class, 'storeQuestion'])->name('cases.questions.store');
 
     Route::post('/cases/{case}/submit-final', [CaseController::class, 'submitFinal'])->name('cases.submit.final');
+
+    Route::patch('/cases/{case}/toggle-status', [CaseController::class, 'toggleStatus'])->name('cases.toggle-status');
 });
 
 Route::get('/cases', [CaseController::class, 'index'])->name('cases.index');
