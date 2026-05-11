@@ -60,6 +60,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/cases/{case}/toggle-status', [CaseController::class, 'toggleStatus'])->name('cases.toggle-status');
 
     Route::get('/cases/{id}/comments', [CaseController::class, 'comments'])->name('cases.comments');
+
+    Route::get('/my-ratings', [RatingController::class, 'index'])->name('ratings.index');
+    Route::get('/my-ratings/{id}/edit', [RatingController::class, 'edit'])->name('ratings.edit');
+    Route::put('/my-ratings/{id}', [RatingController::class, 'update'])->name('ratings.update');
+    Route::delete('/my-ratings/{id}', [RatingController::class, 'destroy'])->name('ratings.destroy');
 });
 
 Route::get('/cases', [CaseController::class, 'index'])->name('cases.index');

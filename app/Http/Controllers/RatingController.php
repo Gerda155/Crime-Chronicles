@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Rating;
+use App\Models\User;
 use App\Models\CaseModel;
 use Illuminate\Support\Facades\Auth;
 
 class RatingController extends Controller
 {
-
     public function store(Request $request)
     {
         $request->validate([
@@ -18,7 +18,7 @@ class RatingController extends Controller
             'comment' => 'nullable|string'
         ]);
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         $completed = $user->attempts()
@@ -45,7 +45,55 @@ class RatingController extends Controller
         $case->rating = Rating::where('case_id', $case->id)->avg('rating');
         $case->save();
 
-
         return back()->with('success', 'Paldies par vērtējumu!');
+    }
+
+    public function index()
+    {
+        $ratings = Rating::with('case')
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
+        return view('ratings.index', compact('ratings'));
+    }
+
+    public function edit($id)
+    {
+        $rating = Rating::where('user_id', auth()->id())
+            ->where('id', $id)
+            ->firstOrFail();
+
+        return view('ratings.edit', compact('rating'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string'
+        ]);
+
+        $rating = Rating::where('user_id', auth()->id())
+            ->where('id', $id)
+            ->firstOrFail();
+
+        $rating->update([
+            'rating' => $request->rating,
+            'comment' => $request->comment,
+        ]);
+
+        return redirect()->route('ratings.index')->with('status', 'Atjaunots!');
+    }
+
+    public function destroy($id)
+    {
+        $rating = Rating::where('user_id', auth()->id())
+            ->where('id', $id)
+            ->firstOrFail();
+
+        $rating->delete();
+
+        return back()->with('status', 'Izdzēsts!');
     }
 }
