@@ -23,8 +23,9 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            CasesTableSeeder::class
+            GenreSeeder::class,
+            AchievementSeeder::class,
+            CaseSeeder::class,
         ]);
-
     }
 }

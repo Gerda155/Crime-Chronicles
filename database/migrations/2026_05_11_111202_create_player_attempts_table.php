@@ -9,10 +9,21 @@ return new class extends Migration {
     {
         Schema::create('player_attempts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('case_id')->constrained('cases')->onDelete('cascade');
-            $table->unsignedBigInteger('suspect_id');
-            $table->boolean('is_correct')->default(false);
+
+            $table->foreignId('user_id')
+                ->constrained()
+                ->onDelete('cascade');
+
+            $table->foreignId('case_id')
+                ->constrained()
+                ->onDelete('cascade');
+
+            $table->foreignId('suspect_id')
+                ->constrained()
+                ->onDelete('cascade');
+
+            $table->boolean('is_correct');
+
             $table->timestamps();
         });
     }
