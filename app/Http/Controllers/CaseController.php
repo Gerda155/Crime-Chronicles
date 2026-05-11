@@ -457,4 +457,11 @@ class CaseController extends Controller
 
         return back()->with('status', 'Statuss atjaunināts');
     }
+
+    public function comments($id)
+    {
+        $case = CaseModel::with('ratings.user')->findOrFail($id);
+
+        return view('cases.comments', compact('case'));
+    }
 }

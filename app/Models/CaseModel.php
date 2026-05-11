@@ -68,4 +68,9 @@ class CaseModel extends Model
     {
         return $this->hasMany(Question::class, 'case_id');
     }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'case_id');
+    }
 }

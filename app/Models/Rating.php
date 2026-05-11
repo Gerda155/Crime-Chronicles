@@ -7,10 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class Rating extends Model
 {
     protected $fillable = [
-    'user_id',
-    'case_id',
-    'rating',
-    'comment'
-];
+        'user_id',
+        'case_id',
+        'rating',
+        'comment'
+    ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function case()
+    {
+        return $this->belongsTo(CaseModel::class);
+    }
 }

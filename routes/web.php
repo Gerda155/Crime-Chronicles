@@ -58,6 +58,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/cases/{case}/submit-final', [CaseController::class, 'submitFinal'])->name('cases.submit.final');
 
     Route::patch('/cases/{case}/toggle-status', [CaseController::class, 'toggleStatus'])->name('cases.toggle-status');
+
+    Route::get('/cases/{id}/comments', [CaseController::class, 'comments'])->name('cases.comments');
 });
 
 Route::get('/cases', [CaseController::class, 'index'])->name('cases.index');

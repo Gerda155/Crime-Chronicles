@@ -232,6 +232,12 @@
 
                         <td>
 
+                            <a href="{{ route('cases.comments', $case->id) }}"
+                                class="btn btn-sm btn-outline-info rounded"
+                                title="Komentāri">
+                                <i class="fa-solid fa-comments"></i>
+                            </a>
+
                             <a href="{{ route('cases.edit', $case->id) }}"
                                 class="btn btn-sm btn-outline-primary rounded"
                                 title="Rediģēt">
