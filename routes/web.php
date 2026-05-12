@@ -2,6 +2,10 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CaseController;
+use App\Http\Controllers\CasePlayController;
+use App\Http\Controllers\CaseSuspectController;
+use App\Http\Controllers\CaseEvidenceController;
+use App\Http\Controllers\CaseQuestionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\ModeratorController;
@@ -27,12 +31,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/my-cases', [CaseController::class, 'myCases'])->name('cases.my-cases');
-    Route::get('/cases/{case}/play', [CaseController::class, 'play'])->name('cases.play');
-    Route::post('/cases/{case}/submit', [CaseController::class, 'submit'])->name('cases.submit');
+    Route::get('/cases/{case}/play', [CasePlayController::class, 'play'])->name('cases.play');
+    Route::post('/cases/{case}/submit', [CasePlayController::class, 'submit'])->name('cases.submit');
     Route::get('/cases/{id}/edit', [CaseController::class, 'edit'])->name('cases.edit');
     Route::put('/cases/{id}', [CaseController::class, 'update'])->name('cases.update');
     Route::delete('/cases/{id}', [CaseController::class, 'destroy'])->name('cases.destroy');
-    Route::post('/progress/update', [CaseController::class, 'updateProgress']);
+    Route::post('/progress/update', [CasePlayController::class, 'updateProgress']);
 
     Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 
@@ -40,20 +44,20 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/ratings', [RatingController::class, 'store'])->name('ratings.store');
 
-    Route::get('/tutorial', [CaseController::class, 'tutorial'])->name('cases.tutorial');
+    Route::get('/tutorial', [CasePlayController::class, 'tutorial'])->name('cases.tutorial');
 
     Route::get('/cases/create', [CaseController::class, 'create'])->name('user.cases.create');
     Route::post('/cases', [CaseController::class, 'store'])->name('user.cases.store');
 
-    Route::get('/cases/{case}/suspects', [CaseController::class, 'suspects'])->name('cases.suspects');
-    Route::post('/cases/{case}/suspects', [CaseController::class, 'storeSuspect'])->name('cases.suspects.store');
-    Route::post('/cases/{case}/set-answer', [CaseController::class, 'setAnswer'])->name('cases.suspects.setAnswer');
+    Route::get('/cases/{case}/suspects', [CaseSuspectController::class, 'suspects'])->name('cases.suspects');
+    Route::post('/cases/{case}/suspects', [CaseSuspectController::class, 'storeSuspect'])->name('cases.suspects.store');
+    Route::post('/cases/{case}/set-answer', [CaseSuspectController::class, 'setAnswer'])->name('cases.suspects.setAnswer');
 
-    Route::get('/cases/{case}/evidence', [CaseController::class, 'evidence'])->name('cases.evidence');
-    Route::post('/cases/{case}/evidence', [CaseController::class, 'storeEvidence'])->name('cases.evidence.store');
+    Route::get('/cases/{case}/evidence', [CaseEvidenceController::class, 'evidence'])->name('cases.evidence');
+    Route::post('/cases/{case}/evidence', [CaseEvidenceController::class, 'storeEvidence'])->name('cases.evidence.store');
 
-    Route::get('/cases/{case}/questions', [CaseController::class, 'questions'])->name('cases.questions');
-    Route::post('/cases/{case}/questions', [CaseController::class, 'storeQuestion'])->name('cases.questions.store');
+    Route::get('/cases/{case}/questions', [CaseQuestionController::class, 'questions'])->name('cases.questions');
+    Route::post('/cases/{case}/questions', [CaseQuestionController::class, 'storeQuestion'])->name('cases.questions.store');
 
     Route::post('/cases/{case}/submit-final', [CaseController::class, 'submitFinal'])->name('cases.submit.final');
 

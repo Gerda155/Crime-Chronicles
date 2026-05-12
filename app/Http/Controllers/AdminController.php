@@ -64,7 +64,7 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Lietotājs dzēsts!');
     }
 
-    public function restoreUser($id)
+    public function restoreUser(int $id)
     {
         $user = User::withTrashed()->findOrFail($id);
         $user->restore();
