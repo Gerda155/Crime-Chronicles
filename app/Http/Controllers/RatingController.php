@@ -51,30 +51,30 @@ class RatingController extends Controller
     public function index()
     {
         $ratings = Rating::with('case')
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->latest()
             ->get();
 
         return view('ratings.index', compact('ratings'));
     }
 
-    public function edit($id)
+    public function edit(int $id)
     {
-        $rating = Rating::where('user_id', auth()->id())
+        $rating = Rating::where('user_id', Auth::id())
             ->where('id', $id)
             ->firstOrFail();
 
         return view('ratings.edit', compact('rating'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string'
         ]);
 
-        $rating = Rating::where('user_id', auth()->id())
+        $rating = Rating::where('user_id', Auth::id())
             ->where('id', $id)
             ->firstOrFail();
 
@@ -86,9 +86,9 @@ class RatingController extends Controller
         return redirect()->route('ratings.index')->with('status', 'Atjaunots!');
     }
 
-    public function destroy($id)
+    public function destroy(int $id)
     {
-        $rating = Rating::where('user_id', auth()->id())
+        $rating = Rating::where('user_id', Auth::id())
             ->where('id', $id)
             ->firstOrFail();
 

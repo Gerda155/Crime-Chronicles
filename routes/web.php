@@ -84,6 +84,7 @@ Route::middleware(['auth', ModeratorMiddleware::class])
             Route::put('/{case}/activate', [ModeratorController::class, 'activateCase'])->name('cases.activate');
             Route::delete('/{case}', [ModeratorController::class, 'destroyCase'])->name('cases.destroy');
             Route::post('/{case}/restore', [ModeratorController::class, 'restoreCase'])->name('cases.restore');
+            Route::put('/{id}/tutorial', [ModeratorController::class, 'setTutorial'])->name('cases.setTutorial');
         });
 
         Route::prefix('users')->group(function () {

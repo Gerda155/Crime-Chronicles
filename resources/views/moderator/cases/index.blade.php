@@ -62,6 +62,20 @@
                         <td>{{ $case->genre->name ?? '-' }}</td>
                         <td>{{ $case->status === 'inactive' ? 'Neaktīvs' : 'Aktīvs' }}</td>
                         <td class="d-flex flex-wrap gap-1">
+                            <form action="{{ route('moderator.cases.setTutorial', $case->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+
+                                <button type="button"
+                                    class="btn btn-sm {{ $case->is_tutorial ? 'btn-success' : 'btn-outline-info' }} rounded"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#tutorialModal"
+                                    data-action="{{ route('moderator.cases.setTutorial', $case->id) }}">
+
+                                    {{ $case->is_tutorial ? 'Tutorial' : 'Padarīt par tutorial' }}
+                                </button>
+                            </form>
+
                             <a href="{{ route('moderator.cases.edit', $case->id) }}" class="btn btn-sm btn-outline-primary rounded">Rediģēt</a>
 
                             <form action="{{ $case->status === 'inactive' 
@@ -128,15 +142,56 @@
         </div>
     </div>
 
+    <div class="modal fade" id="tutorialModal" tabindex="-1" aria-labelledby="tutorialModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tutorialModalLabel">Tutorial apstiprināšana</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    Sistēmā vienlaicīgi var būt tikai viens tutorial.
+                    Vai tiešām vēlies šo lietu iestatīt kā tutorial?
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded" data-bs-dismiss="modal">
+                        Atcelt
+                    </button>
+
+                    <form id="tutorialForm" method="POST">
+                        @csrf
+                        @method('PUT')
+
+                        <button type="submit" class="btn btn-info rounded">
+                            Apstiprināt
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const deleteModal = document.getElementById('deleteModal');
             deleteModal.addEventListener('show.bs.modal', function(event) {
-                const button = event.relatedTarget; 
-                const action = button.getAttribute('data-action'); 
+                const button = event.relatedTarget;
+                const action = button.getAttribute('data-action');
                 const form = deleteModal.querySelector('#deleteForm');
-                form.action = action; 
+                form.action = action;
             });
+        });
+
+        const tutorialModal = document.getElementById('tutorialModal');
+
+        tutorialModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const action = button.getAttribute('data-action');
+
+            const form = tutorialModal.querySelector('#tutorialForm');
+            form.action = action;
         });
     </script>
 

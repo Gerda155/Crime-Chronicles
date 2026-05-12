@@ -489,7 +489,7 @@ class ModeratorController extends Controller
             ->with('success', 'Rangs izveidots!');
     }
 
-    public function updateRang(Request $request, $id)
+    public function updateRang(Request $request, int $id)
     {
         $rang = Rang::findOrFail($id);
 
@@ -511,7 +511,7 @@ class ModeratorController extends Controller
             ->with('success', 'Rangs atjaunināts!');
     }
 
-    public function destroyRang($id)
+    public function destroyRang(int $id)
     {
         $rang = Rang::findOrFail($id);
         $rang->delete();
@@ -520,7 +520,7 @@ class ModeratorController extends Controller
             ->with('success', 'Rangs dzēsts!');
     }
 
-    public function deactivateRang($id)
+    public function deactivateRang(int $id)
     {
         $rang = Rang::findOrFail($id);
         $rang->update(['status' => 'inactive']);
@@ -529,7 +529,7 @@ class ModeratorController extends Controller
             ->with('success', 'Rangs deaktivēts!');
     }
 
-    public function activateRang($id)
+    public function activateRang(int $id)
     {
         $rang = Rang::findOrFail($id);
         $rang->update(['status' => 'active']);
@@ -538,11 +538,25 @@ class ModeratorController extends Controller
             ->with('success', 'Rangs aktivēts!');
     }
 
-    public function restoreRang($id)
+    public function restoreRang(int $id)
     {
         $rang = Rang::withTrashed()->findOrFail($id);
         $rang->restore();
 
         return back()->with('success', 'Rangs atjaunots!');
+    }
+
+    public function setTutorial(int $id)
+    {
+        CaseModel::where('is_tutorial', 1)->update([
+            'is_tutorial' => 0
+        ]);
+
+        $case = CaseModel::findOrFail($id);
+
+        $case->is_tutorial = 1;
+        $case->save();
+
+        return back()->with('success', 'Tutorial veiksmīgi atjaunināts!');
     }
 }
