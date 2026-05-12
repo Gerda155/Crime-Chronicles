@@ -40,7 +40,7 @@
                     Katrai lietai ir vajadzīgi <strong>aizdomās turamie</strong>. Tev jāpievieno vismaz 2 cilvēki,
                     kurus spēlētāji turēs aizdomās par noziegumu.<br>
                     Viens no viņiem ir <strong>īstais vainīgais</strong> - vienkārši <strong>uzklikšķini</strong> uz viņa kartītes, lai atzīmētu!<br>
-                <small> Pašlaik pievienoti: <span id="suspectCount">{{ count($suspects) }}</span></small>
+                    <small> Pašlaik pievienoti: <span id="suspectCount">{{ count($suspects) }}</span></small>
                 </div>
             </div>
         </div>
@@ -164,120 +164,19 @@
 
     @include('partials.footer')
 
+    <div id="suspectData"
+        data-suspects-count="{{ count($suspects) }}"
+        style="display: none;">
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.suspect-card');
-            const nextBtn = document.getElementById('nextBtn');
-            const selectedName = document.getElementById('selectedName');
-            let suspectsCount = parseInt('{{ count($suspects) }}');
-
-            cards.forEach((card) => {
-                const suspectId = card.dataset.id;
-                const currentAnswerId = '{{ $case->answer_id }}';
-                if (suspectId == currentAnswerId) {
-                    card.classList.add('selected');
-                }
-            });
-
-            function saveGuilty(suspectId, suspectName) {
-                fetch('{{ route("cases.suspects.setAnswer", $case->id) }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: JSON.stringify({
-                            answer_id: suspectId
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            showToast('success', `"${suspectName}" atzīmēts kā vainīgais!`);
-                            selectedName.textContent = suspectName;
-
-                            if (suspectsCount >= 2) {
-                                nextBtn.classList.remove('disabled');
-                                nextBtn.removeAttribute('disabled');
-                            }
-                        } else {
-                            showToast('error', 'Kļūda saglabājot vainīgo');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showToast('error', 'Kļūda saglabājot vainīgo');
-                    });
-            }
-
-            function showToast(type, message) {
-                const toast = document.createElement('div');
-                toast.className = `toast-notification ${type}`;
-                toast.innerHTML = `
-                    <div class="toast-content">
-                        <i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
-                        <span>${message}</span>
-                    </div>
-                `;
-                document.body.appendChild(toast);
-
-                setTimeout(() => {
-                    toast.classList.add('show');
-                }, 100);
-
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
-            }
-
-            cards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'A') {
-                        return;
-                    }
-
-                    const suspectId = this.dataset.id;
-                    const suspectName = this.dataset.name;
-
-                    cards.forEach(c => c.classList.remove('selected'));
-
-                    this.classList.add('selected');
-
-                    saveGuilty(suspectId, suspectName);
-                });
-            });
-
-            function updateNextButton() {
-                if (suspectsCount >= 2 && '{{ $case->answer_id }}' !== '') {
-                    nextBtn.classList.remove('disabled');
-                    nextBtn.removeAttribute('disabled');
-                } else {
-                    nextBtn.classList.add('disabled');
-                    nextBtn.setAttribute('disabled', 'disabled');
-                }
-            }
-
-            updateNextButton();
-
-            const fileInput = document.getElementById('imageInput');
-            if (fileInput) {
-                fileInput.addEventListener('change', function(e) {
-                    const fileName = this.files[0]?.name || 'Nav izvēlēts fails';
-                    const label = this.parentElement.querySelector('.file-name');
-                    if (label) {
-                        label.textContent = fileName;
-                    }
-                    if (this.files.length > 0) {
-                        this.parentElement.classList.add('has-file');
-                    } else {
-                        this.parentElement.classList.remove('has-file');
-                    }
-                });
-            }
-        });
+        const suspectDataElement = document.getElementById('suspectData');
+        window.suspectData = {
+            suspectsCount: parseInt(suspectDataElement.dataset.suspectsCount)
+        };
     </script>
+
+    <script src="{{ asset('js/constructor/suspect.js') }}"></script>
 
 </body>
 
