@@ -166,13 +166,22 @@
 
     <div id="suspectData"
         data-suspects-count="{{ count($suspects) }}"
+        data-current-answer-id="{{ $case->answer_id }}"
+        data-current-answer-name="{{ $case->answer_id ? optional($suspects->firstWhere('id', $case->answer_id))->name : '' }}"
+        data-set-answer-url="{{ route('cases.suspects.setAnswer', $case->id) }}"
+        data-csrf-token="{{ csrf_token() }}"
         style="display: none;">
     </div>
 
     <script>
         const suspectDataElement = document.getElementById('suspectData');
+
         window.suspectData = {
-            suspectsCount: parseInt(suspectDataElement.dataset.suspectsCount)
+            suspectsCount: parseInt(suspectDataElement.dataset.suspectsCount),
+            currentAnswerId: suspectDataElement.dataset.currentAnswerId === '' ? null : parseInt(suspectDataElement.dataset.currentAnswerId),
+            currentAnswerName: suspectDataElement.dataset.currentAnswerName === '' ? null : suspectDataElement.dataset.currentAnswerName,
+            setAnswerUrl: suspectDataElement.dataset.setAnswerUrl,
+            csrfToken: suspectDataElement.dataset.csrfToken
         };
     </script>
 

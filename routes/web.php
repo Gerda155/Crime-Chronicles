@@ -35,7 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/my-cases', [CaseController::class, 'myCases']);
+    Route::get('/my-cases', [CaseController::class, 'myCases'])->name('cases.my-cases');
     Route::get('/cases/{case}/play', [CasePlayController::class, 'play'])->name('cases.play');
     Route::post('/cases/{case}/submit', [CasePlayController::class, 'submit'])->name('cases.submit');
     Route::get('/cases/{id}/edit', [CaseController::class, 'edit'])->name('cases.edit');

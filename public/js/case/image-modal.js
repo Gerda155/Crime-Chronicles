@@ -1,35 +1,41 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     const wrappers = document.querySelectorAll('.evidence-img-wrapper');
-
     const imageModalEl = document.getElementById('imageModal');
 
     if (!imageModalEl) return;
 
     const imageModal = new bootstrap.Modal(imageModalEl);
-
     const modalImg = document.getElementById('modalImage');
 
     let currentKeyArea = null;
-
     let currentWrapper = null;
+    let currentImg = null;
 
     wrappers.forEach(function (wrapper) {
-
         const img = wrapper.querySelector('.evidence-img');
+        if (!img) return;
 
-        wrapper.addEventListener('click', function () {
-
+        wrapper.addEventListener('click', function (e) {
+            if (e.target.classList.contains('selection-box')) return;
+            
             modalImg.src = img.src;
-
             currentWrapper = wrapper;
+            currentImg = img;
 
             try {
-
-                currentKeyArea = JSON.parse(img.dataset.keyArea);
-
-            } catch {
-
+                if (img.dataset.keyArea && img.dataset.keyArea !== 'null' && img.dataset.keyArea !== '') {
+                    let parsed = JSON.parse(img.dataset.keyArea);
+                    
+                    if (typeof parsed === 'string') {
+                        parsed = JSON.parse(parsed);
+                    }
+                    
+                    currentKeyArea = parsed;
+                } else {
+                    currentKeyArea = null;
+                }
+            } catch (e) {
                 currentKeyArea = null;
             }
 
@@ -38,60 +44,87 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     modalImg.addEventListener('click', function (e) {
+        if (!currentKeyArea || !currentWrapper) {
+            return;
+        }
 
-        if (!currentKeyArea || !currentWrapper) return;
+        if (currentWrapper.dataset.keyAreaFound === 'true') {
+            showSmallNotification('Jūs jau atradāt šo pierādījumu!', 'warning');
+            return;
+        }
 
         const rect = modalImg.getBoundingClientRect();
 
         const clickX = e.clientX - rect.left;
-
         const clickY = e.clientY - rect.top;
 
-        const scaleX = modalImg.clientWidth / modalImg.naturalWidth;
-        const scaleY = modalImg.clientHeight / modalImg.naturalHeight;
+        const imgDisplayWidth = rect.width;
+        const imgDisplayHeight = rect.height;
 
-        const x = currentKeyArea.x * scaleX;
-        const y = currentKeyArea.y * scaleY;
-        const w = currentKeyArea.width * scaleX;
-        const h = currentKeyArea.height * scaleY;
+        const relativeClickX = clickX / imgDisplayWidth;
+        const relativeClickY = clickY / imgDisplayHeight;
 
-        const inside =
-            clickX >= x &&
-            clickX <= x + w &&
-            clickY >= y &&
-            clickY <= y + h;
-
-        if (!inside) return;
-
-        if (currentWrapper.dataset.found) {
-
-            showSmallNotification(
-                'Jūs jau atradāt šo pierādījumu!',
-                'warning'
-            );
-
+        const targetX = currentKeyArea.x;
+        const targetY = currentKeyArea.y;
+        const targetWidth = currentKeyArea.width;
+        const targetHeight = currentKeyArea.height;
+        
+        const inside = relativeClickX >= targetX &&
+                      relativeClickX <= targetX + targetWidth &&
+                      relativeClickY >= targetY &&
+                      relativeClickY <= targetY + targetHeight;
+        
+        if (!inside) {
+            showSmallNotification('Nepareiza vieta! Turpini meklēt...', 'error');
             return;
         }
 
-        currentWrapper.dataset.found = 'true';
+        currentWrapper.dataset.keyAreaFound = 'true';
 
-        let opened =
-            parseInt(document.getElementById('openedEvidenceCount').value) || 0;
+        const originalWrapper = currentWrapper;
+        if (originalWrapper) {
 
-        opened++;
+            const oldOverlay = originalWrapper.querySelector('.found-overlay');
+            if (oldOverlay) oldOverlay.remove();
 
-        document.getElementById('openedEvidenceCount').value = opened;
+            const overlay = document.createElement('div');
+            overlay.className = 'found-overlay';
 
-        addScore(20);
+            const parentRect = originalWrapper.getBoundingClientRect();
+            const imgRect = originalWrapper.querySelector('img').getBoundingClientRect();
 
-        updateProgress(opened);
+            const offsetX = imgRect.left - parentRect.left;
+            const offsetY = imgRect.top - parentRect.top;
+            
+            overlay.style.position = 'absolute';
+            overlay.style.left = (offsetX + (currentKeyArea.x * imgRect.width)) + 'px';
+            overlay.style.top = (offsetY + (currentKeyArea.y * imgRect.height)) + 'px';
+            overlay.style.width = (currentKeyArea.width * imgRect.width) + 'px';
+            overlay.style.height = (currentKeyArea.height * imgRect.height) + 'px';
+            overlay.style.border = '3px solid #00ff00';
+            overlay.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+            overlay.style.borderRadius = '4px';
+            overlay.style.pointerEvents = 'none';
+            overlay.style.zIndex = '10';
+            
+            originalWrapper.style.position = 'relative';
+            originalWrapper.appendChild(overlay);
+        }
 
-        TutorialSystem.trigger('hidden_object');
+        if (typeof window.addScore === 'function') {
+            window.addScore(20);
+        }
 
-        showSmallNotification(
-            'Pierādījums atrasts! +20 punkti',
-            'success'
-        );
+        let opened = parseInt(document.getElementById('openedEvidenceCount')?.value || 0);
+        if (typeof updateProgress === 'function') {
+            updateProgress(opened, 0);
+        }
+
+        if (typeof TutorialSystem !== 'undefined' && TutorialSystem.trigger) {
+            TutorialSystem.trigger('hidden_object');
+        }
+
+        showSmallNotification('Atrasts slepenais pierādījums! +20 punkti', 'success');
 
         setTimeout(function () {
             imageModal.hide();

@@ -13,7 +13,7 @@
                 <div class="suspect-card p-3 d-flex flex-column align-items-center bg-secondary text-light shadow-sm border-2 rounded"
                     style="cursor:pointer;" data-suspect-id="{{ $suspect->id }}" data-suspect-name="{{ $suspect->name }}">
                     @if($suspect->image_path)
-                    <img src="{{ asset('storage/' . $suspect->image_path) }}" alt="{{ $suspect->name }}" class="rounded mb-3" style="width:500px; height:500px; object-fit:cover;">
+                    <img src="{{ asset('storage/cases/suspects/' . $suspect->image_path) }}" alt="{{ $suspect->name }}" class="rounded mb-3" style="width:500px; height:500px; object-fit:cover;">
                     @endif
                     <strong class="fs-5">{{ $suspect->name }}</strong>
                     <p class="mb-0 text-light">{{ $suspect->description }}</p>

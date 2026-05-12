@@ -1,15 +1,10 @@
 const TutorialSystem = {
 
     isActive: window.caseData.isTutorial,
-
     currentStep: 0,
-
     overlay: null,
-
     tutorialBox: null,
-
     highlightedElement: null,
-
     stepsCompleted: [],
 
     steps: [
@@ -73,14 +68,10 @@ const TutorialSystem = {
     init() {
 
         if (!this.isActive) return;
-
         this.overlay = document.createElement('div');
         this.overlay.className = 'tutorial-overlay';
-
         document.body.appendChild(this.overlay);
-
         this.createTutorialBox();
-
         this.start();
     },
 
@@ -88,20 +79,15 @@ const TutorialSystem = {
 
         this.tutorialBox = document.createElement('div');
         this.tutorialBox.className = 'tutorial-box';
-
         document.body.appendChild(this.tutorialBox);
     },
 
     showStep(stepIndex) {
 
         const step = this.steps[stepIndex];
-
         if (!step) return;
-
         this.removeHighlight();
-
         let buttonsHtml = '';
-
         if (stepIndex < this.steps.length - 1) {
 
             buttonsHtml = step.trigger
@@ -160,11 +146,8 @@ const TutorialSystem = {
     highlightElementFn(element) {
 
         this.removeHighlight();
-
         this.highlightedElement = element;
-
         element.classList.add('tutorial-highlight');
-
         element.scrollIntoView({
             behavior: 'smooth',
             block: 'center'
@@ -174,9 +157,7 @@ const TutorialSystem = {
     removeHighlight() {
 
         if (!this.highlightedElement) return;
-
         this.highlightedElement.classList.remove('tutorial-highlight');
-
         this.highlightedElement = null;
     },
 
@@ -202,7 +183,6 @@ const TutorialSystem = {
     trigger(triggerName) {
 
         if (!this.isActive) return;
-
         const currentStep = this.steps[this.currentStep];
 
         if (
@@ -212,15 +192,11 @@ const TutorialSystem = {
         ) {
 
             this.stepsCompleted[this.currentStep] = true;
-
             this.currentStep++;
 
             if (this.currentStep >= this.steps.length) {
-
                 this.end();
-
             } else {
-
                 this.showStep(this.currentStep);
             }
         }
@@ -231,9 +207,7 @@ const TutorialSystem = {
         this.currentStep++;
 
         if (this.currentStep >= this.steps.length) {
-
             this.end();
-
         } else {
 
             this.showStep(this.currentStep);
@@ -243,20 +217,15 @@ const TutorialSystem = {
     start() {
 
         this.currentStep = 0;
-
         this.stepsCompleted = [];
-
         this.showStep(0);
     },
 
     end() {
 
         this.isActive = false;
-
         this.overlay?.remove();
-
         this.tutorialBox?.remove();
-
         this.removeHighlight();
     }
 };

@@ -11,13 +11,13 @@
                     <p>{{ $item->description }}</p>
                     @if($item->type === 'image' && $item->image_path)
                     <div class="evidence-img-wrapper mb-2 position-relative" style="width:100%; height:200px; overflow:hidden; border-radius:8px; cursor:zoom-in;">
-                        <img src="{{ asset('storage/' . $item->image_path) }}"
+                        <img src="{{ asset($item->image_path) }}"
                             class="w-100 h-100 evidence-img"
                             style="object-fit:contain;"
                             data-key-area="{{ $item->key_object_area }}">
                     </div>
                     @elseif($item->type === 'report' && $item->image_path)
-                    <a href="{{ asset('storage/' . $item->image_path) }}" target="_blank" class="btn btn-outline-light btn-sm">
+                    <a href="{{ asset($item->image_path) }}" target="_blank" class="btn btn-outline-light btn-sm">
                         Skatīt atskaiti
                     </a>
                     @endif

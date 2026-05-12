@@ -56,12 +56,12 @@
 
     <script src="{{ asset('js/case/tutorial.js') }}"></script>
     <script src="{{ asset('js/case/image-modal.js') }}"></script>
-    <script src="{{ asset('js/case/evidence.js') }}"></script>
     <script src="{{ asset('js/case/questions.js') }}"></script>
     <script src="{{ asset('js/case/suspects.js') }}"></script>
     <script src="{{ asset('js/case/progress.js') }}"></script>
     <script src="{{ asset('js/case/notifications.js') }}"></script>
     <script src="{{ asset('js/case/rating.js') }}"></script>
+    <script src="{{ asset('js/case/evidence.js') }}"></script>
     <script src="{{ asset('js/case/achievement.js') }}"></script>
 
 </body>
