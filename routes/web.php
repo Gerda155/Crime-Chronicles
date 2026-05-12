@@ -1,14 +1,19 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CaseController;
-use App\Http\Controllers\CasePlayController;
-use App\Http\Controllers\CaseSuspectController;
-use App\Http\Controllers\CaseEvidenceController;
-use App\Http\Controllers\CaseQuestionController;
+use App\Http\Controllers\Case\CaseController;
+use App\Http\Controllers\Case\CasePlayController;
+use App\Http\Controllers\Case\CaseSuspectController;
+use App\Http\Controllers\Case\CaseEvidenceController;
+use App\Http\Controllers\Case\CaseQuestionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LeaderboardController;
-use App\Http\Controllers\ModeratorController;
+use App\Http\Controllers\Moderator\ModeratorUserController;
+use App\Http\Controllers\Moderator\ModeratorCaseController;
+use App\Http\Controllers\Moderator\ModeratorAchievementController;
+use App\Http\Controllers\Moderator\ModeratorGenreController;
+use App\Http\Controllers\Moderator\ModeratorRangController;
+use App\Http\Controllers\Moderator\ModeratorStatsController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\ContactController;
@@ -30,7 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/my-cases', [CaseController::class, 'myCases'])->name('cases.my-cases');
+    Route::get('/my-cases', [CaseController::class, 'myCases']);
     Route::get('/cases/{case}/play', [CasePlayController::class, 'play'])->name('cases.play');
     Route::post('/cases/{case}/submit', [CasePlayController::class, 'submit'])->name('cases.submit');
     Route::get('/cases/{id}/edit', [CaseController::class, 'edit'])->name('cases.edit');
@@ -79,62 +84,62 @@ Route::middleware(['auth', ModeratorMiddleware::class])
     ->group(function () {
 
         Route::prefix('cases')->group(function () {
-            Route::get('/', [ModeratorController::class, 'casesIndex'])->name('cases.index');
-            Route::get('/create', [ModeratorController::class, 'createCase'])->name('cases.create');
-            Route::post('/', [ModeratorController::class, 'storeCase'])->name('cases.store');
-            Route::get('/{case}/edit', [ModeratorController::class, 'editCase'])->name('cases.edit');
-            Route::put('/{case}', [ModeratorController::class, 'updateCase'])->name('cases.update');
-            Route::put('/{case}/deactivate', [ModeratorController::class, 'deactivateCase'])->name('cases.deactivate');
-            Route::put('/{case}/activate', [ModeratorController::class, 'activateCase'])->name('cases.activate');
-            Route::delete('/{case}', [ModeratorController::class, 'destroyCase'])->name('cases.destroy');
-            Route::post('/{case}/restore', [ModeratorController::class, 'restoreCase'])->name('cases.restore');
-            Route::put('/{id}/tutorial', [ModeratorController::class, 'setTutorial'])->name('cases.setTutorial');
+            Route::get('/', [ModeratorCaseController::class, 'casesIndex'])->name('cases.index');
+            Route::get('/create', [ModeratorCaseController::class, 'createCase'])->name('cases.create');
+            Route::post('/', [ModeratorCaseController::class, 'storeCase'])->name('cases.store');
+            Route::get('/{case}/edit', [ModeratorCaseController::class, 'editCase'])->name('cases.edit');
+            Route::put('/{case}', [ModeratorCaseController::class, 'updateCase'])->name('cases.update');
+            Route::put('/{case}/deactivate', [ModeratorCaseController::class, 'deactivateCase'])->name('cases.deactivate');
+            Route::put('/{case}/activate', [ModeratorCaseController::class, 'activateCase'])->name('cases.activate');
+            Route::delete('/{case}', [ModeratorCaseController::class, 'destroyCase'])->name('cases.destroy');
+            Route::post('/{case}/restore', [ModeratorCaseController::class, 'restoreCase'])->name('cases.restore');
+            Route::put('/{id}/tutorial', [ModeratorCaseController::class, 'setTutorial'])->name('cases.setTutorial');
         });
 
         Route::prefix('users')->group(function () {
-            Route::get('/', [ModeratorController::class, 'usersIndex'])->name('users.index');
-            Route::get('/{user}', [ModeratorController::class, 'showUser'])->name('users.show');
-            Route::put('/{user}/deactivate', [ModeratorController::class, 'deactivateUser'])->name('users.deactivate');
-            Route::put('/{user}/activate', [ModeratorController::class, 'activateUser'])->name('users.activate');
-            Route::delete('/{user}', [ModeratorController::class, 'destroyUser'])->name('users.destroy');
-            Route::post('/{user}/restore', [ModeratorController::class, 'restoreUser'])->name('users.restore');
+            Route::get('/', [ModeratorUserController::class, 'usersIndex'])->name('users.index');
+            Route::get('/{user}', [ModeratorUserController::class, 'showUser'])->name('users.show');
+            Route::put('/{user}/deactivate', [ModeratorUserController::class, 'deactivateUser'])->name('users.deactivate');
+            Route::put('/{user}/activate', [ModeratorUserController::class, 'activateUser'])->name('users.activate');
+            Route::delete('/{user}', [ModeratorUserController::class, 'destroyUser'])->name('users.destroy');
+            Route::post('/{user}/restore', [ModeratorUserController::class, 'restoreUser'])->name('users.restore');
         });
 
         Route::prefix('achievements')->group(function () {
-            Route::get('/', [ModeratorController::class, 'achievementsIndex'])->name('achievements.index');
-            Route::get('/create', [ModeratorController::class, 'createAchievement'])->name('achievements.create');
-            Route::post('/', [ModeratorController::class, 'storeAchievement'])->name('achievements.store');
-            Route::get('/{achievement}/edit', [ModeratorController::class, 'editAchievement'])->name('achievements.edit');
-            Route::put('/{achievement}', [ModeratorController::class, 'updateAchievement'])->name('achievements.update');
-            Route::post('/{achievement}/deactivate', [ModeratorController::class, 'deactivateAchievement'])->name('achievements.deactivate');
-            Route::post('/{achievement}/activate', [ModeratorController::class, 'activateAchievement'])->name('achievements.activate');
-            Route::delete('/{achievement}', [ModeratorController::class, 'destroyAchievement'])->name('achievements.destroy');
-            Route::post('/{achievement}/restore', [ModeratorController::class, 'restoreAchievement'])->name('achievements.restore');
+            Route::get('/', [ModeratorAchievementController::class, 'achievementsIndex'])->name('achievements.index');
+            Route::get('/create', [ModeratorAchievementController::class, 'createAchievement'])->name('achievements.create');
+            Route::post('/', [ModeratorAchievementController::class, 'storeAchievement'])->name('achievements.store');
+            Route::get('/{achievement}/edit', [ModeratorAchievementController::class, 'editAchievement'])->name('achievements.edit');
+            Route::put('/{achievement}', [ModeratorAchievementController::class, 'updateAchievement'])->name('achievements.update');
+            Route::post('/{achievement}/deactivate', [ModeratorAchievementController::class, 'deactivateAchievement'])->name('achievements.deactivate');
+            Route::post('/{achievement}/activate', [ModeratorAchievementController::class, 'activateAchievement'])->name('achievements.activate');
+            Route::delete('/{achievement}', [ModeratorAchievementController::class, 'destroyAchievement'])->name('achievements.destroy');
+            Route::post('/{achievement}/restore', [ModeratorAchievementController::class, 'restoreAchievement'])->name('achievements.restore');
         });
 
         Route::prefix('genres')->group(function () {
-            Route::get('/', [ModeratorController::class, 'genresIndex'])->name('genres.index');
-            Route::post('/', [ModeratorController::class, 'storeGenre'])->name('genres.store');
-            Route::get('/{genre}/edit', [ModeratorController::class, 'editGenre'])->name('genres.edit');
-            Route::put('/{genre}', [ModeratorController::class, 'updateGenre'])->name('genres.update');
-            Route::post('/{genre}/deactivate', [ModeratorController::class, 'deactivateGenre'])->name('genres.deactivate');
-            Route::post('/{genre}/activate', [ModeratorController::class, 'activateGenre'])->name('genres.activate');
-            Route::delete('/{genre}', [ModeratorController::class, 'destroyGenre'])->name('genres.destroy');
-            Route::post('/{genre}/restore', [ModeratorController::class, 'restoreGenre'])->name('genres.restore');
+            Route::get('/', [ModeratorGenreController::class, 'genresIndex'])->name('genres.index');
+            Route::post('/', [ModeratorGenreController::class, 'storeGenre'])->name('genres.store');
+            Route::get('/{genre}/edit', [ModeratorGenreController::class, 'editGenre'])->name('genres.edit');
+            Route::put('/{genre}', [ModeratorGenreController::class, 'updateGenre'])->name('genres.update');
+            Route::post('/{genre}/deactivate', [ModeratorGenreController::class, 'deactivateGenre'])->name('genres.deactivate');
+            Route::post('/{genre}/activate', [ModeratorGenreController::class, 'activateGenre'])->name('genres.activate');
+            Route::delete('/{genre}', [ModeratorGenreController::class, 'destroyGenre'])->name('genres.destroy');
+            Route::post('/{genre}/restore', [ModeratorGenreController::class, 'restoreGenre'])->name('genres.restore');
         });
 
-        Route::get('/stats', [ModeratorController::class, 'stats'])->name('stats');
+        Route::get('/stats', [ModeratorStatsController::class, 'stats'])->name('stats');
 
         Route::prefix('rangs')->group(function () {
-            Route::get('/', [ModeratorController::class, 'rangsIndex'])->name('rangs.index');
-            Route::get('/create', [ModeratorController::class, 'createrang'])->name('rangs.create');
-            Route::post('/', [ModeratorController::class, 'storerang'])->name('rangs.store');
-            Route::get('/{rangs}/edit', [ModeratorController::class, 'editrang'])->name('rangs.edit');
-            Route::put('/{rangs}', [ModeratorController::class, 'updaterang'])->name('rangs.update');
-            Route::post('/{rangs}/deactivate', [ModeratorController::class, 'deactivaterang'])->name('rangs.deactivate');
-            Route::post('/{rangs}/activate', [ModeratorController::class, 'activaterang'])->name('rangs.activate');
-            Route::delete('/{rangs}', [ModeratorController::class, 'destroyrang'])->name('rangs.destroy');
-            Route::post('/{rangs}/restore', [ModeratorController::class, 'restorerang'])->name('rangs.restore');
+            Route::get('/', [ModeratorRangController::class, 'rangsIndex'])->name('rangs.index');
+            Route::get('/create', [ModeratorRangController::class, 'createrang'])->name('rangs.create');
+            Route::post('/', [ModeratorRangController::class, 'storerang'])->name('rangs.store');
+            Route::get('/{rangs}/edit', [ModeratorRangController::class, 'editrang'])->name('rangs.edit');
+            Route::put('/{rangs}', [ModeratorRangController::class, 'updaterang'])->name('rangs.update');
+            Route::post('/{rangs}/deactivate', [ModeratorRangController::class, 'deactivaterang'])->name('rangs.deactivate');
+            Route::post('/{rangs}/activate', [ModeratorRangController::class, 'activaterang'])->name('rangs.activate');
+            Route::delete('/{rangs}', [ModeratorRangController::class, 'destroyrang'])->name('rangs.destroy');
+            Route::post('/{rangs}/restore', [ModeratorRangController::class, 'restorerang'])->name('rangs.restore');
         });
     });
 

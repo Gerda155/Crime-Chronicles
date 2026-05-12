@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Case;
 
 use Illuminate\Http\Request;
 use App\Models\CaseModel;
 use App\Models\Genre;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Models\Achievement;
-use App\Models\PlayerAttempt;
-use App\Models\UserProgress;
+use App\Http\Controllers\Controller;
 
 
 class CaseController extends Controller

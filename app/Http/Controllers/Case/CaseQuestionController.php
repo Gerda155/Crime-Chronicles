@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Case;
 
 use Illuminate\Http\Request;
 use App\Models\CaseModel;
+use App\Http\Controllers\Controller;
 
 class CaseQuestionController extends Controller
 {
