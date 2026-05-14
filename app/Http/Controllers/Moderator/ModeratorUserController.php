@@ -28,23 +28,54 @@ class ModeratorUserController extends Controller
         }
 
         switch ($request->get('sort')) {
+
             case 'oldest':
-                $query->orderBy('id', 'asc');
+                $query->orderBy('created_at', 'asc');
                 break;
-            case 'name':
+
+            case 'name_asc':
                 $query->orderBy('name', 'asc');
                 break;
+
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+
+            case 'username':
+                $query->orderBy('username', 'asc');
+                break;
+
             case 'email':
                 $query->orderBy('email', 'asc');
                 break;
+
             case 'role':
                 $query->orderBy('role', 'asc');
                 break;
-            case 'status':
-                $query->orderBy('status', 'asc');
+
+            case 'status_active':
+                $query->where('status', 'active')
+                    ->orderBy('name', 'asc');
                 break;
+
+            case 'status_inactive':
+                $query->where('status', 'inactive')
+                    ->orderBy('name', 'asc');
+                break;
+
+            case 'most_cases':
+                $query->orderBy('completed_cases_count', 'desc');
+                break;
+
+            case 'most_achievements':
+                $query->withCount('achievements')
+                    ->orderBy('achievements_count', 'desc');
+                break;
+
+            case 'newest':
             default:
-                $query->orderBy('id', 'desc');
+                $query->orderBy('created_at', 'desc');
+                break;
         }
 
         $users = $query->paginate(10)->withQueryString();

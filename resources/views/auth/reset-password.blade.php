@@ -27,7 +27,7 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <x-primary-button class="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 px-6 py-2 rounded-lg">
+                    <x-primary-button class="px-6 py-2 rounded-lg">
                         Atjaunot paroli
                     </x-primary-button>
                 </div>

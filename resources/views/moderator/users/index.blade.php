@@ -8,6 +8,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 </head>
 
@@ -30,12 +31,51 @@
 
             <form method="GET" class="d-flex gap-2">
                 <select name="sort" class="form-select bg-secondary text-light border-0 rounded">
-                    <option value="newest" {{ request('sort')=='newest' ? 'selected' : '' }}>Jaunākie</option>
-                    <option value="oldest" {{ request('sort')=='oldest' ? 'selected' : '' }}>Vecākie</option>
-                    <option value="name" {{ request('sort')=='name' ? 'selected' : '' }}>Vārds</option>
-                    <option value="email" {{ request('sort')=='email' ? 'selected' : '' }}>E-pasts</option>
-                    <option value="role" {{ request('sort')=='role' ? 'selected' : '' }}>Loma</option>
-                    <option value="status" {{ request('sort')=='status' ? 'selected' : '' }}>status</option>
+
+                    <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>
+                        Jaunākie
+                    </option>
+
+                    <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>
+                        Vecākie
+                    </option>
+
+                    <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>
+                        Vārds A-Z
+                    </option>
+
+                    <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>
+                        Vārds Z-A
+                    </option>
+
+                    <option value="username" {{ request('sort') == 'username' ? 'selected' : '' }}>
+                        Segvārds
+                    </option>
+
+                    <option value="email" {{ request('sort') == 'email' ? 'selected' : '' }}>
+                        E-pasts
+                    </option>
+
+                    <option value="role" {{ request('sort') == 'role' ? 'selected' : '' }}>
+                        Loma
+                    </option>
+
+                    <option value="status_active" {{ request('sort') == 'status_active' ? 'selected' : '' }}>
+                        Aktīvie
+                    </option>
+
+                    <option value="status_inactive" {{ request('sort') == 'status_inactive' ? 'selected' : '' }}>
+                        Bloķētie
+                    </option>
+
+                    <option value="most_cases" {{ request('sort') == 'most_cases' ? 'selected' : '' }}>
+                        Visvairāk atrisināto lietu
+                    </option>
+
+                    <option value="most_achievements" {{ request('sort') == 'most_achievements' ? 'selected' : '' }}>
+                        Visvairāk sasniegumu
+                    </option>
+
                 </select>
                 <button type="submit" class="btn btn-primary rounded">Kārtot</button>
             </form>

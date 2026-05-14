@@ -22,24 +22,34 @@ class CaseController extends Controller
         }
 
         $sort = $request->get('sort', 'newest');
+
         switch ($sort) {
+
             case 'oldest':
                 $query->orderBy('created_at', 'asc');
                 break;
+
             case 'rating':
                 $query->orderBy('rating', 'desc');
                 break;
-            case 'title':
+
+            case 'alphabet':
                 $query->orderBy('title', 'asc');
                 break;
-            case 'genre':
-                $query->join('genres', 'cases.genre_id', '=', 'genres.id')
-                    ->orderBy('genres.name', 'asc')
-                    ->select('cases.*');
+
+            case 'alphabet_desc':
+                $query->orderBy('title', 'desc');
                 break;
+
+            case 'tutorials':
+                $query->where('is_tutorial', 1)
+                    ->orderBy('created_at', 'desc');
+                break;
+
             case 'newest':
             default:
                 $query->orderBy('created_at', 'desc');
+                break;
         }
 
         $cases = $query->paginate(9)->withQueryString();

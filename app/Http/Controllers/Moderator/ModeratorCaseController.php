@@ -17,29 +17,35 @@ class ModeratorCaseController extends Controller
             $query->where('title', 'like', '%' . $request->search . '%');
         }
 
-        if ($request->sort) {
-            switch ($request->sort) {
-                case 'newest':
-                    $query->orderBy('created_at', 'desc');
-                    break;
-                case 'oldest':
-                    $query->orderBy('created_at', 'asc');
-                    break;
-                case 'rating':
-                    $query->orderBy('rating', 'desc');
-                    break;
-                case 'title':
-                    $query->orderBy('title', 'asc');
-                    break;
-                case 'genre':
-                    $query->orderBy('genre_id', 'asc');
-                    break;
-                case 'status':
-                    $query->orderBy('status', 'asc');
-                    break;
-            }
-        } else {
-            $query->latest();
+       $sort = $request->get('sort', 'newest');
+
+        switch ($sort) {
+
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+
+            case 'rating':
+                $query->orderBy('rating', 'desc');
+                break;
+
+            case 'alphabet':
+                $query->orderBy('title', 'asc');
+                break;
+
+            case 'alphabet_desc':
+                $query->orderBy('title', 'desc');
+                break;
+
+            case 'tutorials':
+                $query->where('is_tutorial', 1)
+                    ->orderBy('created_at', 'desc');
+                break;
+
+            case 'newest':
+            default:
+                $query->orderBy('created_at', 'desc');
+                break;
         }
 
         $cases = $query->paginate(10)->withQueryString();

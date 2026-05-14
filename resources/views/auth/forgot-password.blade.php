@@ -1,32 +1,68 @@
 <x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-indigo-800 to-black px-4">
-        <div class="max-w-md w-full bg-gray-900 shadow-2xl rounded-xl p-8 text-white">
+    <div class="h-screen overflow-hidden flex items-center justify-center px-4
+    bg-black bg-gradient-to-br from-purple-900/40 via-indigo-900/30 to-black">
 
-            <h2 class="text-center text-3xl font-bold mb-6">Aizmirsāt paroli?</h2>
+        <div class="w-full max-w-md rounded-2xl p-8 text-white
+            bg-gradient-to-b from-gray-900 to-black
+            border border-purple-500/20
+            shadow-[0_0_40px_rgba(168,85,247,0.25)]">
 
-            <p class="mb-4 text-gray-400 text-sm">
-                Ievadiet savu e-pastu, un mēs nosūtīsim saiti, lai izvēlētos jaunu paroli.
+            <h2 class="text-center text-3xl font-bold mb-2
+                tracking-widest
+                text-purple-300
+                drop-shadow-[0_0_12px_rgba(168,85,247,0.8)]">
+                PASSWORD RESET
+            </h2>
+
+            <p class="mb-6 text-sm text-center text-gray-400">
+                Ievadiet savu e-pastu, lai saņemtu paroles atiestatīšanas saiti.
             </p>
 
             <x-auth-session-status class="mb-4" :status="session('status')" />
 
-            <form method="POST" action="{{ route('password.email') }}">
+            @if ($errors->any())
+                <div class="mb-4 p-3 bg-red-900/50 text-red-400 rounded-lg text-sm">
+                    @foreach ($errors->all() as $error)
+                        {{ $error }}<br>
+                    @endforeach
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('password.email') }}" class="space-y-4">
                 @csrf
 
-                <div class="mb-4">
-                    <x-input-label for="email" :value="__('E-pasts')" />
-                    <x-text-input id="email" class="block mt-1 w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500" type="email" name="email" :value="old('email')" required autofocus />
-                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                </div>
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    required
+                    autofocus
+                    value="{{ old('email') }}"
+                    placeholder="E-pasts"
+                    class="w-full px-4 py-2 rounded-lg
+                    bg-gray-950 text-white placeholder:text-gray-500
+                    border border-gray-700
+                    focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30
+                    outline-none transition"
+                >
 
-                <div class="flex justify-end mt-4">
-                    <x-primary-button class="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 px-6 py-2 rounded-lg">
-                        Nosūtīt saiti
-                    </x-primary-button>
-                </div>
+                <button
+                    type="submit"
+                    class="w-full py-3 rounded-lg font-semibold tracking-wide
+                    shadow-[0_0_30px_rgba(168,85,247,0.6)]
+                    hover:shadow-[0_0_45px_rgba(168,85,247,0.9)]
+                    transition">
+                    Nosūtīt saiti
+                </button>
             </form>
 
-            <a href="{{ url('/') }}" class="mt-4 block text-center text-gray-400 hover:text-gray-300 text-sm">
+            <a href="{{ route('login') }}"
+               class="block mt-6 text-center text-sm text-purple-400 hover:text-purple-300">
+                Atpakaļ uz autorizāciju
+            </a>
+
+            <a href="{{ url('/') }}"
+               class="block mt-4 text-center text-xs text-gray-500 hover:text-gray-300">
                 Atpakaļ uz galveno
             </a>
 

@@ -12,24 +12,45 @@ class ModeratorRangController extends Controller
     {
         $query = Rang::query();
 
-        // SEARCH
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        // SORT
         switch ($request->get('sort')) {
+
             case 'oldest':
-                $query->orderBy('id', 'asc');
+                $query->orderBy('created_at', 'asc');
                 break;
-            case 'name':
+
+            case 'name_asc':
                 $query->orderBy('name', 'asc');
                 break;
-            case 'points':
+
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+
+            case 'low_score':
+                $query->orderBy('min_score', 'asc');
+                break;
+
+            case 'high_score':
                 $query->orderBy('min_score', 'desc');
                 break;
+
+            case 'active':
+                $query->where('status', 'active')
+                    ->orderBy('min_score', 'asc');
+                break;
+
+            case 'inactive':
+                $query->where('status', 'inactive')
+                    ->orderBy('min_score', 'asc');
+                break;
+
+            case 'newest':
             default:
-                $query->orderBy('id', 'desc');
+                $query->orderBy('created_at', 'desc');
                 break;
         }
 

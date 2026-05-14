@@ -44,12 +44,31 @@
 
             <form method="GET" action="{{ route('cases.index') }}" class="d-flex gap-2">
                 <select name="sort" class="form-select bg-secondary text-light border-0 rounded">
-                    <option value="">Kārtot pēc...</option>
-                    <option value="newest" {{ request('sort')=='newest' ? 'selected' : '' }}>Jaunākie</option>
-                    <option value="oldest" {{ request('sort')=='oldest' ? 'selected' : '' }}>Vecākie</option>
-                    <option value="rating" {{ request('sort')=='rating' ? 'selected' : '' }}>Reitings</option>
-                    <option value="title" {{ request('sort')=='title' ? 'selected' : '' }}>Nosaukums</option>
-                    <option value="genre" {{ request('sort')=='genre' ? 'selected' : '' }}>Žanrs</option>
+
+                    <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>
+                        Jaunākās lietas
+                    </option>
+
+                    <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>
+                        Vecākās lietas
+                    </option>
+
+                    <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>
+                        Augstākais vērtējums
+                    </option>
+
+                    <option value="alphabet" {{ request('sort') == 'alphabet' ? 'selected' : '' }}>
+                        Nosaukums A-Z
+                    </option>
+
+                    <option value="alphabet_desc" {{ request('sort') == 'alphabet_desc' ? 'selected' : '' }}>
+                        Nosaukums Z-A
+                    </option>
+
+                    <option value="tutorials" {{ request('sort') == 'tutorials' ? 'selected' : '' }}>
+                        Apmācības lietas
+                    </option>
+
                 </select>
 
                 <input type="hidden" name="search" value="{{ request('search') }}">
@@ -61,8 +80,8 @@
 
         <div class="row g-4">
             @forelse($cases as $case)
-            <div class="col-md-6 col-lg-4">
-                <div class="card p-3 h-100"
+            <div class="col-md-6 col-lg-4 card-hover">
+                <div class="card p-3 h-100 "
                     data-bs-toggle="modal"
                     data-bs-target="@auth #caseModal-{{ $case->id }} @else #authModal @endauth">
 

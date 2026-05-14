@@ -18,7 +18,7 @@
             <div class="flex flex-col gap-3 mt-4">
                 <form method="POST" action="{{ route('verification.send') }}">
                     @csrf
-                    <x-primary-button class="w-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 px-6 py-2 rounded-lg mb-2">
+                    <x-primary-button class="w-full px-6 py-2 rounded-lg mb-2">
                         Nosūtīt apstiprinājuma e-pastu vēlreiz
                     </x-primary-button>
                 </form>

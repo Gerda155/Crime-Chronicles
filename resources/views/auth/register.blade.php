@@ -21,9 +21,7 @@
             <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="flex flex-col md:flex-row gap-6">
-                    <!-- Левая колонка -->
                     <div class="flex-1 flex flex-col gap-4">
-                        <!-- Имя -->
                         <input name="name" required placeholder="Vārds" value="{{ old('name') }}"
                             class="px-4 py-2 rounded-lg bg-gray-950 text-gray-900 border border-gray-700
                        focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none transition">
@@ -31,7 +29,6 @@
                         <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
                         @enderror
 
-                        <!-- Почта и юзернейм -->
                         <div class="flex gap-4">
                             <div class="flex-1 flex flex-col">
                                 <input name="email" type="email" required placeholder="E-pasts" value="{{ old('email') }}"
@@ -51,7 +48,6 @@
                             </div>
                         </div>
 
-                        <!-- Био -->
                         <textarea name="bio" placeholder="Par mani" rows="3"
                             class="w-full px-4 py-2 rounded-lg bg-gray-950 text-gray-900 placeholder:text-gray-500 border border-gray-700
                        focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none transition">{{ old('bio') }}</textarea>
@@ -59,7 +55,6 @@
                         <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
                         @enderror
 
-                        <!-- Пароли -->
                         <div class="flex gap-4">
                             <div class="flex-1 flex flex-col">
                                 <input name="password" type="password" required placeholder="Parole"
@@ -77,7 +72,6 @@
                         </div>
                     </div>
 
-                    <!-- Правая колонка (аватар) -->
                     <div class="w-64 flex flex-col items-center">
                         <label for="avatarInput" class="form-label mb-2">Izvēlies avatāru</label>
                         <input type="file" id="avatarInput" accept="image/*">
@@ -92,9 +86,7 @@
                 </div>
 
                 <button type="submit"
-                    class="mt-6 w-full py-3 rounded-lg font-semibold tracking-wide
-               bg-gradient-to-r from-pink-500 to-indigo-500 shadow-[0_0_30px_rgba(168,85,247,0.6)]
-               hover:shadow-[0_0_45px_rgba(168,85,247,0.9)] transition">
+                    class="mt-6 w-full py-3 rounded-lg font-semibold tracking-wide shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:shadow-[0_0_45px_rgba(168,85,247,0.9)] transition">
                     Reģistrēties
                 </button>
             </form>

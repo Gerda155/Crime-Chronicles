@@ -2,7 +2,7 @@
     <div class="container text-center">
 
         <small class="text-secondary">
-            &copy; {{ date('Y') }} Crime Chronicles. Visas tiesības aizsargātas.
+            &copy; {{ date('Y') }} Crime Chronicles. 
         </small>
 
     </div>

@@ -17,15 +17,34 @@ class ModeratorGenreController extends Controller
         }
 
         $sort = $request->input('sort', 'newest');
+
         switch ($sort) {
+
             case 'oldest':
-                $query->orderBy('id', 'asc');
+                $query->orderBy('created_at', 'asc');
                 break;
-            case 'name':
+
+            case 'name_asc':
                 $query->orderBy('name', 'asc');
                 break;
+
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+
+            case 'active':
+                $query->where('status', 'active')
+                    ->orderBy('name', 'asc');
+                break;
+
+            case 'inactive':
+                $query->where('status', 'inactive')
+                    ->orderBy('name', 'asc');
+                break;
+
+            case 'newest':
             default:
-                $query->orderBy('id', 'desc');
+                $query->orderBy('created_at', 'desc');
                 break;
         }
 

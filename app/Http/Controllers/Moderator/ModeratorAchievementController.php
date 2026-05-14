@@ -23,17 +23,40 @@ class ModeratorAchievementController extends Controller
         $sort = $request->input('sort', 'newest');
 
         switch ($sort) {
+
             case 'oldest':
-                $query->orderBy('id', 'asc');
+                $query->orderBy('created_at', 'asc');
                 break;
-            case 'title':
+
+            case 'title_asc':
                 $query->orderBy('title', 'asc');
                 break;
-            case 'points':
+
+            case 'title_desc':
+                $query->orderBy('title', 'desc');
+                break;
+
+            case 'easy':
+                $query->orderBy('required_cases', 'asc');
+                break;
+
+            case 'hard':
                 $query->orderBy('required_cases', 'desc');
                 break;
+
+            case 'active':
+                $query->where('status', 'active')
+                    ->orderBy('created_at', 'desc');
+                break;
+
+            case 'inactive':
+                $query->where('status', 'inactive')
+                    ->orderBy('created_at', 'desc');
+                break;
+
+            case 'newest':
             default:
-                $query->orderBy('id', 'desc');
+                $query->orderBy('created_at', 'desc');
                 break;
         }
 

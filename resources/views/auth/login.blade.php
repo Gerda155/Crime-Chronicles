@@ -57,7 +57,6 @@
 
                 <button
                     class="w-full py-3 rounded-lg font-semibold tracking-wide
-                    bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500
                     shadow-[0_0_30px_rgba(168,85,247,0.6)]
                     hover:shadow-[0_0_45px_rgba(168,85,247,0.9)]
                     transition">

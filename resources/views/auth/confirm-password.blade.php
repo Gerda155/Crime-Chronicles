@@ -11,7 +11,6 @@
             <form method="POST" action="{{ route('password.confirm') }}">
                 @csrf
 
-                <!-- Parole -->
                 <div class="mb-4">
                     <x-input-label for="password" :value="__('Parole')" />
                     <x-text-input id="password" class="block mt-1 w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500" type="password" name="password" required autocomplete="current-password" />

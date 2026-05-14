@@ -3777,6 +3777,11 @@ li {
   font-size: 14px;
 }
 
+.card-hover:hover{
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
 
 
 @media (prefers-color-scheme: dark) {
