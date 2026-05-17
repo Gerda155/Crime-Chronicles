@@ -10,32 +10,32 @@
                 @csrf
                 <div class="modal-body">
                     @if ($errors->any())
-                        <div class="alert alert-danger">
-                            @foreach ($errors->all() as $error)
-                                <div>{{ $error }}</div>
-                            @endforeach
-                        </div>
+                    <div class="alert alert-danger">
+                        @foreach ($errors->all() as $error)
+                        <div>{{ $error }}</div>
+                        @endforeach
+                    </div>
                     @endif
 
                     <div class="mb-3">
                         <label class="form-label">Nosaukums</label>
                         <input type="text" name="name" id="create_name"
-                               class="form-control bg-secondary text-light border-0" 
-                               value="{{ old('name') }}" required>
+                            class="form-control bg-secondary text-light border-0"
+                            value="{{ old('name') }}" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Min punkti</label>
                         <input type="number" name="min_score" id="create_min_score"
-                               class="form-control bg-secondary text-light border-0" 
-                               value="{{ old('min_score') }}" required>
+                            class="form-control bg-secondary text-light border-0"
+                            value="{{ old('min_score') }}" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Max punkti</label>
                         <input type="number" name="max_score" id="create_max_score"
-                               class="form-control bg-secondary text-light border-0" 
-                               value="{{ old('max_score') }}">
+                            class="form-control bg-secondary text-light border-0"
+                            value="{{ old('max_score') }}">
                         <small class="text-muted">Atstāj tukšu, ja nav augšējās robežas</small>
                     </div>
                 </div>
@@ -50,24 +50,21 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const createModal = document.getElementById('createRankModal');
-    const createForm = document.getElementById('createRankForm');
-    
-    // Очистка формы при закрытии модалки
-    if (createModal && createForm) {
-        createModal.addEventListener('hidden.bs.modal', function() {
-            createForm.reset(); // Очищаем все поля
-            // Убираем классы ошибок
-            createForm.querySelectorAll('.is-invalid').forEach(el => {
-                el.classList.remove('is-invalid');
+    document.addEventListener('DOMContentLoaded', function() {
+        const createModal = document.getElementById('createRankModal');
+        const createForm = document.getElementById('createRankForm');
+
+        if (createModal && createForm) {
+            createModal.addEventListener('hidden.bs.modal', function() {
+                createForm.reset();
+                createForm.querySelectorAll('.is-invalid').forEach(el => {
+                    el.classList.remove('is-invalid');
+                });
+                const errorAlert = createForm.querySelector('.alert-danger');
+                if (errorAlert) {
+                    errorAlert.remove();
+                }
             });
-            // Убираем сообщения об ошибках
-            const errorAlert = createForm.querySelector('.alert-danger');
-            if (errorAlert) {
-                errorAlert.remove();
-            }
-        });
-    }
-});
+        }
+    });
 </script>

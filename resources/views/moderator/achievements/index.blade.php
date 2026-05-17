@@ -36,10 +36,10 @@
 
     </main>
 
-    @include('moderator.achievements.create-modal')
     @include('partials.footer')
 
-    @include('moderator.achievements.partials.modals')
+    @include('moderator.achievements.partials.modals.create')
+    @include('moderator.achievements.partials.modals.delete')
 </body>
 
 </html>

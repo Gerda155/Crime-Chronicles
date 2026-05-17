@@ -146,7 +146,7 @@
 
                     </tr>
 
-                    @include('moderator.achievements.edit-modal', ['achievement' => $achievement])
+                    @include('moderator.achievements.partials.modals.edit', ['achievement' => $achievement])
 
                     @empty
 

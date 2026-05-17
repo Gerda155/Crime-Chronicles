@@ -35,11 +35,10 @@
     @include('moderator.genres.partials.table')
 </main>
 
-    @include('moderator.genres.create-modal')
-
     @include('partials.footer')
 
-    @include('moderator.genres.partials.modals')
+    @include('moderator.genres.partials.modals.delete')
+    @include('moderator.genres.partials.modals.create')
 </body>
 
 </html>

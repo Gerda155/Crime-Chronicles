@@ -116,13 +116,22 @@
                 <td>
 
                     @if($case->status === 'active')
-                    <span class="badge bg-success">Aktīva</span>
+                    <span class="badge bg-success">
+                        <i class="fa-solid fa-circle-check me-1"></i>
+                        Aktīva
+                    </span>
 
                     @elseif($case->status === 'pending')
-                    <span class="badge bg-warning">Gaida</span>
+                    <span class="badge bg-warning">
+                        <i class="fa-solid fa-clock me-1"></i>
+                        Gaida
+                    </span>
 
                     @elseif($case->status === 'rejected')
-                    <span class="badge bg-danger">Noraidīta</span>
+                    <span class="badge bg-danger">
+                        <i class="fa-solid fa-times-circle me-1"></i>
+                        Noraidīta
+                    </span>
                     @endif
 
                 </td>
