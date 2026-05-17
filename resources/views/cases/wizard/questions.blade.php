@@ -15,11 +15,22 @@
     @include('partials.header')
     @include('partials.burger')
 
+    @php
+    $editMode = $editMode ?? false;
+    @endphp
+
     <main class="container my-5">
 
         <h1 class="text-center mb-4 fw-bold ">
             Lietas: <strong class="text-light">"{{ $case->title }}"</strong> jautājumi
         </h1>
+
+        @if($editMode)
+        <div class="alert alert-warning border-0 mb-4">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            Pēc izmaiņu veikšanas lieta tiks atkārtoti nosūtīta moderācijai.
+        </div>
+        @endif
 
         <div class="mb-4">
             <div class="d-flex justify-content-between mb-2">
@@ -31,13 +42,12 @@
             </div>
         </div>
 
-        {{-- EXPLANATION --}}
         <div class="alert alert-dark border-0 mb-4">
             <div class="d-flex align-items-center gap-3">
                 <div class="display-6"><i class="fa-solid fa-circle-question"></i></div>
                 <div>
                     <strong>Detektīv, ir laiks veikt nopratināšanu!</strong><br>
-                    Tagad vari pievienot <strong>jautājumus</strong> aizdomās turamajiem. 
+                    Tagad vari pievienot <strong>jautājumus</strong> aizdomās turamajiem.
                     Šie jautājumi palīdzēs spēlētājam labāk izprast lietu un atklāt patiesību.<br>
                     Jautājumi nav obligāti, bet tie padara spēli <strong>interesantāku un dziļāku</strong>!<br>
                     <small class="text-secondary"><i class="fa-solid fa-lightbulb" style="color: #dabe69;"></i> Padoms: Uzdod jautājumus, kas atklāj aizdomās turamā raksturu un motivāciju!</small><br>
@@ -46,34 +56,75 @@
             </div>
         </div>
 
-        {{-- JAUTĀJUMU SARAKSTS --}}
         <div class="card bg-secondary text-light border-0 mb-4">
             <div class="card-body">
                 <h5 class="mb-3"><i class="fa-solid fa-list"></i> Esošie jautājumi</h5>
 
                 @forelse($questions as $q)
-                <div class="suspect-card w-100 mb-3 p-3 rounded">
-                    <strong><i class="fa-regular fa-circle-question"></i> {{ $q->question_text }}</strong><br>
-                    <small class="text-info"><i class="fa-solid fa-circle-user"></i> Jautā: {{ $q->suspect->name ?? '—' }}</small><br>
-                    <small class="text-light"><i class="fa-solid fa-comment-dots"></i> Atbilde: {{ $q->answer_text }}</small>
+
+                <div class="suspect-card w-100 mb-3 p-3 rounded d-flex justify-content-between align-items-start gap-3">
+
+                    <div class="flex-grow-1">
+                        <strong>
+                            <i class="fa-regular fa-circle-question"></i>
+                            {{ $q->question_text }}
+                        </strong><br>
+
+                        <small class="text-info">
+                            <i class="fa-solid fa-circle-user"></i>
+                            Jautā: {{ $q->suspect->name ?? '—' }}
+                        </small><br>
+
+                        <small class="text-light">
+                            <i class="fa-solid fa-comment-dots"></i>
+                            Atbilde: {{ $q->answer_text }}
+                        </small>
+                    </div>
+
+                    <div>
+                        <form method="POST"
+                            action="{{ route('cases.questions.destroy', [$case->id, $q->id]) }}">
+
+                            @csrf
+                            @method('DELETE')
+
+                            <button class="btn btn-sm btn-danger">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+
                 </div>
+
                 @empty
-                <p class="text-muted text-center py-3"><i class="fa-solid fa-folder-open"></i> Nav pievienotu jautājumu (jautājumi nav obligāti)</p>
+                <p class="text-muted text-center py-3">
+                    <i class="fa-solid fa-folder-open"></i>
+                    Nav pievienotu jautājumu
+                </p>
                 @endforelse
+
             </div>
+
         </div>
 
-        {{-- FORMA JAUTĀJUMA PIEVIENOŠANAI --}}
         <div class="card bg-secondary text-light border-0">
             <div class="card-body">
                 <h5 class="mb-3"><i class="fa-solid fa-plus-circle"></i> Pievienot jaunu jautājumu</h5>
-                
-                <form method="POST" action="{{ route('cases.questions.store', $case->id) }}">
+
+                <form method="POST"
+                    action="{{ isset($editingQuestion)
+                        ? route('cases.questions.update', [$case->id, $editingQuestion->id])
+                        : route('cases.questions.store', $case->id) }}">
+
                     @csrf
+
+                    @if(isset($editingQuestion))
+                    @method('PUT')
+                    @endif
 
                     <div class="mb-3">
                         <label class="form-label"><i class="fa-solid fa-user"></i> Aizdomās turamais</label>
-                        <select name="suspect_id" class="form-select bg-dark text-light border-0" required>
+                        <select name="suspect_id" class="form-select bg-dark text-light border-0">
                             <option value="">Izvēlies aizdomās turamo</option>
                             @foreach($suspects as $s)
                             <option value="{{ $s->id }}">{{ $s->name }}</option>
@@ -86,7 +137,7 @@
 
                     <div class="mb-3">
                         <label class="form-label"><i class="fa-regular fa-circle-question"></i> Jautājums</label>
-                        <textarea name="question_text" class="form-control bg-dark text-light border-0" rows="3" required placeholder="Piem., 'Kur jūs atradāties nozieguma brīdī?'"></textarea>
+                        <textarea name="question_text" class="form-control bg-dark text-light border-0" rows="3" placeholder="Piem., 'Kur jūs atradāties nozieguma brīdī?'">{{ old('question_text', $editingQuestion->question_text ?? '') }}</textarea>
                         <small class="text-light mt-1 d-block">
                             <i class="fa-solid fa-pen"></i> Uzraksti jautājumu, ko spēlētājs varēs uzdot aizdomās turamajam
                         </small>
@@ -94,7 +145,7 @@
 
                     <div class="mb-3">
                         <label class="form-label"><i class="fa-solid fa-comment-dots"></i> Atbilde</label>
-                        <textarea name="answer_text" class="form-control bg-dark text-light border-0" rows="3" required placeholder="Ieraksti atbildi, ko aizdomās turamais sniegs..."></textarea>
+                        <textarea name="answer_text" class="form-control bg-dark text-light border-0" rows="3" placeholder="Ieraksti atbildi, ko aizdomās turamais sniegs...">{{ old('answer_text', $editingQuestion->answer_text ?? '') }}</textarea>
                         <small class="text-light mt-1 d-block">
                             <i class="fa-solid fa-info-circle"></i> Atbilde var saturēt norādes, melus vai svarīgu informāciju
                         </small>
@@ -118,12 +169,10 @@
             <a href="{{ route('cases.my-cases') }}" class="btn btn-outline-light">
                 <i class="fa-solid fa-right-from-bracket"></i> Iziet
             </a>
-            <form method="POST" action="{{ route('cases.submit.final', $case->id) }}" id="finalForm">
-                @csrf
-                <button type="submit" class="btn btn-success">
-                    <i class="fa-solid fa-circle-check"></i> Pabeigt lietu
-                </button>
-            </form>
+            <a href="{{ route('cases.solution', $case->id) }}"
+                class="btn btn-success">
+                Tālāk <i class="fa-solid fa-circle-arrow-right"></i>
+            </a>
         </div>
 
     </main>

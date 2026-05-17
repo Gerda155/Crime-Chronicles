@@ -98,8 +98,38 @@ class CaseController extends Controller
     public function edit(int $id)
     {
         $case = CaseModel::findOrFail($id);
+
         if ($case->user_id != Auth::id()) abort(403);
-        return view('cases.edit', compact('case'));
+
+        $genres = Genre::all();
+
+        return view('cases.wizard.create', [
+            'case' => $case,
+            'genres' => $genres,
+            'editMode' => true
+        ]);
+    }
+
+    public function updateBasic(Request $request, int $id)
+    {
+        $case = CaseModel::findOrFail($id);
+
+        if ($case->user_id != Auth::id()) abort(403);
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'genre_id' => 'required|exists:genres,id',
+        ]);
+
+        $case->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'genre_id' => $request->genre_id,
+            'status' => 'pending'
+        ]);
+
+        return redirect()->route('cases.suspects', $case->id);
     }
 
     public function update(Request $request, int $id)

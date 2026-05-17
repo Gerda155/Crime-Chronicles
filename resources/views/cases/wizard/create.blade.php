@@ -15,11 +15,22 @@
     @include('partials.header')
     @include('partials.burger')
 
+    @php
+        $editMode = $editMode ?? false;
+    @endphp
+
     <main class="container my-5">
 
         <h1 class="text-center mb-4 fw-bold">
-            Jaunas lietas izveide
+            {{ $editMode ? 'Lietas rediģēšana' : 'Jaunas lietas izveide' }}
         </h1>
+
+        @if($editMode)
+        <div class="alert alert-warning border-0 mb-4">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            Pēc izmaiņu veikšanas lieta tiks atkārtoti nosūtīta moderācijai.
+        </div>
+        @endif
 
         <div class="mb-4">
             <div class="d-flex justify-content-between mb-2">
@@ -46,8 +57,15 @@
         <div class="card bg-secondary text-light border-0">
             <div class="card-body">
 
-                <form method="POST" action="{{ route('user.cases.store') }}">
+                <form method="POST"
+                    action="{{ $editMode
+                    ? route('cases.update.basic', $case->id)
+                    : route('user.cases.store') }}">
                     @csrf
+
+                    @if($editMode)
+                    @method('PUT')
+                    @endif
 
                     <div class="mb-4">
                         <label class="form-label fw-bold"><i class="fa-solid fa-pen"></i> Nosaukums</label>
@@ -55,6 +73,7 @@
                             name="title"
                             class="form-control bg-dark text-light border-0 rounded"
                             placeholder="Ievadi lietas nosaukumu, piem., 'Rīgas noslēpums'"
+                            value="{{ old('title', $case->title ?? '') }}"
                             required>
                         <small class="text-light mt-1 d-block">
                             <i class="fa-solid fa-info-circle"></i> Nosaukumam jābūt oriģinālam un atmiņā paliekošam
@@ -67,7 +86,7 @@
                             rows="5"
                             class="form-control bg-dark text-light border-0 rounded"
                             placeholder="Apraksti lietas sižetu, noziegumu un galvenos notikumus..."
-                            required></textarea>
+                            required>{{ old('description', $case->description ?? '') }}</textarea>
                         <small class="text-light mt-1 d-block">
                             <i class="fa-solid fa-info-circle"></i> Detalizēts apraksts palīdzēs spēlētājam iegrimt stāstā
                         </small>
@@ -80,7 +99,8 @@
                             required>
                             <option value="">Izvēlies žanru</option>
                             @foreach($genres as $genre)
-                            <option value="{{ $genre->id }}">
+                            <option value="{{ $genre->id }}"
+                                {{ old('genre_id', $case->genre_id ?? '') == $genre->id ? 'selected' : '' }}>
                                 {{ $genre->name }}
                             </option>
                             @endforeach

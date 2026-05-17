@@ -6,6 +6,7 @@ use App\Http\Controllers\Case\CasePlayController;
 use App\Http\Controllers\Case\CaseSuspectController;
 use App\Http\Controllers\Case\CaseEvidenceController;
 use App\Http\Controllers\Case\CaseQuestionController;
+use App\Http\Controllers\Case\CaseSolutionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\Moderator\ModeratorUserController;
@@ -74,6 +75,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-ratings/{id}/edit', [RatingController::class, 'edit'])->name('ratings.edit');
     Route::put('/my-ratings/{id}', [RatingController::class, 'update'])->name('ratings.update');
     Route::delete('/my-ratings/{id}', [RatingController::class, 'destroy'])->name('ratings.destroy');
+
+    Route::get('/cases/{id}/edit', [CaseController::class, 'edit'])->name('cases.edit');
+    Route::put('/cases/{id}/update-basic', [CaseController::class, 'updateBasic'])->name('cases.update.basic');
+    Route::put('/cases/{case}/suspects/{suspect}', [CaseSuspectController::class, 'update'])->name('cases.suspects.update');
+    Route::delete('/cases/{case}/suspects/{suspect}', [CaseSuspectController::class, 'destroy'])->name('cases.suspects.destroy');
+    Route::put('/cases/{case}/evidence/{evidence}', [CaseEvidenceController::class, 'update'])->name('cases.evidence.update');
+    Route::delete('/cases/{case}/evidence/{evidence}', [CaseEvidenceController::class, 'destroy'])->name('cases.evidence.destroy');
+    Route::put('/cases/{case}/questions/{question}', [CaseQuestionController::class, 'update'])->name('cases.questions.update');
+    Route::delete('/cases/{case}/questions/{question}', [CaseQuestionController::class, 'destroy'])->name('cases.questions.destroy');
+
+    Route::get('/cases/{case}/solution', [CaseSolutionController::class, 'index'])->name('cases.solution');
+    Route::put('/cases/{case}/solution', [CaseSolutionController::class, 'save'])->name('cases.solution.save');
 });
 
 Route::get('/cases', [CaseController::class, 'index'])->name('cases.index');

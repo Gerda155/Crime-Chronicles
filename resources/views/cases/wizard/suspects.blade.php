@@ -16,11 +16,22 @@
     @include('partials.header')
     @include('partials.burger')
 
+    @php
+    $editMode = $editMode ?? false;
+    @endphp
+
     <main class="container my-5">
 
         <h1 class="text-center mb-4 fw-bold">
             Lietas: <strong class="text-light">"{{ $case->title }}"</strong> aizdomās turamie
         </h1>
+
+        @if($editMode)
+        <div class="alert alert-warning border-0 mb-4">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            Pēc izmaiņu veikšanas lieta tiks atkārtoti nosūtīta moderācijai.
+        </div>
+        @endif
 
         <div class="mb-4">
             <div class="d-flex justify-content-between mb-2">
@@ -84,6 +95,21 @@
                         </small>
                     </div>
 
+                    <div class="d-flex gap-2 mt-2">
+
+                        <form method="POST"
+                            action="{{ route('cases.suspects.destroy', [$case->id, $suspect->id]) }}">
+
+                            @csrf
+                            @method('DELETE')
+
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+
+                    </div>
+
                 </div>
                 @endforeach
             </div>
@@ -94,14 +120,22 @@
                 <h5 class="mb-3"><i class="fa-solid fa-plus-circle"></i> Pievienot jaunu aizdomās turamo</h5>
 
                 <form method="POST"
-                    action="{{ route('cases.suspects.store', $case->id) }}"
+                    action="{{ isset($editingSuspect)
+                    ? route('cases.suspects.update', [$case->id, $editingSuspect->id])
+                    : route('cases.suspects.store', $case->id) }}"
                     enctype="multipart/form-data">
+
                     @csrf
+
+                    @if(isset($editingSuspect))
+                    @method('PUT')
+                    @endif
 
                     <div class="mb-3">
                         <label class="form-label"><i class="fa-solid fa-user"></i> Vārds</label>
                         <input type="text" name="name"
                             class="form-control bg-dark text-light border-0"
+                            value="{{ old('name', $editingSuspect->name ?? '') }}"
                             required>
                         <small class="text-light mt-1 d-block"><i class="fa-solid fa-info-circle"></i> Iedomājies aizdomīgu tēlu. Vārds ir pirmais, ko spēlētājs ieraudzīs</small>
                     </div>
@@ -110,7 +144,7 @@
                         <label class="form-label"><i class="fa-solid fa-align-left"></i> Apraksts</label>
                         <textarea name="description"
                             class="form-control bg-dark text-light border-0"
-                            rows="3"></textarea>
+                            rows="3">{{ old('description', $editingSuspect->description ?? '') }}</textarea>
                         <small class="text-light mt-1 d-block">
                             <i class="fa-solid fa-info-circle"></i> Apraksti viņa izskatu, raksturu, uzvedību un iespējamo saistību ar noziegumu
                         </small>
@@ -155,7 +189,11 @@
             </a>
             <a href="{{ route('cases.evidence', $case->id) }}"
                 id="nextBtn"
-                class="btn btn-success {{ count($suspects) < 2 ? 'disabled' : '' }}">
+                class="btn btn-success {{
+                    count($suspects) < 2 || !$case->answer_id
+                    ? 'disabled'
+                    : ''
+                }}">
                 Tālāk <i class="fa-solid fa-circle-arrow-right"></i>
             </a>
         </div>

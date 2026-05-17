@@ -8,28 +8,212 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 </head>
 
 <body class="bg-dark text-light">
+
     @include('partials.header')
     @include('partials.burger')
 
     <main class="container my-5">
-        <h1 class="text-center mb-4 fw-bold text-pink">
-            {{ ucfirst(Auth::user()->role) }} panelis – Lietotāji
+
+        <h1 class="text-center mb-4 fw-bold">
+            {{ ucfirst(Auth::user()->role) }} panelis - Lietotāji
         </h1>
 
-        <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+        <div class="row g-3 mb-4">
+
+            <div class="{{ Auth::user()->role === 'admin' ? 'col-lg-2 col-md-4 col-6' : 'col-lg-3 col-md-6 col-12' }}">
+                <div class="card border-0 rounded-4 p-3 h-100 shadow-sm bg-dark-subtle">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <div class="text-secondary small mb-1">
+                                Kopā lietotāju
+                            </div>
+
+                            <div class="fs-3 fw-bold text-light">
+                                {{ $users->count() }}
+                            </div>
+
+                        </div>
+
+                        <div class="bg-primary bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center"
+                            style="width: 55px; height: 55px;">
+
+                            <i class="fa-solid fa-users text-primary fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="{{ Auth::user()->role === 'admin' ? 'col-lg-2 col-md-4 col-6' : 'col-lg-3 col-md-6 col-12' }}">
+                <div class="card border-0 rounded-4 p-3 h-100 shadow-sm bg-dark-subtle">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <div class="text-secondary small mb-1">
+                                Aktīvi
+                            </div>
+
+                            <div class="fs-3 fw-bold text-success">
+                                {{ $users->where('status', 'active')->count() }}
+                            </div>
+
+                        </div>
+
+                        <div class="bg-success bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center"
+                            style="width: 55px; height: 55px;">
+
+                            <i class="fa-solid fa-user-check text-success fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="{{ Auth::user()->role === 'admin' ? 'col-lg-2 col-md-4 col-6' : 'col-lg-3 col-md-6 col-12' }}">
+                <div class="card border-0 rounded-4 p-3 h-100 shadow-sm bg-dark-subtle">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <div class="text-secondary small mb-1">
+                                Bloķēti
+                            </div>
+
+                            <div class="fs-3 fw-bold text-danger">
+                                {{ $users->where('status', 'inactive')->count() }}
+                            </div>
+
+                        </div>
+
+                        <div class="bg-danger bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center"
+                            style="width: 55px; height: 55px;">
+
+                            <i class="fa-solid fa-user-xmark text-danger fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            @if(Auth::user()->role === 'admin')
+
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="card border-0 rounded-4 p-3 h-100 shadow-sm bg-dark-subtle">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <div class="text-secondary small mb-1">
+                                Moderatori
+                            </div>
+
+                            <div class="fs-3 fw-bold text-warning">
+                                {{ $users->where('role', 'moderator')->count() }}
+                            </div>
+
+                        </div>
+
+                        <div class="bg-warning bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center"
+                            style="width: 55px; height: 55px;">
+
+                            <i class="fa-solid fa-user-shield text-warning fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            @endif
+
+            <div class="{{ Auth::user()->role === 'admin' ? 'col-lg-4 col-md-8 col-12' : 'col-lg-3 col-md-6 col-12' }}">
+                <div class="card border-0 rounded-4 p-3 h-100 shadow-sm bg-dark-subtle">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div class="overflow-hidden">
+
+                            <div class="text-secondary small mb-1">
+                                TOP detektīvs
+                            </div>
+
+                            <div class="fw-bold text-info text-truncate"
+                                style="max-width: 180px;">
+
+                                {{ $users->sortByDesc('completed_cases_count')->first()->name ?? 'Nav datu' }}
+
+                            </div>
+
+                            <small class="text-secondary">
+
+                                {{ $users->sortByDesc('completed_cases_count')->first()->completed_cases_count ?? 0 }}
+                                atrisinātas lietas
+
+                            </small>
+
+                        </div>
+
+                        <div class="bg-info bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                            style="width: 55px; height: 55px;">
+
+                            <i class="fa-solid fa-trophy text-info fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mb-3">
+
             <form method="GET" class="d-flex gap-2 flex-grow-1">
-                <input type="text" name="search" value="{{ request('search') }}"
+
+                <span class="input-group-text bg-secondary border-0 text-light">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+
+                <input type="text"
+                    name="search"
+                    value="{{ request('search') }}"
                     class="form-control bg-secondary text-light border-0 rounded"
                     placeholder="Meklēt pēc vārda vai e-pasta">
-                <button type="submit" class="btn btn-primary rounded">Meklēt</button>
+
+                <button type="submit" class="btn btn-primary rounded">
+                    Meklēt
+                </button>
+
             </form>
 
             <form method="GET" class="d-flex gap-2">
+
                 <select name="sort" class="form-select bg-secondary text-light border-0 rounded">
 
                     <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>
@@ -77,219 +261,283 @@
                     </option>
 
                 </select>
-                <button type="submit" class="btn btn-primary rounded">Kārtot</button>
+
+                <button type="submit" class="btn btn-primary rounded">
+                    Kārtot
+                </button>
+
             </form>
 
             @if(Auth::user()->role === 'admin')
-            <button type="button" class="btn btn-success rounded" data-bs-toggle="modal" data-bs-target="#addModeratorModal">
-                Pievienot jaunu moderatoru
-            </button>
-            @endif
-        </div>
 
-        @if(Auth::user()->role === 'admin')
-        <div class="modal fade" id="addModeratorModal" tabindex="-1" aria-labelledby="addModeratorModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content bg-dark text-light">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addModeratorModalLabel">Moderatora pievienošanas forma</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{{ route('admin.moderators.store') }}" method="POST">
-                        @csrf
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Lietotājvārds</label>
-                                <input type="text" name="username" class="form-control bg-secondary text-light border-0" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">E-pasts</label>
-                                <input type="email" name="email" class="form-control bg-secondary text-light border-0" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Vārds</label>
-                                <input type="text" name="name" class="form-control bg-secondary text-light border-0" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Parole</label>
-                                <input type="password" name="password" class="form-control bg-secondary text-light border-0" required minlength="8">
-                            </div>
-                            <div class="mb-3">
-                                <label for="password_confirmation" class="form-label">Apstiprināt paroli</label>
-                                <input type="password" name="password_confirmation" class="form-control bg-secondary text-light border-0" required>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-success rounded">Pievienot</button>
-                            <button type="button" class="btn btn-secondary rounded" data-bs-dismiss="modal">Aizvērt</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            <button type="button"
+                class="btn btn-success rounded"
+                data-bs-toggle="modal"
+                data-bs-target="#addModeratorModal">
+
+                <i class="fa-solid fa-plus me-1"></i>
+                Pievienot moderatoru
+            </button>
+
+            @endif
+
         </div>
-        @endif
 
         @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+
+        <div class="alert alert-success">
+            <i class="fa-solid fa-circle-check me-2"></i>
+            {{ session('success') }}
+        </div>
+
         @endif
 
         <div class="table-responsive rounded shadow-sm">
+
             <table class="table table-dark table-hover align-middle mb-0">
-                <thead class="text-uppercase text-muted small">
+
+                <thead class="table-dark text-uppercase text-muted small">
+
                     <tr>
+
                         <th>#</th>
-                        <th>Vārds</th>
-                        <th>E-pasts</th>
-                        <th>Loma</th>
-                        <th>Statuss</th>
-                        <th>Darbības</th>
+
+                        <th>
+                            <i class="fa-solid fa-user me-1"></i>
+                            Lietotājs
+                        </th>
+
+                        <th>
+                            <i class="fa-solid fa-envelope me-1"></i>
+                            E-pasts
+                        </th>
+
+                        <th>
+                            <i class="fa-solid fa-user-tag me-1"></i>
+                            Loma
+                        </th>
+
+                        <th>
+                            <i class="fa-solid fa-toggle-on me-1"></i>
+                            Statuss
+                        </th>
+
+                        <th>
+                            <i class="fa-solid fa-calendar me-1"></i>
+                            Reģistrācija
+                        </th>
+
+                        <th>
+                            <i class="fa-solid fa-gear me-1"></i>
+                            Darbības
+                        </th>
+
                     </tr>
+
                 </thead>
+
                 <tbody>
-                    @foreach($users as $user)
+
+                    @forelse($users as $user)
+
                     <tr class="{{ $user->status === 'inactive' ? 'text-secondary' : '' }}">
-                        <td>{{ $users->firstItem() + $loop->index }}</td>
-                        <td class="fw-bold">{{ $user->name }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>{{ ucfirst($user->role) }}</td>
-                        <td>{{ $user->status === 'inactive' ? 'Neaktīvs' : 'Aktīvs' }}</td>
-                        <td class="d-flex gap-1">
-                            <button type="button" class="btn btn-sm btn-outline-info rounded" data-bs-toggle="modal" data-bs-target="#userModal{{ $user->id }}">
-                                Skatīt
-                            </button>
 
-                            @if(Auth::user()->role === 'admin')
-                            <button type="button" class="btn btn-sm btn-outline-primary rounded" data-bs-toggle="modal" data-bs-target="#editUserModal{{ $user->id }}">
-                                Rediģēt
-                            </button>
-                            @endif
-
-                            @if(Auth::user()->role === 'admin' || (Auth::user()->role === 'moderator' && $user->role === 'user'))
-                            <form action="{{ $user->status === 'inactive' ? route(Auth::user()->role.'.users.activate', $user->id) : route(Auth::user()->role.'.users.deactivate', $user->id) }}"
-                                method="POST">
-                                @csrf
-                                @method('PUT')
-                                <button class="btn btn-sm {{ $user->status === 'inactive' ? 'btn-outline-success' : 'btn-outline-warning' }} rounded">
-                                    {{ $user->status === 'inactive' ? 'Aktivēt' : 'Deaktivēt' }}
-                                </button>
-                            </form>
-
-                            <button type="button"
-                                class="btn btn-sm btn-outline-danger rounded"
-                                data-bs-toggle="modal"
-                                data-bs-target="#deleteModal"
-                                data-action="{{ route('moderator.users.destroy', $user->id) }}">
-                                Dzēst
-                            </button>
-
-                            @if($user->trashed())
-                            <form action="{{ route(Auth::user()->role.'.users.restore', $user->id) }}" method="POST">
-                                @csrf
-                                <button class="btn btn-sm btn-outline-success rounded">Atjaunot</button>
-                            </form>
-                            @endif
-                            @endif
+                        <td>
+                            {{ $users->firstItem() + $loop->index }}
                         </td>
-                    </tr>
 
-                    <div class="modal fade" id="userModal{{ $user->id }}" tabindex="-1" aria-labelledby="userModalLabel{{ $user->id }}" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-lg">
-                            <div class="modal-content bg-dark text-light">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="userModalLabel{{ $user->id }}">{{ $user->name }} profils</h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="d-flex gap-4 align-items-start">
-                                        <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('images/avatar-placeholder.jpg') }}"
-                                            class="rounded-circle border
-                                            @if($user->role === 'admin') border-danger
-                                            @elseif($user->role === 'moderator') border-warning
-                                            @else border-secondary @endif"
-                                            width="150" height="150" style="object-fit: cover;">
+                        <td>
 
-                                        <div class="flex-grow-1 text-white">
-                                            <h4 class="@if($user->role === 'admin') text-danger fw-bold
-                                                @elseif($user->role === 'moderator') text-warning fw-bold
-                                                @endif">{{ $user->name }}</h4>
-                                            <p>{{ $user->bio ?? 'Lietotājs vēl nav pievienojis bio.' }}</p>
+                            <div class="d-flex align-items-center gap-2">
 
-                                            <h5 class="mt-2">Sasniegumi</h5>
-                                            @if($user->achievements && $user->achievements->count())
-                                            <div class="d-flex flex-wrap gap-2">
-                                                @foreach($user->achievements as $achievement)
-                                                <span class="badge bg-secondary">{{ $achievement->title }}</span>
-                                                @endforeach
-                                            </div>
-                                            @else
-                                            <p class="text-white">Nav neviena sasnieguma</p>
-                                            @endif
+                                <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('images/avatar-placeholder.jpg') }}"
+                                    width="45"
+                                    height="45"
+                                    class="rounded-circle border"
+                                    style="object-fit: cover;">
 
-                                            <p class="text-secondary mt-2 mb-0" style="font-size: 0.9rem;">Pabeigtas lietas: {{ $user->completed_cases_count ?? 0 }}</p>
-                                            <p class="text-secondary mb-0" style="font-size: 0.9rem;">Detektīvs kopš: {{ $user->created_at->format('d.m.Y') }}</p>
-                                        </div>
+                                <div>
+
+                                    <div class="fw-bold">
+                                        {{ $user->name }}
                                     </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary rounded" data-bs-dismiss="modal">Aizvērt</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    @if(Auth::user()->role === 'admin')
-                    <div class="modal fade" id="editUserModal{{ $user->id }}" tabindex="-1" aria-labelledby="editUserModalLabel{{ $user->id }}" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content bg-dark text-light">
-                                @if ($errors->any())
-                                <div class="alert alert-danger">
-                                    @foreach ($errors->all() as $error)
-                                    <div>{{ $error }}</div>
-                                    @endforeach
+                                    <small class="text-secondary">
+                                        {{ '@'.$user->username }}
+                                    </small>
+
                                 </div>
+
+                            </div>
+
+                        </td>
+
+                        <td>
+                            {{ $user->email }}
+                        </td>
+
+                        <td>
+
+                            @if($user->role === 'admin')
+
+                            <span class="badge bg-danger">
+                                <i class="fa-solid fa-crown me-1"></i>
+                                Admin
+                            </span>
+
+                            @elseif($user->role === 'moderator')
+
+                            <span class="badge bg-warning text-dark">
+                                <i class="fa-solid fa-user-shield me-1"></i>
+                                Moderator
+                            </span>
+
+                            @else
+
+                            <span class="badge bg-secondary">
+                                <i class="fa-solid fa-user me-1"></i>
+                                User
+                            </span>
+
+                            @endif
+
+                        </td>
+
+                        <td>
+
+                            @if($user->status === 'active')
+
+                            <span class="badge bg-success">
+                                <i class="fa-solid fa-circle-check me-1"></i>
+                                Aktīvs
+                            </span>
+
+                            @else
+
+                            <span class="badge bg-danger">
+                                <i class="fa-solid fa-circle-xmark me-1"></i>
+                                Bloķēts
+                            </span>
+
+                            @endif
+
+                        </td>
+
+                        <td>
+                            <small>
+                                {{ $user->created_at->format('d.m.Y') }}
+                            </small>
+                        </td>
+
+                        <td>
+
+                            <div class="d-flex flex-wrap gap-1">
+
+                                <button type="button"
+                                    class="btn btn-sm btn-outline-info rounded"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#userModal{{ $user->id }}"
+                                    title="Skatīt">
+
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+
+                                @if(Auth::user()->role === 'admin')
+
+                                <button type="button"
+                                    class="btn btn-sm btn-outline-primary rounded"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editUserModal{{ $user->id }}"
+                                    title="Rediģēt">
+
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+
                                 @endif
 
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="editUserModalLabel{{ $user->id }}">Moderatora rediģēšanas forma</h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
+                                @if(Auth::user()->role === 'admin' || (Auth::user()->role === 'moderator' && $user->role === 'user'))
+
+                                <form action="{{ $user->status === 'inactive'
+                                ? route(Auth::user()->role.'.users.activate', $user->id)
+                                : route(Auth::user()->role.'.users.deactivate', $user->id) }}"
+                                    method="POST">
+
                                     @csrf
                                     @method('PUT')
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label for="role" class="form-label">Loma</label>
-                                            <select name="role" class="form-select bg-secondary text-light border-0" required>
-                                                <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Administrator</option>
-                                                <option value="moderator" {{ $user->role === 'moderator' ? 'selected' : '' }}>Moderator</option>
-                                                <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>User</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="status" class="form-label">Statuss</label>
-                                            <select name="status" class="form-select bg-secondary text-light border-0" required>
-                                                <option value="active" {{ $user->status === 'active' ? 'selected' : '' }}>Aktīvs</option>
-                                                <option value="inactive" {{ $user->status === 'inactive' ? 'selected' : '' }}>Neaktīvs</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-success rounded">Saglabāt</button>
-                                        <button type="button" class="btn btn-secondary rounded" data-bs-dismiss="modal">Aizvērt</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
 
-                    @endforeach
+                                    <button type="submit"
+                                        class="btn btn-sm {{ $user->status === 'inactive' ? 'btn-outline-success' : 'btn-outline-warning' }} rounded"
+                                        title="{{ $user->status === 'inactive' ? 'Aktivēt' : 'Bloķēt' }}">
+
+                                        @if($user->status === 'inactive')
+                                        <i class="fa-solid fa-check"></i>
+                                        @else
+                                        <i class="fa-solid fa-ban"></i>
+                                        @endif
+
+                                    </button>
+
+                                </form>
+
+                                <button type="button"
+                                    class="btn btn-sm btn-outline-danger rounded"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal"
+                                    data-action="{{ route('moderator.users.destroy', $user->id) }}"
+                                    title="Dzēst">
+
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+
+                                @if($user->trashed())
+
+                                <form action="{{ route(Auth::user()->role.'.users.restore', $user->id) }}"
+                                    method="POST">
+
+                                    @csrf
+
+                                    <button class="btn btn-sm btn-outline-success rounded"
+                                        title="Atjaunot">
+
+                                        <i class="fa-solid fa-rotate-left"></i>
+                                    </button>
+
+                                </form>
+
+                                @endif
+
+                                @endif
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    @empty
+
+                    <tr>
+
+                        <td colspan="8" class="text-center text-secondary py-5">
+
+                            <i class="fa-solid fa-users fa-3x mb-3 d-block"></i>
+
+                            Nav atrastu lietotāju
+
+                        </td>
+
+                    </tr>
+
+                    @endforelse
+
                 </tbody>
+
             </table>
 
-            <div class="mt-3">
-                {{ $users->links() }}
-            </div>
+        </div>
+
+        <div class="mt-4">
+            {{ $users->links() }}
         </div>
 
     </main>
@@ -297,38 +545,75 @@
     @include('partials.footer')
 
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+
         <div class="modal-dialog">
+
             <div class="modal-content bg-dark text-light">
+
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Apstiprināt dzēšanu</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        Apstiprināt dzēšanu
+                    </h5>
+
+                    <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal">
+                    </button>
+
                 </div>
+
                 <div class="modal-body">
-                    Vai tiešām vēlies dzēst šo ierakstu? Šī darbība ir neatgriezeniska!
+                    Vai tiešām vēlies dzēst šo lietotāju? Šī darbība ir neatgriezeniska!
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary rounded" data-bs-dismiss="modal">Atcelt</button>
+
+                    <button type="button"
+                        class="btn btn-secondary rounded"
+                        data-bs-dismiss="modal">
+
+                        Atcelt
+                    </button>
+
                     <form id="deleteForm" method="POST" class="m-0">
+
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger rounded">Dzēst</button>
+
+                        <button type="submit" class="btn btn-danger rounded">
+                            Dzēst
+                        </button>
+
                     </form>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
             const deleteModal = document.getElementById('deleteModal');
+
             deleteModal.addEventListener('show.bs.modal', function(event) {
+
                 const button = event.relatedTarget;
                 const action = button.getAttribute('data-action');
+
                 const form = deleteModal.querySelector('#deleteForm');
+
                 form.action = action;
+
             });
+
         });
     </script>
+
 </body>
 
 </html>

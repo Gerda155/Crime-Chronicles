@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const fileInput = document.getElementById('imageInput');
 
     const suspectsCount = window.suspectData.suspectsCount;
-    const currentAnswerId = window.suspectData.currentAnswerId;
+    let currentAnswerId = window.suspectData.currentAnswerId;
     const setAnswerUrl = window.suspectData.setAnswerUrl;
     const csrfToken = window.suspectData.csrfToken;
 
@@ -41,10 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (data.success) {
 
-                    showToast(
-                        'success',
-                        `"${suspectName}" atzīmēts kā vainīgais!`
-                    );
+                    currentAnswerId = suspectId;
 
                     selectedName.textContent = suspectName;
 
@@ -53,57 +50,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         nextBtn.removeAttribute('disabled');
                     }
 
-                } else {
-
-                    showToast(
-                        'error',
-                        'Kļūda saglabājot vainīgo'
-                    );
                 }
             })
             .catch(function (error) {
 
                 console.error(error);
 
-                showToast(
-                    'error',
-                    'Kļūda saglabājot vainīgo'
-                );
             });
-    }
-
-    function showToast(type, message) {
-
-        const toast = document.createElement('div');
-
-        toast.className = `toast-notification ${type}`;
-
-        toast.innerHTML = `
-            <div class="toast-content">
-                <i class="fa-solid ${type === 'success'
-                ? 'fa-circle-check'
-                : 'fa-circle-exclamation'
-            }"></i>
-
-                <span>${message}</span>
-            </div>
-        `;
-
-        document.body.appendChild(toast);
-
-        setTimeout(function () {
-            toast.classList.add('show');
-        }, 100);
-
-        setTimeout(function () {
-
-            toast.classList.remove('show');
-
-            setTimeout(function () {
-                toast.remove();
-            }, 300);
-
-        }, 3000);
     }
 
     cards.forEach(function (card) {
@@ -135,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (
             suspectsCount >= 2 &&
-            currentAnswerId !== ''
+            currentAnswerId
         ) {
 
             nextBtn.classList.remove('disabled');

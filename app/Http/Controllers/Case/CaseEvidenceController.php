@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Case;
 
 use Illuminate\Http\Request;
 use App\Models\CaseModel;
+use App\Models\Evidence;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 
 class CaseEvidenceController extends Controller
@@ -40,5 +42,20 @@ class CaseEvidenceController extends Controller
         return redirect()
             ->route('cases.evidence', $case->id)
             ->with('status', 'Pierādījums pievienots!');
+    }
+
+    public function destroy(int $caseId, int $evidenceId)
+    {
+        $evidence = Evidence::findOrFail($evidenceId);
+
+        if ($evidence->case->user_id != Auth::id()) abort(403);
+
+        if ($evidence->image_path && file_exists(public_path($evidence->image_path))) {
+            unlink(public_path($evidence->image_path));
+        }
+
+        $evidence->delete();
+
+        return back()->with('status', 'Pierādījums dzēsts');
     }
 }

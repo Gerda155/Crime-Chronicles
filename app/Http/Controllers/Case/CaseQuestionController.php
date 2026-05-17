@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Case;
 use Illuminate\Http\Request;
 use App\Models\CaseModel;
 use App\Http\Controllers\Controller;
+use App\Models\Question;
+use Illuminate\Support\Facades\Auth;
 
 class CaseQuestionController extends Controller
 {
@@ -31,5 +33,16 @@ class CaseQuestionController extends Controller
         ]);
 
         return redirect()->route('cases.questions', $case->id);
+    }
+
+        public function destroy(int $caseId, int $questionId)
+    {
+        $question = Question::findOrFail($questionId);
+
+        if ($question->case->user_id != Auth::id()) abort(403);
+
+        $question->delete();
+
+        return back()->with('status', 'Jautājums dzēsts');
     }
 }

@@ -16,11 +16,22 @@
     @include('partials.header')
     @include('partials.burger')
 
+    @php
+    $editMode = $editMode ?? false;
+    @endphp
+
     <main class="container my-5">
 
         <h1 class="text-center mb-4 fw-bold">
             Lietas: <strong class="text-light">"{{ $case->title }}"</strong> pierādījumi
         </h1>
+
+        @if($editMode)
+        <div class="alert alert-warning border-0 mb-4">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            Pēc izmaiņu veikšanas lieta tiks atkārtoti nosūtīta moderācijai.
+        </div>
+        @endif
 
         <div class="mb-4">
             <div class="d-flex justify-content-between mb-2">
@@ -85,6 +96,20 @@
                         </small>
                         @endif
                     </div>
+                    <div class="d-flex gap-2 mt-2">
+
+                        <form method="POST"
+                            action="{{ route('cases.evidence.destroy', [$case->id, $item->id]) }}">
+
+                            @csrf
+                            @method('DELETE')
+
+                            <button class="btn btn-sm btn-danger">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+
+                    </div>
                 </div>
                 @empty
                 <p class="text-muted text-center py-3"><i class="fa-solid fa-folder-open"></i> Nav pievienotu pierādījumu</p>
@@ -97,10 +122,17 @@
                 <h5 class="mb-3"><i class="fa-solid fa-plus-circle"></i> Pievienot jaunu pierādījumu</h5>
 
                 <form method="POST"
-                    action="{{ route('cases.evidence.store', $case->id) }}"
+                    action="{{ isset($editingEvidence)
+                    ? route('cases.evidence.update', [$case->id, $editingEvidence->id])
+                    : route('cases.evidence.store', $case->id) }}"
                     enctype="multipart/form-data"
                     id="evidenceForm">
+
                     @csrf
+
+                    @if(isset($editingEvidence))
+                    @method('PUT')
+                    @endif
 
                     <div class="mb-3">
                         <label class="form-label"><i class="fa-solid fa-pen"></i> Apraksts</label>
@@ -108,7 +140,7 @@
                             class="form-control bg-dark text-light border-0"
                             rows="3"
                             required
-                            placeholder="Piem., 'Asins traips uz paklāja' vai 'Aizdomīga vēstule'..."></textarea>
+                            placeholder="Piem., 'Asins traips uz paklāja' vai 'Aizdomīga vēstule'...">{{ old('description', $editingEvidence->description ?? '') }}</textarea>
                         <small class="text-light mt-1 d-block">
                             <i class="fa-solid fa-info-circle"></i> Apraksti, kas šis ir par pierādījumu, kur tas atrasts un kāpēc tas ir svarīgs
                         </small>

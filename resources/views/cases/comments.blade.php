@@ -21,6 +21,10 @@
     <main class="container my-5">
         <h1 class="text-center mb-4 fw-bold">Komentāri par lietu: {{ $case->title }}</h1>
 
+        <a href="{{ route('cases.my-cases') }}" class="btn btn-outline-light mb-3">
+            <i class="fa-solid fa-circle-arrow-left"></i> Atpakaļ
+        </a>
+
         @forelse($case->ratings as $rating)
         <div class="card bg-secondary text-light mb-2 p-2">
             <strong>{{ $rating->user->name }}</strong>

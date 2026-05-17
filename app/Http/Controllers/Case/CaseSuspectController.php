@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Case;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\CaseModel;
+use App\Models\Suspect;
+use Illuminate\Support\Facades\Auth;
 
 class CaseSuspectController extends Controller
 {
@@ -60,5 +62,27 @@ class CaseSuspectController extends Controller
         }
 
         return redirect()->back()->with('success', 'Vainīgais saglabāts!');
+    }
+
+    public function destroy(CaseModel $case, int $suspectId)
+    {
+        $suspect = Suspect::findOrFail($suspectId);
+
+        if ($suspect->case->user_id != Auth::id()) {
+            abort(403);
+        }
+
+        if ($suspect->image_path && file_exists(public_path($suspect->image_path))) {
+            unlink(public_path($suspect->image_path));
+        }
+
+        if ($case->answer_id == $suspect->id) {
+            $case->answer_id = null;
+            $case->save();
+        }
+
+        $suspect->delete();
+
+        return back()->with('status', 'Aizdomās turamais dzēsts');
     }
 }

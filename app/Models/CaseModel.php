@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Genre;
 use App\Models\User;
+use App\Models\Suspect;
 
 class CaseModel extends Model
 {
@@ -25,7 +26,7 @@ class CaseModel extends Model
         'user_id',
         'status',
         'solution_explanation',
-        'type',
+        'is_tutorial',
     ];
 
     public function genre()
@@ -46,6 +47,11 @@ class CaseModel extends Model
     public function suspects()
     {
         return $this->hasMany(Suspect::class, 'case_id');
+    }
+
+    public function suspect()
+    {
+        return $this->belongsTo(Suspect::class, 'answer_id');
     }
 
     public function attempts()
