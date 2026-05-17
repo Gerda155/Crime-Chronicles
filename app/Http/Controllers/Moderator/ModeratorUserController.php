@@ -41,11 +41,7 @@ class ModeratorUserController extends Controller
                 $query->orderBy('name', 'desc');
                 break;
 
-            case 'username':
-                $query->orderBy('username', 'asc');
-                break;
-
-            case 'email':
+            case 'email_asc':
                 $query->orderBy('email', 'asc');
                 break;
 
@@ -53,18 +49,9 @@ class ModeratorUserController extends Controller
                 $query->orderBy('role', 'asc');
                 break;
 
-            case 'status_active':
-                $query->where('status', 'active')
-                    ->orderBy('name', 'asc');
-                break;
-
-            case 'status_inactive':
-                $query->where('status', 'inactive')
-                    ->orderBy('name', 'asc');
-                break;
-
             case 'most_cases':
-                $query->orderBy('completed_cases_count', 'desc');
+                $query->withCount('cases')
+                    ->orderBy('cases_count', 'desc');
                 break;
 
             case 'most_achievements':
@@ -72,10 +59,13 @@ class ModeratorUserController extends Controller
                     ->orderBy('achievements_count', 'desc');
                 break;
 
-            case 'newest':
             default:
                 $query->orderBy('created_at', 'desc');
                 break;
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
         $users = $query->paginate(10)->withQueryString();
