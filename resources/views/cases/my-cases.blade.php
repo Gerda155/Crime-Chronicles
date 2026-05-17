@@ -18,6 +18,10 @@
     @include('partials.header')
     @include('partials.burger')
 
+    @php
+    $activeCases = $cases->where('status', 'active');
+    @endphp
+
     <main class="container my-5">
 
         <h1 class="text-center mb-4 fw-bold">
@@ -46,7 +50,7 @@
                         <div>
                             <div class="card-text">Vidējais vērtējums</div>
                             <div class="card-title">
-                                {{ number_format($cases->avg('rating') ?? 0, 1) }}
+                                {{ number_format($activeCases->avg('rating') ?? 0, 1) }}
                             </div>
                         </div>
 
@@ -61,7 +65,7 @@
                         <div>
                             <div class="card-text">Aktīvas lietas</div>
                             <div class="card-title">
-                                {{ $cases->where('is_active', true)->count() }}
+                                {{ $cases->where('status', 'active')->count() }}
                             </div>
                         </div>
 
@@ -76,7 +80,7 @@
                         <div>
                             <div class="card-text">Arhivētas</div>
                             <div class="card-title">
-                                {{ $cases->where('is_active', false)->count() }}
+                                {{ $cases->where('status', '!=', 'active')->count() }}
                             </div>
                         </div>
 
@@ -91,7 +95,7 @@
                         <div>
                             <div class="card-text">Gaida apstiprinājumu</div>
                             <div class="card-title">
-                                {{ $cases->where('is_active', false)->count() }}
+                                {{ $cases->where('status', 'pending')->count() }}
                             </div>
                         </div>
 
@@ -107,7 +111,7 @@
                             <div class="card-text">TOP lieta</div>
 
                             <div class="card-title fs-6">
-                                {{ $cases->sortByDesc('rating')->first()->title ?? 'Nav datu' }}
+                                {{ $activeCases->sortByDesc('rating')->first()->title ?? 'Nav datu' }}
                             </div>
                         </div>
 

@@ -141,7 +141,7 @@ Route::middleware(['auth', ModeratorMiddleware::class])
             Route::post('/{genre}/restore', [ModeratorGenreController::class, 'restoreGenre'])->name('genres.restore');
         });
 
-        Route::get('/stats', [ModeratorStatsController::class, 'stats'])->name('stats');
+        Route::get('/stats', [ModeratorStatsController::class, 'index'])->name('stats');
 
         Route::prefix('rangs')->group(function () {
             Route::get('/', [ModeratorRangController::class, 'rangsIndex'])->name('rangs.index');

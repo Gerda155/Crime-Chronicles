@@ -3,61 +3,60 @@
 namespace App\Http\Controllers\Moderator;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\CaseModel;
 use App\Models\User;
-use App\Models\Genre;
-use App\Models\Achievement;
-use App\Models\Rang;
+use App\Models\CaseModel;
+use Illuminate\Support\Facades\DB;
 
 class ModeratorStatsController extends Controller
 {
-    public function stats()
+    public function index()
     {
+        // Основная статистика
         $totalCases = CaseModel::count();
-        $activeCases = CaseModel::where('status', 'active')->count();
-
-        $totalUsers = User::whereNotIn('role', ['moderator', 'administrator'])->count();
+        $activeCases = CaseModel::where('status', 'published')->count();
+        $totalUsers = User::count();
         $activeUsers = User::where('status', 'active')->count();
-        $activeUsers = User::where('status', 'active')
-            ->where('role', '!=', 'administrator')
-            ->where('role', '!=', 'moderator')
-            ->count();
 
-
-        $casesByGenre = CaseModel::where('status', '!=', 'inactive')
-            ->selectRaw('genre_id, count(*) as count')
+        // Статистика по жанрам
+        $casesByGenre = CaseModel::select('genre_id', DB::raw('count(*) as count'))
             ->groupBy('genre_id')
-            ->with('genre')
-            ->get()
-            ->mapWithKeys(function ($item) {
-                return [$item->genre->name ?? 'Nav žanra' => $item->count];
-            });
+            ->get();
 
-        $genreLabels = $casesByGenre->keys();
-        $genreData = $casesByGenre->values();
+        $casesByGenreData = [
+            'labels' => $casesByGenre->pluck('genre_id')->toArray(),
+            'data' => $casesByGenre->pluck('count')->toArray()
+        ];
 
-        $registrations = User::where('status', '!=', 'inactive')
+        // Статистика регистраций за 7 дней
+        $registrations = User::select(
+            DB::raw('DATE(created_at) as date'),
+            DB::raw('count(*) as count')
+        )
             ->where('created_at', '>=', now()->subDays(7))
-            ->selectRaw('DATE(created_at) as date, count(*) as total')
             ->groupBy('date')
             ->orderBy('date')
             ->get();
 
-        $regLabels = $registrations->pluck('date')->map(fn($d) => \Carbon\Carbon::parse($d)->format('d.m'))->toArray();
-        $regData = $registrations->pluck('total')->toArray();
+        $regLabels = [];
+        $regData = [];
 
-        return view('moderator.stats', [
-            'totalCases' => $totalCases,
-            'activeCases' => $activeCases,
-            'totalUsers' => $totalUsers,
-            'activeUsers' => $activeUsers,
-            'casesByGenre' => [
-                'labels' => $genreLabels,
-                'data' => $genreData,
-            ],
-            'regLabels' => $regLabels,
-            'regData' => $regData,
-        ]);
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $regLabels[] = $date;
+
+            $found = $registrations->firstWhere('date', $date);
+            $regData[] = $found ? $found->count : 0;
+        }
+
+
+        return view('moderator.stats', compact(
+            'totalCases',
+            'activeCases',
+            'totalUsers',
+            'activeUsers',
+            'casesByGenreData',
+            'regLabels',
+            'regData'
+        ));
     }
 }
