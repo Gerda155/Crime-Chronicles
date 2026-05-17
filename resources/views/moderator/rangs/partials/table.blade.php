@@ -173,11 +173,7 @@
 
             <tr>
                 <td colspan="7" class="text-center text-secondary py-5">
-
-                    <i class="fa-solid fa-ranking-star fa-3x mb-3 d-block"></i>
-
                     Nav izveidotu rangu
-
                 </td>
             </tr>
 

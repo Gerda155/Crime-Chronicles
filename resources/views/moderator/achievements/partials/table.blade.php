@@ -152,9 +152,6 @@
 
                     <tr>
                         <td colspan="8" class="text-center text-secondary py-5">
-
-                            <i class="fa-solid fa-trophy fa-3x mb-3 d-block"></i>
-
                             Nav izveidotu sasniegumu
                         </td>
                     </tr>

@@ -17,11 +17,33 @@
         @endguest
 
         @auth
+
+        @php
+            $unreadNotifications = Auth::user()
+                ->notifications()
+                ->where('is_read', false)
+                ->count();
+        @endphp
+
+        <a href="{{ route('notifications.index') }}"
+            class="btn btn-outline-light position-relative rounded-circle d-flex align-items-center justify-content-center"
+            style="width: 42px; height: 42px;">
+
+            <i class="fa-solid fa-bell"></i>
+
+            @if($unreadNotifications > 0)
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ $unreadNotifications > 99 ? '99+' : $unreadNotifications }}
+            </span>
+            @endif
+
+        </a>
+
         <img
             src="{{ Auth::user()->avatar
                 ? asset('storage/' . Auth::user()->avatar)
                 : asset('images/avatar-placeholder.jpg') }}"
-            class="rounded-circle"
+            class="rounded-circle border border-secondary"
             width="40"
             height="40"
             style="object-fit: cover;">
@@ -30,9 +52,14 @@
             Sveiki, {{ Auth::user()->name }}!
         </span>
 
-        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#logoutModal">
+        <button type="button"
+            class="btn btn-danger btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#logoutModal">
+
             Iziet
         </button>
+
         @endauth
     </div>
 </nav>
@@ -46,14 +73,27 @@
         <div class="modal-content bg-dark text-light">
             <div class="modal-header">
                 <h5 class="modal-title">Apstiprinājums</h5>
-                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+
+                <button class="btn-close btn-close-white"
+                    data-bs-dismiss="modal">
+                </button>
             </div>
+
             <div class="modal-body">
                 Vai tu tiešām vēlies iziet?
             </div>
+
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Atcelt</button>
-                <button type="button" class="btn btn-danger" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <button class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Atcelt
+                </button>
+
+                <button type="button"
+                    class="btn btn-danger"
+                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+
                     Iziet
                 </button>
             </div>

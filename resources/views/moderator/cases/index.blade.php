@@ -38,7 +38,10 @@
     </main>
     @include('partials.footer')
 
-    @include('moderator.cases.partials.modals')
+    @include('moderator.cases.partials.modals.reject')
+    @include('moderator.cases.partials.modals.tutorial')
+    @include('moderator.cases.partials.modals.delete')
+
 
 </body>
 

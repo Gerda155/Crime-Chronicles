@@ -24,16 +24,16 @@
             <p class="lead">{{ $case->description }}</p>
         </div>
 
-        @include('cases.partials.progress')
-        @include('cases.partials.evidence')
-        @include('cases.partials.suspects')
+        @include('cases.partials.play.progress')
+        @include('cases.partials.play.evidence')
+        @include('cases.partials.play.suspects')
 
     </main>
 
-    @include('cases.partials.modals.answer')
-    @include('cases.partials.modals.rating')
-    @include('cases.partials.modals.achievement')
-    @include('cases.partials.modals.image')
+    @include('cases.partials.play.modals.answer')
+    @include('cases.partials.play.modals.rating')
+    @include('cases.partials.play.modals.achievement')
+    @include('cases.partials.play.modals.image')
 
     @include('partials.footer')
 

@@ -1,9 +1,6 @@
 <div class="table-responsive rounded shadow-sm">
-
     <table class="table table-dark table-hover align-middle mb-0">
-
         <thead class="table-dark text-uppercase text-muted small">
-
             <tr>
 
                 <th>#</th>
@@ -34,22 +31,20 @@
                 </th>
 
                 <th>
-                    <i class="fa-solid fa-toggle-on me-1"></i>
-                    Statuss
-                </th>
-
-                <th>
                     <i class="fa-solid fa-calendar me-1"></i>
                     Izveidots
                 </th>
 
                 <th>
                     <i class="fa-solid fa-gear me-1"></i>
-                    Darbības
+                    Statuss
                 </th>
 
+                <th>
+                    <i class="fa-solid fa-trash me-1"></i>
+                    Dzēst
+                </th>
             </tr>
-
         </thead>
 
         <tbody>
@@ -75,7 +70,6 @@
                 <td>
 
                     <div class="rating-stars">
-
                         @for($i = 1; $i <= 5; $i++)
 
                             @if($i <=round($case->rating ?? 0))
@@ -91,49 +85,18 @@
                     <small class="text-secondary">
                         {{ number_format($case->rating ?? 0, 1) }}
                     </small>
-
                 </td>
 
                 <td>
-
                     @if($case->is_tutorial)
-
                     <span class="badge bg-info">
                         <i class="fa-solid fa-check me-1"></i>
                         Tutorial
                     </span>
-
                     @else
 
-                    <span class="text-secondary">
-                        —
-                    </span>
-
+                    <span class="text-secondary"> —</span>
                     @endif
-
-                </td>
-
-                <td>
-
-                    @if($case->status === 'active')
-                    <span class="badge bg-success">
-                        <i class="fa-solid fa-circle-check me-1"></i>
-                        Aktīva
-                    </span>
-
-                    @elseif($case->status === 'pending')
-                    <span class="badge bg-warning">
-                        <i class="fa-solid fa-clock me-1"></i>
-                        Gaida
-                    </span>
-
-                    @elseif($case->status === 'rejected')
-                    <span class="badge bg-danger">
-                        <i class="fa-solid fa-times-circle me-1"></i>
-                        Noraidīta
-                    </span>
-                    @endif
-
                 </td>
 
                 <td>
@@ -143,98 +106,152 @@
                 </td>
 
                 <td>
-                    <div class="d-flex gap-1 flex-nowrap">
-                        <button type="button"
-                            class="btn btn-sm {{ $case->is_tutorial ? 'btn-success' : 'btn-outline-info' }} rounded"
-                            data-bs-toggle="modal"
-                            data-bs-target="#tutorialModal"
-                            data-action="{{ route('moderator.cases.setTutorial', $case->id) }}"
-                            title="Tutorial">
+                    <div class="dropdown">
 
-                            <i class="fa-solid fa-graduation-cap"></i>
+                        <button
+                            class="btn btn-sm rounded-pill px-3
+                            @if($case->status === 'active')
+                                btn-success
+
+                            @elseif($case->status === 'pending')
+                                btn-warning text-dark
+
+                            @elseif($case->status === 'approved')
+                                btn-info text-dark
+
+                            @elseif($case->status === 'rejected')
+                                btn-danger
+
+                            @elseif($case->status === 'inactive')
+                                btn-secondary
+
+                            @else
+                                btn-dark
+                            @endif
+
+                            dropdown-toggle"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+
+                            @if($case->status === 'active')
+                            <i class="fa-solid fa-circle-check me-1"></i>
+                            Aktīva
+
+                            @elseif($case->status === 'pending')
+                            <i class="fa-solid fa-clock me-1"></i>
+                            Gaida
+
+                            @elseif($case->status === 'approved')
+                            <i class="fa-solid fa-shield-check me-1"></i>
+                            Apstiprināta
+
+                            @elseif($case->status === 'rejected')
+                            <i class="fa-solid fa-circle-xmark me-1"></i>
+                            Noraidīta
+
+                            @elseif($case->status === 'inactive')
+                            <i class="fa-solid fa-ban me-1"></i>
+                            Neaktīva
+                            @endif
                         </button>
 
-                        <a href="{{ route('moderator.cases.edit', $case->id) }}"
-                            class="btn btn-sm btn-outline-primary rounded"
-                            title="Rediģēt">
+                        <ul class="dropdown-menu dropdown-menu-dark shadow border-0">
 
-                            <i class="fa-solid fa-pen"></i>
-                        </a>
+                            {{-- PENDING --}}
+                            @if($case->status === 'pending')
 
-                        <form action="{{ $case->status === 'inactive'
-                            ? route('moderator.cases.activate', $case->id)
-                            : route('moderator.cases.deactivate', $case->id) }}"
-                            method="POST">
+                            <li>
+                                <form action="{{ route('moderator.cases.approve', $case) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <button class="dropdown-item text-info">
+                                        Apstiprināt
+                                    </button>
+                                </form>
+                            </li>
 
-                            @csrf
-                            @method('PUT')
+                            <li>
+                                <button class="dropdown-item text-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#rejectModal"
+                                    data-action="{{ route('moderator.cases.reject', $case) }}">
+                                    Noraidīt
+                                </button>
+                            </li>
 
-                            <button type="submit"
-                                class="btn btn-sm {{ $case->status === 'inactive' ? 'btn-outline-success' : 'btn-outline-warning' }} rounded"
-                                title="{{ $case->status === 'inactive' ? 'Aktivēt' : 'Deaktivēt' }}">
+                            @endif
 
-                                @if($case->status === 'inactive')
-                                <i class="fa-solid fa-check"></i>
-                                @else
-                                <i class="fa-solid fa-ban"></i>
-                                @endif
 
-                            </button>
+                            {{-- APPROVED / REJECTED → back to pending --}}
+                            @if(in_array($case->status, ['approved', 'rejected']))
 
-                        </form>
+                            <li>
+                                <form action="{{ route('moderator.cases.reset', $case) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <button class="dropdown-item text-warning">
+                                        Atgriezt uz gaidīšanu
+                                    </button>
+                                </form>
+                            </li>
 
-                        <button type="button"
-                            class="btn btn-sm btn-outline-danger rounded"
-                            data-bs-toggle="modal"
-                            data-bs-target="#deleteModal"
-                            data-action="{{ route('moderator.cases.destroy', $case->id) }}"
-                            title="Dzēst">
+                            @endif
 
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
 
-                        @if($case->trashed())
+                            {{-- ACTIVE / INACTIVE --}}
+                            @if($case->status === 'active')
+                            <li>
+                                <form action="{{ route('moderator.cases.deactivate', $case) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <button class="dropdown-item text-warning">
+                                        Deaktivēt
+                                    </button>
+                                </form>
+                            </li>
+                            @endif
 
-                        <form action="{{ route('moderator.cases.restore', $case->id) }}"
-                            method="POST">
 
-                            @csrf
+                            @if(in_array($case->status, ['inactive', 'approved']))
+                            <li>
+                                <form action="{{ route('moderator.cases.activate', $case) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <button class="dropdown-item text-success">
+                                        Aktivēt
+                                    </button>
+                                </form>
+                            </li>
+                            @endif
 
-                            <button class="btn btn-sm btn-outline-success rounded"
-                                title="Atjaunot">
-
-                                <i class="fa-solid fa-rotate-left"></i>
-                            </button>
-
-                        </form>
-
-                        @endif
+                        </ul>
                     </div>
+                </td>
 
+                <td>
+                    <button type="button"
+                        class="btn btn-sm btn-outline-danger rounded"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteModal"
+                        data-action="{{ route('moderator.cases.destroy', $case->id) }}"
+                        title="Dzēst">
+
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
                 </td>
 
             </tr>
-
             @empty
-
             <tr>
 
                 <td colspan="9" class="text-center text-secondary py-5">
-
-                    <i class="fa-solid fa-folder-open fa-3x mb-3 d-block"></i>
-
                     Nav izveidotu lietu
-
                 </td>
-
             </tr>
-
             @endforelse
-
         </tbody>
-
     </table>
-
 </div>
 
 <div class="mt-4">

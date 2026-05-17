@@ -79,4 +79,24 @@ class CaseModel extends Model
     {
         return $this->hasMany(Rating::class, 'case_id');
     }
+
+    public function canApprove()
+    {
+        return $this->status === 'pending';
+    }
+
+    public function canReject()
+    {
+        return $this->status === 'pending';
+    }
+
+    public function canActivate()
+    {
+        return in_array($this->status, ['inactive', 'approved']);
+    }
+
+    public function canDeactivate()
+    {
+        return $this->status === 'active';
+    }
 }

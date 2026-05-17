@@ -164,7 +164,6 @@
             </div>
         </div>
 
-        {{-- NEXT STEP --}}
         <div class="text-end mt-4 d-flex justify-content-between">
             <a href="{{ route('cases.my-cases') }}" class="btn btn-outline-light">
                 <i class="fa-solid fa-right-from-bracket"></i> Iziet

@@ -9,6 +9,7 @@ use App\Http\Controllers\Case\CaseQuestionController;
 use App\Http\Controllers\Case\CaseSolutionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LeaderboardController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Moderator\ModeratorUserController;
 use App\Http\Controllers\Moderator\ModeratorCaseController;
 use App\Http\Controllers\Moderator\ModeratorAchievementController;
@@ -87,6 +88,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/cases/{case}/solution', [CaseSolutionController::class, 'index'])->name('cases.solution');
     Route::put('/cases/{case}/solution', [CaseSolutionController::class, 'save'])->name('cases.solution.save');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+    Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+    Route::delete('/notifications/delete-all', [NotificationController::class, 'deleteAll'])->name('notifications.deleteAll');
 });
 
 Route::get('/cases', [CaseController::class, 'index'])->name('cases.index');
@@ -102,11 +109,14 @@ Route::middleware(['auth', ModeratorMiddleware::class])
             Route::post('/', [ModeratorCaseController::class, 'storeCase'])->name('cases.store');
             Route::get('/{case}/edit', [ModeratorCaseController::class, 'editCase'])->name('cases.edit');
             Route::put('/{case}', [ModeratorCaseController::class, 'updateCase'])->name('cases.update');
-            Route::put('/{case}/deactivate', [ModeratorCaseController::class, 'deactivateCase'])->name('cases.deactivate');
-            Route::put('/{case}/activate', [ModeratorCaseController::class, 'activateCase'])->name('cases.activate');
             Route::delete('/{case}', [ModeratorCaseController::class, 'destroyCase'])->name('cases.destroy');
             Route::post('/{case}/restore', [ModeratorCaseController::class, 'restoreCase'])->name('cases.restore');
             Route::put('/{id}/tutorial', [ModeratorCaseController::class, 'setTutorial'])->name('cases.setTutorial');
+            Route::put('/{case}/reject', [ModeratorCaseController::class, 'rejectCase'])->name('cases.reject');
+            Route::put('/{case}/approve', [ModeratorCaseController::class, 'approveCase'])->name('cases.approve');
+            Route::put('/{case}/activate', [ModeratorCaseController::class, 'activateCase'])->name('cases.activate');
+            Route::put('/{case}/deactivate', [ModeratorCaseController::class, 'deactivateCase'])->name('cases.deactivate');
+            Route::put('/{case}/reset', [ModeratorCaseController::class, 'resetToPending'])->name('cases.reset');
         });
 
         Route::prefix('users')->group(function () {

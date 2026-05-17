@@ -149,11 +149,7 @@
 
             <tr>
                 <td colspan="5" class="text-center text-secondary py-5">
-
-                    <i class="fa-solid fa-masks-theater fa-3x mb-3 d-block"></i>
-
                     Nav izveidotu žanru
-
                 </td>
             </tr>
 

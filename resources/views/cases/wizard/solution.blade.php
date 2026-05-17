@@ -35,7 +35,6 @@
         </div>
         @endif
 
-        {{-- PROGRESS --}}
         <div class="mb-4">
             <div class="d-flex justify-content-between mb-2">
                 <span>5. solis no 5</span>
@@ -47,7 +46,6 @@
             </div>
         </div>
 
-        {{-- INFO --}}
         <div class="alert alert-dark border-0 mb-4">
             <div class="d-flex align-items-center gap-3">
                 <div class="display-6">
@@ -70,7 +68,6 @@
             </div>
         </div>
 
-        {{-- CASE SUMMARY --}}
         <div class="card bg-secondary text-light border-0 mb-4">
             <div class="card-body">
 
@@ -125,7 +122,6 @@
             </div>
         </div>
 
-        {{-- SOLUTION FORM --}}
         <div class="card bg-secondary text-light border-0">
             <div class="card-body">
 
@@ -181,7 +177,6 @@
             </div>
         </div>
 
-        {{-- FINISH --}}
         <div class="text-end mt-4 d-flex justify-content-between">
 
             <a href="{{ route('cases.my-cases') }}"
