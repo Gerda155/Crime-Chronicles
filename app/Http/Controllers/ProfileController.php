@@ -64,13 +64,46 @@ class ProfileController extends Controller
 
 
         $validated = $request->validate([
+
             'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+
+            'username' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:users,username,' . $user->id
+            ],
+
             'email' => 'required|email|max:255',
-            'password' => ['nullable', Password::min(8)->mixedCase()->numbers()->symbols()],
-            'password_confirmation' => 'same:password',
+
             'bio' => 'nullable|string|max:300',
-            'avatar' => 'nullable|image|max:5120',
+
+            'password' => [
+                'nullable',
+                'confirmed',
+                Password::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols(),
+            ],
+
+            'avatar_cropped' => 'nullable|string',
+
+        ], [
+
+            'name.required' => 'Ievadiet pilno vārdu.',
+
+            'username.required' => 'Ievadiet lietotājvārdu.',
+            'username.unique' => 'Šis lietotājvārds jau tiek izmantots.',
+
+            'email.required' => 'Ievadiet e-pastu.',
+            'email.email' => 'Nepareizs e-pasta formāts.',
+
+            'bio.max' => 'Apraksts nedrīkst pārsniegt 300 simbolus.',
+
+            'password.confirmed' => 'Paroles nesakrīt.',
+            'password.min' => 'Parolei jābūt vismaz 8 simboliem.',
+
         ]);
 
         $user->name = $validated['name'];

@@ -21,7 +21,6 @@
     <main class="container my-5">
         <div class="row g-4">
 
-            {{-- Profile --}}
             <div class="col-lg-4">
                 <div class="card bg-dark text-light shadow-lg border-0">
                     <div class="card-body d-flex flex-column align-items-center text-center">
@@ -90,9 +89,27 @@
                 <div class="card bg-dark text-light shadow-lg border-0">
                     <div class="card-body">
                         <h5 class="mb-4">Profila iestatījumi</h5>
-                        @error('field')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+
+                        @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                        </div>
+                        @endif
+
+                        @if ($errors->any())
+                        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
+                            <strong>Kļūda!</strong>
+                            <ul class="mb-0 mt-2 ps-3">
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                        </div>
+                        @endif
+
                         <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
                             @csrf
                             @method('PATCH')
@@ -101,36 +118,87 @@
 
                                 <div class="col-md-6">
                                     <label class="form-label">Pilnais vārds</label>
-                                    <input name="name" class="form-control rounded @error('field') is-invalid @enderror" value="{{ $user->name }}" required>
+
+                                    <input
+                                        name="name"
+                                        value="{{ old('name', $user->name) }}"
+                                        class="form-control rounded bg-dark text-light border-secondary @error('name') is-invalid @enderror"
+                                        required>
+
+                                    @error('name')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                    @enderror
                                 </div>
 
                                 <div class="col-md-6">
                                     <label class="form-label">Lietotājvārds</label>
-                                    <input name="username" class="form-control rounded @error('field') is-invalid @enderror"
-                                        value="{{ $user->username }}" required>
-                                </div>
 
+                                    <input
+                                        name="username"
+                                        value="{{ old('username', $user->username) }}"
+                                        class="form-control rounded bg-dark text-light border-secondary @error('username') is-invalid @enderror"
+                                        required>
+
+                                    @error('username')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                    @enderror
+                                </div>
                                 <div class="col-md-6">
                                     <label class="form-label">E-pasts</label>
-                                    <input name="email" type="email" class="form-control rounded @error('field') is-invalid @enderror"
-                                        value="{{ $user->email }}" required>
+
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value="{{ old('email', $user->email) }}"
+                                        class="form-control rounded bg-dark text-light border-secondary @error('email') is-invalid @enderror"
+                                        required>
+
+                                    @error('email')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                    @enderror
                                 </div>
 
                                 <div class="col-12">
                                     <label class="form-label">Par mani</label>
-                                    <textarea name="bio" class="form-control rounded @error('field') is-invalid @enderror" maxlength="300"
-                                        rows="3">{{ $user->bio }}</textarea>
+
+                                    <textarea
+                                        name="bio"
+                                        rows="3"
+                                        maxlength="300"
+                                        class="form-control rounded bg-dark text-light border-secondary @error('bio') is-invalid @enderror">{{ old('bio', $user->bio) }}</textarea>
+
+                                    @error('bio')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                    @enderror
                                 </div>
 
                                 <div class="col-12">
                                     <label class="form-label">Avatars</label>
-                                    <input type="file" id="avatarInput" accept="image/*" class="form-control @error('avatar') is-invalid @enderror">
-                                    @error('avatar')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+
+                                    <input
+                                        type="file"
+                                        id="avatarInput"
+                                        accept="image/*"
+                                        class="form-control bg-dark text-light border-secondary @error('avatar_cropped') is-invalid @enderror">
+
+                                    @error('avatar_cropped')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
                                     @enderror
 
-                                    <div id="avatarPreviewWrapper" class="mt-3 w-64 h-64 border border-secondary overflow-hidden d-none">
-                                        <img id="avatarPreview" class="w-100 h-100 object-cover">
+                                    <div id="avatarPreviewWrapper"
+                                        class="mt-3 w-64 h-64 border border-secondary overflow-hidden d-none rounded">
+
+                                        <img id="avatarPreview" class="w-100 h-100 object-fit-cover">
                                     </div>
 
                                     <input type="hidden" name="avatar_cropped" id="avatarCropped">
@@ -138,12 +206,26 @@
 
                                 <div class="col-md-6">
                                     <label class="form-label">Jauna parole</label>
-                                    <input type="password" name="password" class="form-control rounded @error('field') is-invalid @enderror"">
+
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        class="form-control rounded bg-dark text-light border-secondary @error('password') is-invalid @enderror">
+
+                                    @error('password')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                    @enderror
                                 </div>
 
-                                <div class=" col-md-6">
+                                <div class="col-md-6">
                                     <label class="form-label">Apstiprināt paroli</label>
-                                    <input type="password" name="password_confirmation" class="form-control rounded @error('field') is-invalid @enderror"">
+
+                                    <input
+                                        type="password"
+                                        name="password_confirmation"
+                                        class="form-control rounded bg-dark text-light border-secondary">
                                 </div>
                             </div>
 

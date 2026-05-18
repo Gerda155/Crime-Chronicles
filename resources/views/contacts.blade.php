@@ -64,17 +64,13 @@
                     <div class="d-grid gap-3">
                         <button
                             type="submit" class="py-3 rounded-lg fw-semibold tracking-wide
-                        bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500
-                        shadow-[0_0_30px_rgba(168,85,247,0.6)]
-                        hover:shadow-[0_0_45px_rgba(168,85,247,0.9)]
-                        transition border-0 text-white">
+                            transition border-0 text-white">
                             Nosūtīt ziņu
                         </button>
 
                         <a href="{{ url()->previous() }}"
                             class="py-2 rounded-lg text-center text-decoration-none
-                        bg-gradient-to-r from-gray-700 to-gray-900
-                        text-light hover:opacity-90 transition">
+                            text-light hover:opacity-90 transition">
                             Atpakaļ
                         </a>
                     </div>
