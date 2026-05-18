@@ -38,7 +38,7 @@
             @forelse($notifications as $notification)
 
             <div class="card rounded p-3 shadow-sm
-    {{ !$notification->is_read ? 'border border-primary bg-dark' : 'bg-dark' }}">
+                {{ !$notification->is_read ? 'border border-primary bg-dark' : 'bg-dark' }}">
                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
                     <div class="d-flex gap-3">
                         <div class="fs-3">
@@ -61,27 +61,20 @@
                             @else
                             <i class="fa-solid fa-bell"></i>
                             @endif
-
                         </div>
 
                         @if(!$notification->is_read)
                         <span class="badge bg-primary mb-2">Jauns</span>
                         @endif
-
                         <div>
-
                             <div class="fw-bold mb-1 text-light">
                                 {{ $notification->message }}
                             </div>
-
                             <small class="text-secondary">
                                 {{ $notification->created_at->format('d.m.Y H:i') }}
                             </small>
-
                         </div>
-
                     </div>
-
                     <div class="d-flex gap-2">
 
                         @if(!$notification->is_read)
@@ -94,11 +87,8 @@
 
                             <button class="btn btn-sm btn-outline-primary rounded"
                                 title="Atzīmēt kā izlasītu">
-
                                 <i class="fa-solid fa-check"></i>
-
                             </button>
-
                         </form>
 
                         @endif
@@ -111,28 +101,19 @@
 
                             <button class="btn btn-sm btn-outline-danger rounded"
                                 title="Dzēst">
-
                                 <i class="fa-solid fa-trash"></i>
-
                             </button>
-
                         </form>
-
                     </div>
-
                 </div>
-
             </div>
-
             @empty
-
             <div class="text-center text-secondary py-5">
                 <i class="fa-solid fa-bell-slash fa-3x mb-3 d-block"></i>
                 Tev vēl nav paziņojumu
             </div>
 
             @endforelse
-
         </div>
 
         <div class="mt-4">
