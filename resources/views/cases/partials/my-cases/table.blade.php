@@ -3,19 +3,19 @@
         <thead class="table-dark text-uppercase text-muted small">
             <tr>
                 <th>#</th>
-                <th><i class="fa-solid fa-folder me-1"></i>Nosaukums</th>
+                <th>Nosaukums</th>
 
-                <th><i class="fa-solid fa-align-left me-1"></i>Apraksts</th>
+                <th>Apraksts</th>
 
-                <th><i class="fa-solid fa-masks-theater me-1"></i>Žanrs</th>
+                <th>Žanrs</th>
 
-                <th><i class="fa-solid fa-star me-1"></i>Vērtējums</th>
+                <th>Vērtējums</th>
 
-                <th><i class="fa-solid fa-calendar me-1"></i>Izveidots</th>
+                <th>Izveidots</th>
 
-                <th><i class="fa-solid fa-toggle-on me-1"></i>Statuss</th>
+                <th></i>Statuss</th>
 
-                <th><i class="fa-solid fa-gear me-1"></i>Darbības</th>
+                <th>Darbības</th>
             </tr>
         </thead>
 

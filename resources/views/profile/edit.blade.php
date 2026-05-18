@@ -23,7 +23,7 @@
         <div class="row g-4">
 
             <div class="col-lg-4">
-                @include('profile.partials.profile_card')
+                @include('profile.partials.profile-card')
             </div>
 
             <div class="col-lg-8">
@@ -33,11 +33,11 @@
 
                         @include('partials.alerts')
 
-                        @include('profile.partials.profile_form')
+                        @include('profile.partials.profile-form')
                     </div>
                 </div>
 
-                @include('profile.partials.delete_account')
+                @include('profile.partials.delete-account')
 
             </div>
         </div>

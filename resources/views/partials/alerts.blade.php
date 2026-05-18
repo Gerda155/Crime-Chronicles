@@ -16,4 +16,4 @@
 
     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
 </div>
-@endifs
+@endif

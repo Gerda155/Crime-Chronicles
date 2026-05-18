@@ -27,7 +27,7 @@
 
         <div class="mt-3 d-flex gap-2">
 
-            <button class="btn btn-sm btn-outline-warning rounded"
+            <button class="btn btn-sm btn-outline-light rounded"
                 data-bs-toggle="modal"
                 data-bs-target="#editRatingModal{{ $rating->id }}">
                 Rediģēt

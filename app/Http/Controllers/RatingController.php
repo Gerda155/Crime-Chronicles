@@ -83,6 +83,13 @@ class RatingController extends Controller
             'comment' => $request->comment,
         ]);
 
+        $case = $rating->case;
+
+        $case->rating = Rating::where('case_id', $case->id)
+            ->avg('rating');
+
+        $case->save();
+
         return redirect()->route('ratings.index')->with('status', 'Atjaunots!');
     }
 
@@ -92,7 +99,12 @@ class RatingController extends Controller
             ->where('id', $id)
             ->firstOrFail();
 
+        $case = $rating->case;
+
         $rating->delete();
+
+        $case->rating = Rating::where('case_id', $case->id)->avg('rating');
+        $case->save();
 
         return back()->with('status', 'Izdzēsts!');
     }

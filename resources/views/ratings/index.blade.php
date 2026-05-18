@@ -30,11 +30,11 @@
         <div class="row g-3">
             @forelse($ratings as $rating)
 
-            @include('ratings.partials.rating_card')
+            @include('ratings.partials.rating-card')
 
-            @include('ratings.partials.edit_modal')
+            @include('ratings.partials.edit-modal')
 
-            @include('ratings.partials.delete_modal')
+            @include('ratings.partials.delete-modal')
             @empty
 
             <div class="text-center text-secondary py-5">

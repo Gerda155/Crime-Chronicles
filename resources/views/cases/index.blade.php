@@ -20,17 +20,17 @@
         <h1 class="text-center mb-4 fw-bold">Visas lietas</h1>
 
         <div class="d-flex flex-wrap gap-2 mb-4">
-            @include('cases.partials.filters')
+            @include('cases.partials.index.filters')
         </div>
 
         <div class="row g-4">
             @forelse($cases as $case)
 
-            @include('cases.partials.case_card', ['case' => $case])
+            @include('cases.partials.index.case-card', ['case' => $case])
 
             @auth
 
-            @include('cases.partials.modals.case-modal', ['case' => $case])
+            @include('cases.partials.index.case-modal', ['case' => $case])
 
             @endauth
 
@@ -47,7 +47,7 @@
         </div>
     </div>
 
-    @include('cases.auth.partials.auth-modal')
+    @include('cases.partials.index.auth-modal')
     @include('partials.footer')
 
 </body>
