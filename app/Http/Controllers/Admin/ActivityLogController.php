@@ -12,27 +12,61 @@ class ActivityLogController extends Controller
     {
         $query = ActivityLog::query();
 
-        if ($request->user_id) {
-            $query->where('user_id', $request->user_id);
+        if ($search = $request->search) {
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where('username', 'like', "%{$search}%")
+                    ->orWhere('action_type', 'like', "%{$search}%")
+                    ->orWhere('object_type', 'like', "%{$search}%");
+            });
         }
 
-        if ($request->action_type) {
-            $query->where('action_type', $request->action_type);
+        $sort = $request->get('sort', 'newest');
+
+        switch ($sort) {
+
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+
+            case 'login':
+                $query->where('action_type', 'login')
+                    ->orderBy('created_at', 'desc');
+                break;
+
+            case 'logout':
+                $query->where('action_type', 'logout')
+                    ->orderBy('created_at', 'desc');
+                break;
+
+            case 'delete':
+                $query->where('action_type', 'delete')
+                    ->orderBy('created_at', 'desc');
+                break;
+
+            case 'approve':
+                $query->where('action_type', 'approve')
+                    ->orderBy('created_at', 'desc');
+                break;
+
+            case 'case':
+                $query->where('object_type', 'case')
+                    ->orderBy('created_at', 'desc');
+                break;
+
+            case 'user':
+                $query->where('object_type', 'user')
+                    ->orderBy('created_at', 'desc');
+                break;
+
+            case 'newest':
+            default:
+                $query->orderBy('created_at', 'desc');
+                break;
         }
 
-        if ($request->object_type) {
-            $query->where('object_type', $request->object_type);
-        }
-
-        if ($request->date_from) {
-            $query->whereDate('created_at', '>=', $request->date_from);
-        }
-
-        if ($request->date_to) {
-            $query->whereDate('created_at', '<=', $request->date_to);
-        }
-
-        $logs = $query->latest()->paginate(20);
+        $logs = $query->paginate(20)->withQueryString();
 
         return view('admin.logs.index', compact('logs'));
     }
