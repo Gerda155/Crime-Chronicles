@@ -8,25 +8,26 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 </head>
 
 <body class="bg-dark text-light">
+
     @include('partials.header')
     @include('partials.burger')
 
     <main class="container my-5">
-        <h1 class="text-center mb-4 fw-bold text-pink">
+
+        <h1 class="text-center fw-bold mb-4">
             Moderatora panelis – Lietotāji
         </h1>
 
         @include('moderator.users.partials.stats')
         @include('moderator.users.partials.filters')
 
-        @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
+        @include('partials.alerts')
 
         @include('moderator.users.partials.table')
 
@@ -34,7 +35,11 @@
 
     @include('partials.footer')
 
-    @include('moderator.users.partials.modals')
+    @include('moderator.users.partials.modals.view')
+    @include('moderator.users.partials.modals.edit')
+    @include('moderator.users.partials.modals.create')
+    @include('moderator.users.partials.modals.delete')
+
 </body>
 
 </html>

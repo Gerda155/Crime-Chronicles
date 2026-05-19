@@ -103,7 +103,7 @@
                             <button type="button"
                                 class="btn btn-sm btn-outline-light rounded"
                                 data-bs-toggle="modal"
-                                data-bs-target="#userModal{{ $user->id }}">
+                                data-bs-target="#viewUserModal{{ $user->id }}">
                                 <i class="fa-solid fa-eye"></i>
                             </button>
 
