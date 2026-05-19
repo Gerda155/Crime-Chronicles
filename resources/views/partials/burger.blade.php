@@ -47,10 +47,10 @@
 
             <span class="fw-bold text-uppercase small text-secondary">
                 <i class="fa-solid fa-shield-halved me-2"></i>
-                @if(Auth::user()->role === 'moderator')
-                Moderatora panelis
-                @elseif(Auth::user()->role === 'admin')
-                Administratora panelis
+                @if(Auth::user()->role === 'admin')
+                Administratora Panelis
+                @else
+                Moderatora Panelis
                 @endif
             </span>
 
@@ -86,8 +86,6 @@
                     Rangi
                 </a>
 
-                @endif
-
                 @if(Auth::user()->role === 'admin')
                 <a href="{{ route('admin.logs.index') }}" class="d-block text-light mb-2 text-decoration-none">
                     <i class="fa-solid fa-file-alt me-2"></i>
@@ -97,6 +95,8 @@
 
             </div>
         </div>
+
+        @endif
 
         <form method="GET" action="{{ route('users.search') }}" class="mb-4 mt-4">
 
