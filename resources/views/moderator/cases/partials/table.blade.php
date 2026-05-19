@@ -63,7 +63,16 @@
                     </span>
                     @else
 
-                    <span class="text-secondary"> —</span>
+                    <form action="{{ route('moderator.cases.setTutorial', $case->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        @method('PUT')
+
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#tutorialModal"
+                            data-action="{{ route('moderator.cases.setTutorial', $case->id) }}" class="btn btn-sm btn-outline-info rounded" title="Iestatīt kā tutorial">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </form>
+
                     @endif
                 </td>
 

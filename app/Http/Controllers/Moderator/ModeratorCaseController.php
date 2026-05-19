@@ -193,4 +193,17 @@ class ModeratorCaseController extends Controller
 
         return back()->with('success', 'Lieta atgriezta uz gaidīšanu');
     }
+
+    public function activateCase(CaseModel $case)
+    {
+        ActivityLogService::log('update','case',$case->id,$case->toArray(),['status' => 'active']);
+
+        $case->update([
+            'status' => 'active'
+        ]);
+
+        return redirect()
+            ->route('moderator.cases.index')
+            ->with('success', 'Lieta aktivēta');
+    }
 }
