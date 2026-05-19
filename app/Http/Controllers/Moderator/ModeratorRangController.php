@@ -17,43 +17,24 @@ class ModeratorRangController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        switch ($request->get('sort')) {
+        $query->when($request->sort, function ($q, $sort) {
 
-            case 'oldest':
-                $query->orderBy('created_at', 'asc');
-                break;
+            match ($sort) {
 
-            case 'name_asc':
-                $query->orderBy('name', 'asc');
-                break;
+                'oldest' => $q->orderBy('created_at', 'asc'),
 
-            case 'name_desc':
-                $query->orderBy('name', 'desc');
-                break;
+                'name_asc' => $q->orderBy('name', 'asc'),
+                'name_desc' => $q->orderBy('name', 'desc'),
 
-            case 'low_score':
-                $query->orderBy('min_score', 'asc');
-                break;
+                'low_score' => $q->orderBy('min_score', 'asc'),
+                'high_score' => $q->orderBy('min_score', 'desc'),
 
-            case 'high_score':
-                $query->orderBy('min_score', 'desc');
-                break;
+                'active' => $q->where('status', 'active')->orderBy('min_score', 'asc'),
+                'inactive' => $q->where('status', 'inactive')->orderBy('min_score', 'asc'),
 
-            case 'active':
-                $query->where('status', 'active')
-                    ->orderBy('min_score', 'asc');
-                break;
-
-            case 'inactive':
-                $query->where('status', 'inactive')
-                    ->orderBy('min_score', 'asc');
-                break;
-
-            case 'newest':
-            default:
-                $query->orderBy('created_at', 'desc');
-                break;
-        }
+                default => $q->orderBy('created_at', 'desc'),
+            };
+        });
 
         $rangs = $query->paginate(10)->withQueryString();
 
@@ -65,11 +46,14 @@ class ModeratorRangController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:rangs,name',
             'min_score' => 'required|integer|min:0',
-            'max_score' => 'nullable|integer|gt:min_score',
+            'max_score' => 'nullable|integer',
         ]);
 
-        if (Rang::hasOverlap($data['min_score'], $data['max_score'])) {
-            return back()->withErrors(['min_score' => 'Šis punktu diapazons pārklājas ar esošu rangu!'])
+        if ($this->isInvalidRange($data['min_score'], $data['max_score'] ?? null)) {
+            return back()
+                ->withErrors([
+                    'min_score' => 'Šis punktu diapazons pārklājas ar esošu rangu!'
+                ])
                 ->withInput();
         }
 
@@ -77,7 +61,8 @@ class ModeratorRangController extends Controller
 
         Rang::create($data);
 
-        return redirect()->route('moderator.rangs.index')
+        return redirect()
+            ->route('moderator.rangs.index')
             ->with('success', 'Rangs izveidots!');
     }
 
@@ -88,58 +73,94 @@ class ModeratorRangController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:rangs,name,' . $id,
             'min_score' => 'required|integer|min:0',
-            'max_score' => 'nullable|integer|gt:min_score',
+            'max_score' => 'nullable|integer',
         ]);
 
-        if (Rang::hasOverlap($data['min_score'], $data['max_score'], $id)) {
-            return back()->withErrors(['min_score' => 'Šis punktu diapazons pārklājas ar esošu rangu!'])
+        if ($this->isInvalidRange($data['min_score'], $data['max_score'] ?? null, $id)) {
+            return back()
+                ->withErrors([
+                    'min_score' => 'Šis punktu diapazons pārklājas ar esošu rangu!'
+                ])
                 ->withInput();
         }
 
         ActivityLogService::log('update', 'rang', $rang->id, $rang->toArray(), $data);
-        
+
         $rang->update($data);
 
-        return redirect()->route('moderator.rangs.index')
+        return redirect()
+            ->route('moderator.rangs.index')
             ->with('success', 'Rangs atjaunināts!');
     }
 
     public function destroyRang(int $id)
     {
         $rang = Rang::findOrFail($id);
+
         ActivityLogService::log('delete', 'rang', $rang->id, $rang->toArray(), null);
+
         $rang->delete();
 
-        return redirect()->route('moderator.rangs.index')
+        return redirect()
+            ->route('moderator.rangs.index')
             ->with('success', 'Rangs dzēsts!');
     }
 
     public function deactivateRang(int $id)
     {
-        $rang = Rang::findOrFail($id);
-        ActivityLogService::log('update', 'rang', $rang->id, $rang->toArray(), ['status' => 'inactive']);   
-        $rang->update(['status' => 'inactive']);
-
-        return redirect()->route('moderator.rangs.index')
-            ->with('success', 'Rangs deaktivēts!');
+        $this->setStatus($id, 'inactive', 'Rangs deaktivēts!');
     }
 
     public function activateRang(int $id)
     {
-        $rang = Rang::findOrFail($id);
-        ActivityLogService::log('update', 'rang', $rang->id, $rang->toArray(), ['status' => 'active']);
-        $rang->update(['status' => 'active']);
-
-        return redirect()->route('moderator.rangs.index')
-            ->with('success', 'Rangs aktivēts!');
+        $this->setStatus($id, 'active', 'Rangs aktivēts!');
     }
 
     public function restoreRang(int $id)
     {
         $rang = Rang::withTrashed()->findOrFail($id);
-        ActivityLogService::log('update', 'rang', $rang->id, $rang->toArray(), ['status' => 'active']); 
-        $rang->restore();
 
-        return back()->with('success', 'Rangs atjaunots!');
+        $rang->restore();
+        $rang->update(['status' => 'active']);
+
+        ActivityLogService::log(
+            'update',
+            'rang',
+            $rang->id,
+            $rang->toArray(),
+            ['status' => 'active']
+        );
+
+        return redirect()
+            ->route('moderator.rangs.index')
+            ->with('success', 'Rangs atjaunots!');
+    }
+
+    /* ---------------------------
+        HELPERS (clean logic)
+    ----------------------------*/
+
+    private function setStatus(int $id, string $status, string $message)
+    {
+        $rang = Rang::findOrFail($id);
+
+        ActivityLogService::log(
+            'update',
+            'rang',
+            $rang->id,
+            $rang->toArray(),
+            ['status' => $status]
+        );
+
+        $rang->update(['status' => $status]);
+
+        return redirect()
+            ->route('moderator.rangs.index')
+            ->with('success', $message);
+    }
+
+    private function isInvalidRange(int $min, ?int $max, ?int $ignoreId = null): bool
+    {
+        return Rang::hasOverlap($min, $max, $ignoreId);
     }
 }
