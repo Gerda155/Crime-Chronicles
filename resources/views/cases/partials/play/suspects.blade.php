@@ -32,7 +32,7 @@
                         </h6>
 
                         <div class="d-flex flex-wrap gap-2 mb-3 question-buttons" style="justify-content:center; display:none;">
-                            @foreach($questions as $q)
+                            @foreach($questions->where('suspect_id', $suspect->id) as $q)
                             <div class="question {{ $q->is_locked ? 'locked-question d-none' : '' }}" data-question-id="{{ $q->id }}">
                                 <button type="button" class="btn btn-outline-info ask-btn" style="margin-top: 10px">
                                     {{ $q->question_text }}

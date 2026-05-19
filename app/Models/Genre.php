@@ -11,5 +11,7 @@ class Genre extends Model
     use HasFactory;
     use SoftDeletes;
 
+    public $timestamps = true;
+
     protected $fillable = ['name', 'status'];
 }

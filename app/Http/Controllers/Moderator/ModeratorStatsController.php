@@ -11,13 +11,11 @@ class ModeratorStatsController extends Controller
 {
     public function index()
     {
-        // Основная статистика
         $totalCases = CaseModel::count();
         $activeCases = CaseModel::where('status', 'published')->count();
         $totalUsers = User::count();
         $activeUsers = User::where('status', 'active')->count();
 
-        // Статистика по жанрам
         $casesByGenre = CaseModel::select('genre_id', DB::raw('count(*) as count'))
             ->groupBy('genre_id')
             ->get();
@@ -27,7 +25,6 @@ class ModeratorStatsController extends Controller
             'data' => $casesByGenre->pluck('count')->toArray()
         ];
 
-        // Статистика регистраций за 7 дней
         $registrations = User::select(
             DB::raw('DATE(created_at) as date'),
             DB::raw('count(*) as count')

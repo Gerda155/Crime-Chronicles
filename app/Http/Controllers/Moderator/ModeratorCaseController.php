@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\CaseModel;
 use App\Models\Genre;
 use App\Models\Notification;
+use App\Services\ActivityLogService;
 
 class ModeratorCaseController extends Controller
 {
@@ -69,6 +70,8 @@ class ModeratorCaseController extends Controller
 
         $data['rating'] = 0;
 
+        ActivityLogService::log('create', 'case', null, null, $data);
+
         CaseModel::create($data);
 
         return redirect()->route('moderator.cases.index')->with('success', 'Lieta izveidota!');
@@ -88,6 +91,7 @@ class ModeratorCaseController extends Controller
             'genre_id' => 'nullable|exists:genres,id',
         ]);
 
+        ActivityLogService::log('update', 'case', $case->id, $case->toArray(), $data);
         $case->update($data);
 
         return redirect()->route('moderator.cases.index')->with('success', 'Lieta atjaunināta');
@@ -95,12 +99,14 @@ class ModeratorCaseController extends Controller
 
     public function deactivateCase(CaseModel $case)
     {
+        ActivityLogService::log('update', 'case', $case->id, $case->toArray(), ['status' => 'inactive']);
         $case->update(['status' => 'inactive']);
         return redirect()->route('moderator.cases.index')->with('success', 'Lieta deaktivēta');
     }
 
     public function destroyCase(CaseModel $case)
     {
+        ActivityLogService::log('delete', 'case', $case->id, $case->toArray(), null);
         $case->delete();
         return redirect()->route('moderator.cases.index')->with('success', 'Lieta dzēsta!');
     }
@@ -121,6 +127,7 @@ class ModeratorCaseController extends Controller
         $case = CaseModel::findOrFail($id);
 
         $case->is_tutorial = 1;
+        ActivityLogService::log('update', 'case', $case->id, $case->toArray(), ['is_tutorial' => 1]);
         $case->save();
 
         return back()->with('success', 'Tutorial veiksmīgi atjaunināts!');
@@ -136,6 +143,7 @@ class ModeratorCaseController extends Controller
             'reason' => 'required|string|max:500'
         ]);
 
+        ActivityLogService::log('update', 'case', $case->id, $case->toArray(), ['status' => 'rejected']);
         $case->update([
             'status' => 'rejected'
         ]);
@@ -156,6 +164,7 @@ class ModeratorCaseController extends Controller
             return back()->with('error', 'Nepareizs lietas statuss');
         }
 
+        ActivityLogService::log('update', 'case', $case->id, $case->toArray(), ['status' => 'approved']);
         $case->update([
             'status' => 'approved'
         ]);
@@ -172,6 +181,7 @@ class ModeratorCaseController extends Controller
 
     public function resetToPending(CaseModel $case)
     {
+        ActivityLogService::log('update', 'case', $case->id, $case->toArray(), ['status' => 'pending']);
         $case->update(['status' => 'pending']);
 
         Notification::create([

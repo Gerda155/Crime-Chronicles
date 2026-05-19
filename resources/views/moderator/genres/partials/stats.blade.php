@@ -8,7 +8,7 @@
                     <div class="card-title">{{ $genres->count() }}</div>
                 </div>
 
-                <i class="fa-solid fa-masks-theater card-title"></i>
+                <i class="fa-solid fa-masks-theater card-title text-light"></i>
             </div>
         </div>
     </div>
@@ -23,7 +23,7 @@
                     </div>
                 </div>
 
-                <i class="fa-solid fa-circle-check card-title text-success"></i>
+                <i class="fa-solid fa-circle-check card-title text-light"></i>
             </div>
         </div>
     </div>
@@ -38,7 +38,7 @@
                     </div>
                 </div>
 
-                <i class="fa-solid fa-ban card-title text-danger"></i>
+                <i class="fa-solid fa-ban card-title text-light"></i>
             </div>
         </div>
     </div>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
 
-                <i class="fa-solid fa-clock-rotate-left card-title text-warning"></i>
+                <i class="fa-solid fa-clock-rotate-left card-title text-light"></i>
             </div>
         </div>
     </div>

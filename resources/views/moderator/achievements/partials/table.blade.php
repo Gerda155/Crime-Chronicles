@@ -4,13 +4,13 @@
                 <thead class="table-dark text-uppercase text-muted small">
                     <tr>
                         <th>#</th>
-                        <th><i class="fa-solid fa-trophy me-1"></i>Nosaukums</th>
-                        <th><i class="fa-solid fa-align-left me-1"></i>Apraksts</th>
-                        <th><i class="fa-solid fa-image me-1"></i>Ikona</th>
-                        <th><i class="fa-solid fa-star me-1"></i> Nepieciešamās lietas</th>
-                        <th><i class="fa-solid fa-toggle-on me-1"></i>Statuss</th>
-                        <th><i class="fa-solid fa-calendar me-1"></i>Izveidots</th>
-                        <th><i class="fa-solid fa-gear me-1"></i>Darbības</th>
+                        <th>Nosaukums</th>
+                        <th>Apraksts</th>
+                        <th>Ikona</th>
+                        <th>Nepieciešamās lietas</th>
+                        <th>Statuss</th>
+                        <th>Izveidots</th>
+                        <th>Darbības</th>
                     </tr>
 
                 </thead>
@@ -37,9 +37,7 @@
                         </td>
 
                         <td>
-                            <span class="badge bg-warning text-dark">
-                                {{ $achievement->required_cases }}
-                            </span>
+                            {{ $achievement->required_cases }}
                         </td>
 
                         <td>
@@ -64,7 +62,7 @@
 
                         <td>
                             <small>
-                                22.11.26
+                                {{ $achievement->created_at->format('d.m.Y') }}
                             </small>
                         </td>
 

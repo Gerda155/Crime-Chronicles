@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Achievement;
 use Illuminate\Support\Facades\Storage;
+use App\Services\ActivityLogService;
 
 class ModeratorAchievementController extends Controller
 {
@@ -60,7 +61,7 @@ class ModeratorAchievementController extends Controller
                 break;
         }
 
-        $achievements = Achievement::whereNull('deleted_at')->paginate(6);
+        $achievements = $query->paginate(6)->withQueryString();
 
         return view('moderator.achievements.index', compact('achievements'));
     }
@@ -82,6 +83,8 @@ class ModeratorAchievementController extends Controller
         if ($request->hasFile('icon')) {
             $data['icon'] = $request->file('icon')->store('achievements', 'public');
         }
+
+        ActivityLogService::log('create', 'achievement', null, null, $data);
 
         Achievement::create($data);
 
@@ -111,6 +114,7 @@ class ModeratorAchievementController extends Controller
             $data['icon'] = $request->file('icon')->store('achievements', 'public');
         }
 
+        ActivityLogService::log('update', 'achievement', $achievement->id, $achievement->toArray(), $data);
         $achievement->update($data);
 
         return redirect()->route('moderator.achievements.index')->with('success', 'Sasniegums atjaunināts!');
@@ -118,18 +122,21 @@ class ModeratorAchievementController extends Controller
 
     public function deactivateAchievement(Achievement $achievement)
     {
+        ActivityLogService::log('update', 'achievement', $achievement->id, $achievement->toArray(), ['status' => 'inactive']);
         $achievement->update(['status' => 'inactive']);
         return redirect()->route('moderator.achievements.index')->with('success', 'Sasniegums deaktivēts!');
     }
 
     public function activateAchievement(Achievement $achievement)
     {
+        ActivityLogService::log('update', 'achievement', $achievement->id, $achievement->toArray(), ['status' => 'active']);
         $achievement->update(['status' => 'active']);
         return redirect()->route('moderator.achievements.index')->with('success', 'Sasniegums aktivēts!');
     }
 
     public function destroyAchievement(Achievement $achievement)
     {
+        ActivityLogService::log('delete', 'achievement', $achievement->id, $achievement->toArray(), null);
         if ($achievement->icon) {
             Storage::disk('public')->delete($achievement->icon);
         }

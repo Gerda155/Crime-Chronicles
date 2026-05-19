@@ -5,26 +5,10 @@
         <thead class="table-dark text-uppercase text-muted small">
             <tr>
                 <th>#</th>
-
-                <th>
-                    <i class="fa-solid fa-masks-theater me-1"></i>
-                    Nosaukums
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-toggle-on me-1"></i>
-                    Statuss
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-calendar me-1"></i>
-                    Izveidots
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-gear me-1"></i>
-                    Darbības
-                </th>
+                <th>Nosaukums</th>
+                <th>Statuss</th>
+                <th>Izveidots</th>
+                <th>Darbības</th>
             </tr>
         </thead>
 
@@ -62,7 +46,7 @@
 
                 <td>
                     <small>
-
+                        {{ $genre->created_at->format('d.m.Y') }}
                     </small>
                 </td>
 

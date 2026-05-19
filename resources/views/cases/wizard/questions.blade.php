@@ -123,7 +123,7 @@
                     @endif
 
                     <div class="mb-3">
-                        <label class="form-label"><i class="fa-solid fa-user"></i> Aizdomās turamais</label>
+                        <label class="form-label"> Aizdomās turamais</label>
                         <select name="suspect_id" class="form-select bg-dark text-light border-0">
                             <option value="">Izvēlies aizdomās turamo</option>
                             @foreach($suspects as $s)
@@ -136,15 +136,15 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label"><i class="fa-regular fa-circle-question"></i> Jautājums</label>
+                        <label class="form-label"> Jautājums</label>
                         <textarea name="question_text" class="form-control bg-dark text-light border-0" rows="3" placeholder="Piem., 'Kur jūs atradāties nozieguma brīdī?'">{{ old('question_text', $editingQuestion->question_text ?? '') }}</textarea>
                         <small class="text-light mt-1 d-block">
-                            <i class="fa-solid fa-pen"></i> Uzraksti jautājumu, ko spēlētājs varēs uzdot aizdomās turamajam
+                            <i class="fa-solid fa-info-circle"></i> Uzraksti jautājumu, ko spēlētājs varēs uzdot aizdomās turamajam
                         </small>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label"><i class="fa-solid fa-comment-dots"></i> Atbilde</label>
+                        <label class="form-label"> Atbilde</label>
                         <textarea name="answer_text" class="form-control bg-dark text-light border-0" rows="3" placeholder="Ieraksti atbildi, ko aizdomās turamais sniegs...">{{ old('answer_text', $editingQuestion->answer_text ?? '') }}</textarea>
                         <small class="text-light mt-1 d-block">
                             <i class="fa-solid fa-info-circle"></i> Atbilde var saturēt norādes, melus vai svarīgu informāciju

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Moderator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Rang;
+use App\Services\ActivityLogService;
 
 class ModeratorRangController extends Controller
 {
@@ -67,11 +68,12 @@ class ModeratorRangController extends Controller
             'max_score' => 'nullable|integer|gt:min_score',
         ]);
 
-        // Проверка на пересечение
         if (Rang::hasOverlap($data['min_score'], $data['max_score'])) {
             return back()->withErrors(['min_score' => 'Šis punktu diapazons pārklājas ar esošu rangu!'])
                 ->withInput();
         }
+
+        ActivityLogService::log('create', 'rang', null, null, $data);
 
         Rang::create($data);
 
@@ -89,12 +91,13 @@ class ModeratorRangController extends Controller
             'max_score' => 'nullable|integer|gt:min_score',
         ]);
 
-        // Проверка на пересечение, исключая текущий ранг
         if (Rang::hasOverlap($data['min_score'], $data['max_score'], $id)) {
             return back()->withErrors(['min_score' => 'Šis punktu diapazons pārklājas ar esošu rangu!'])
                 ->withInput();
         }
 
+        ActivityLogService::log('update', 'rang', $rang->id, $rang->toArray(), $data);
+        
         $rang->update($data);
 
         return redirect()->route('moderator.rangs.index')
@@ -104,6 +107,7 @@ class ModeratorRangController extends Controller
     public function destroyRang(int $id)
     {
         $rang = Rang::findOrFail($id);
+        ActivityLogService::log('delete', 'rang', $rang->id, $rang->toArray(), null);
         $rang->delete();
 
         return redirect()->route('moderator.rangs.index')
@@ -113,6 +117,7 @@ class ModeratorRangController extends Controller
     public function deactivateRang(int $id)
     {
         $rang = Rang::findOrFail($id);
+        ActivityLogService::log('update', 'rang', $rang->id, $rang->toArray(), ['status' => 'inactive']);   
         $rang->update(['status' => 'inactive']);
 
         return redirect()->route('moderator.rangs.index')
@@ -122,6 +127,7 @@ class ModeratorRangController extends Controller
     public function activateRang(int $id)
     {
         $rang = Rang::findOrFail($id);
+        ActivityLogService::log('update', 'rang', $rang->id, $rang->toArray(), ['status' => 'active']);
         $rang->update(['status' => 'active']);
 
         return redirect()->route('moderator.rangs.index')
@@ -131,6 +137,7 @@ class ModeratorRangController extends Controller
     public function restoreRang(int $id)
     {
         $rang = Rang::withTrashed()->findOrFail($id);
+        ActivityLogService::log('update', 'rang', $rang->id, $rang->toArray(), ['status' => 'active']); 
         $rang->restore();
 
         return back()->with('success', 'Rangs atjaunots!');

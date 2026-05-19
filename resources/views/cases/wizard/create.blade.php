@@ -68,7 +68,7 @@
                     @endif
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold"><i class="fa-solid fa-pen"></i> Nosaukums</label>
+                        <label class="form-label fw-bold"> Nosaukums</label>
                         <input type="text"
                             name="title"
                             class="form-control bg-dark text-light border-0 rounded"
@@ -81,7 +81,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold"><i class="fa-solid fa-align-left"></i> Apraksts</label>
+                        <label class="form-label fw-bold">Apraksts</label>
                         <textarea name="description"
                             rows="5"
                             class="form-control bg-dark text-light border-0 rounded"
@@ -93,7 +93,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold"><i class="fa-solid fa-film"></i> Žanrs</label>
+                        <label class="form-label fw-bold"> Žanrs</label>
                         <select name="genre_id"
                             class="form-select bg-dark text-light border-0 rounded"
                             required>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Moderator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Genre;
+use App\Services\ActivityLogService;
 
 class ModeratorGenreController extends Controller
 {
@@ -60,6 +61,8 @@ class ModeratorGenreController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:genres,name',
         ]);
+        
+        ActivityLogService::log('create', 'genre', null, null, $data);
 
         Genre::create($data);
 
@@ -70,6 +73,8 @@ class ModeratorGenreController extends Controller
     {
         $query = Genre::query();
         $genres = $query->paginate(10)->withQueryString();
+
+        ActivityLogService::log('read', 'genre', $genre->id, $genre->toArray(), null);
 
         $editGenre = $genre;
 
@@ -82,6 +87,8 @@ class ModeratorGenreController extends Controller
             'name' => 'required|string|max:255|unique:genres,name,' . $genre->id,
         ]);
 
+        ActivityLogService::log('update', 'genre', $genre->id, $genre->toArray(), $data);
+
         $genre->update($data);
 
         return redirect()->route('moderator.genres.index')->with('success', 'Žanrs atjaunināts!');
@@ -89,18 +96,21 @@ class ModeratorGenreController extends Controller
 
     public function deactivateGenre(Genre $genre)
     {
+        ActivityLogService::log('update', 'genre', $genre->id, $genre->toArray(), ['status' => 'inactive']);
         $genre->update(['status' => 'inactive']);
         return redirect()->route('moderator.genres.index')->with('success', 'Žanrs deaktivēts!');
     }
 
     public function activateGenre(Genre $genre)
     {
+        ActivityLogService::log('update', 'genre', $genre->id, $genre->toArray(), ['status' => 'active']);
         $genre->update(['status' => 'active']);
         return redirect()->route('moderator.genres.index')->with('success', 'Žanrs aktivēts!');
     }
 
     public function destroyGenre(Genre $genre)
     {
+        ActivityLogService::log('delete', 'genre', $genre->id, $genre->toArray(), null);
         $genre->delete();
         return redirect()->route('moderator.genres.index')->with('success', 'Žanrs dzēsts!');
     }

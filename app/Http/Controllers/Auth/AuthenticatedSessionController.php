@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use App\Models\User;
 use Illuminate\Validation\ValidationException;
+use App\Services\ActivityLogService;
+
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -25,6 +27,8 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        ActivityLogService::log('logout', 'user', Auth::id(), null, ['message' => 'User logged out']);
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
@@ -44,6 +48,8 @@ class AuthenticatedSessionController extends Controller
         $user = User::where($fieldType, $login)->first();
 
         if ($user && $user->status !== 'active') {
+            ActivityLogService::log('failed_login','user',null,null,['login' => $login]);
+
             throw ValidationException::withMessages([
                 'login' => 'Tavs konts ir deaktivēts. Sazinieties ar mums, lai to aktivizētu.',
             ]);
@@ -56,6 +62,9 @@ class AuthenticatedSessionController extends Controller
         ], $request->filled('remember'))) {
 
             $request->session()->regenerate();
+
+            ActivityLogService::log('login','user',Auth::id(),null,['message' => 'User logged in']);
+
             return redirect()->intended('/');
         }
 

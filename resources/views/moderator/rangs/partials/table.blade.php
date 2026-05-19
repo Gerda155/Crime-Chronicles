@@ -4,39 +4,13 @@
 
         <thead class="table-dark text-uppercase text-muted small">
             <tr>
-
                 <th>#</th>
-
-                <th>
-                    <i class="fa-solid fa-ranking-star me-1"></i>
-                    Nosaukums
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-arrow-down-1-9 me-1"></i>
-                    Min punkti
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-arrow-up-9-1 me-1"></i>
-                    Max punkti
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-calendar me-1"></i>
-                    Izveidots
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-toggle-on me-1"></i>
-                    Statuss
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-gear me-1"></i>
-                    Darbības
-                </th>
-
+                <th>Nosaukums</th>
+                <th>Min punkti</th>
+                <th>Max punkti</th>
+                <th>Izveidots</th>
+                <th>Statuss</th>
+                <th>Darbības</th>
             </tr>
         </thead>
 

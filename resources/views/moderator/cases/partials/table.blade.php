@@ -4,46 +4,14 @@
             <tr>
 
                 <th>#</th>
-
-                <th>
-                    <i class="fa-solid fa-folder me-1"></i>
-                    Nosaukums
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-align-left me-1"></i>
-                    Apraksts
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-masks-theater me-1"></i>
-                    Žanrs
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-star me-1"></i>
-                    Reitings
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-graduation-cap me-1"></i>
-                    Tutorial
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-calendar me-1"></i>
-                    Izveidots
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-gear me-1"></i>
-                    Statuss
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-trash me-1"></i>
-                    Dzēst
-                </th>
+                <th>Nosaukums</th>
+                <th>Apraksts</th>
+                <th>Žanrs</th>
+                <th>Reitings</th>
+                <th>Tutorial </th>
+                <th>Izveidots</th>
+                <th>Statuss</th>
+                <th>Dzēst</th>
             </tr>
         </thead>
 

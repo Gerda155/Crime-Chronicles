@@ -32,7 +32,7 @@ $cols = Auth::user()->role === 'admin' ? 4 : 3;
                     </div>
                 </div>
 
-                <i class="fa-solid fa-user-check card-title text-success"></i>
+                <i class="fa-solid fa-user-check card-title text-light"></i>
 
             </div>
         </div>
@@ -49,7 +49,7 @@ $cols = Auth::user()->role === 'admin' ? 4 : 3;
                     </div>
                 </div>
 
-                <i class="fa-solid fa-user-xmark card-title text-danger"></i>
+                <i class="fa-solid fa-user-xmark card-title text-light"></i>
 
             </div>
         </div>
@@ -67,7 +67,7 @@ $cols = Auth::user()->role === 'admin' ? 4 : 3;
                     </div>
                 </div>
 
-                <i class="fa-solid fa-user-shield card-title text-warning"></i>
+                <i class="fa-solid fa-user-shield card-title text-light"></i>
 
             </div>
         </div>

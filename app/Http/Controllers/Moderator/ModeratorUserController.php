@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Services\ActivityLogService;
 
 class ModeratorUserController extends Controller
 {
@@ -82,6 +83,7 @@ class ModeratorUserController extends Controller
 
     public function deactivateUser(User $user)
     {
+        ActivityLogService::log('update', 'user', $user->id, $user->toArray(), ['status' => 'inactive']);
         $user->update(['status' => 'inactive']);
 
         return redirect()->route('moderator.users.index')->with('success', 'Lietotājs deaktivēts');
@@ -89,6 +91,7 @@ class ModeratorUserController extends Controller
 
     public function activateUser(User $user)
     {
+        ActivityLogService::log('update', 'user', $user->id, $user->toArray(), ['status' => 'active']);
         $user->update(['status' => 'active']);
 
         return redirect()->route('moderator.users.index')->with('success', 'Lietotājs aktivēts');
@@ -96,12 +99,14 @@ class ModeratorUserController extends Controller
 
     public function destroyUser(User $user)
     {
+        ActivityLogService::log('delete', 'user', $user->id, $user->toArray(), null);
         $user->delete();
         return redirect()->route('moderator.users.index')->with('success', 'Lietotājs dzēsts!');
     }
 
-    public function restoreUser($id)
+    public function restoreUser(int $id)
     {
+        ActivityLogService::log('update', 'user', $id, [], ['status' => 'active']);
         $user = User::withTrashed()->findOrFail($id);
         $user->restore();
         return redirect()->route('moderator.users.index')->with('success', 'Lietotājs atjaunots!');

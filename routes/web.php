@@ -17,6 +17,7 @@ use App\Http\Controllers\Moderator\ModeratorGenreController;
 use App\Http\Controllers\Moderator\ModeratorRangController;
 use App\Http\Controllers\Moderator\ModeratorStatsController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\RatingController;
@@ -184,6 +185,9 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::put('users/{user}/activate', [AdminController::class, 'activateUser'])->name('users.activate');
     Route::delete('users/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
     Route::post('users/{id}/restore', [AdminController::class, 'restoreUser'])->name('users.restore');
+
+    Route::get('/logs', [ActivityLogController::class, 'index'])->name('logs.index');
+
 });
 
 require __DIR__ . '/auth.php';

@@ -61,7 +61,7 @@
 
         <div class="card bg-secondary text-light border-0 mb-4">
             <div class="card-body">
-                <h5 class="mb-3"><i class="fa-solid fa-list"></i> Pievienotie pierādījumi</h5>
+                <h5 class="mb-3"> Pievienotie pierādījumi</h5>
 
                 @forelse($evidence as $item)
                 <div class="suspect-card w-100 mb-3 p-3 rounded d-flex gap-3 align-items-start"
@@ -119,7 +119,7 @@
 
         <div class="card bg-secondary text-light border-0">
             <div class="card-body">
-                <h5 class="mb-3"><i class="fa-solid fa-plus-circle"></i> Pievienot jaunu pierādījumu</h5>
+                <h5 class="mb-3"> Pievienot jaunu pierādījumu</h5>
 
                 <form method="POST"
                     action="{{ isset($editingEvidence)
@@ -135,7 +135,7 @@
                     @endif
 
                     <div class="mb-3">
-                        <label class="form-label"><i class="fa-solid fa-pen"></i> Apraksts</label>
+                        <label class="form-label">Apraksts</label>
                         <textarea name="description"
                             class="form-control bg-dark text-light border-0"
                             rows="3"
@@ -147,7 +147,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label"><i class="fa-solid fa-file"></i> Fails</label>
+                        <label class="form-label"> Fails</label>
                         <input type="file"
                             id="fileInput"
                             name="file"

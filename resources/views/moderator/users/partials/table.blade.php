@@ -6,31 +6,11 @@
 
             <tr>
                 <th>#</th>
-
-                <th>
-                    <i class="fa-solid fa-user me-1"></i>
-                    Lietotājs
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-envelope me-1"></i>
-                    E-pasts
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-user-shield me-1"></i>
-                    Loma
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-toggle-on me-1"></i>
-                    Statuss
-                </th>
-
-                <th>
-                    <i class="fa-solid fa-gear me-1"></i>
-                    Darbības
-                </th>
+                <th>Lietotājs</th>
+                <th>E-pasts</th>
+                <th>Loma</th>
+                <th>Statuss</th>
+                <th>Darbības</th>
             </tr>
 
         </thead>
@@ -121,7 +101,7 @@
                         <div class="d-flex gap-1 flex-nowrap">
 
                             <button type="button"
-                                class="btn btn-sm btn-outline-info rounded"
+                                class="btn btn-sm btn-outline-light rounded"
                                 data-bs-toggle="modal"
                                 data-bs-target="#userModal{{ $user->id }}">
                                 <i class="fa-solid fa-eye"></i>

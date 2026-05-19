@@ -19,7 +19,7 @@ class Achievement extends Model
         'status',
     ];
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     public function users()
     {

@@ -8,7 +8,7 @@
                     <div class="card-title">{{ $achievements->count() }}</div>
                 </div>
 
-                <i class="fa-solid fa-trophy card-title text-warning"></i>
+                <i class="fa-solid fa-trophy card-title text-light"></i>
             </div>
         </div>
     </div>
@@ -23,7 +23,7 @@
                     </div>
                 </div>
 
-                <i class="fa-solid fa-circle-check card-title text-success"></i>
+                <i class="fa-solid fa-circle-check card-title text-light"></i>
             </div>
         </div>
     </div>
@@ -38,7 +38,7 @@
                     </div>
                 </div>
 
-                <i class="fa-solid fa-circle-xmark card-title text-danger"></i>
+                <i class="fa-solid fa-circle-xmark card-title text-light"></i>
             </div>
         </div>
     </div>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
 
-                <i class="fa-solid fa-fire card-title text-danger"></i>
+                <i class="fa-solid fa-fire card-title text-light"></i>
             </div>
         </div>
     </div>
