@@ -4,30 +4,97 @@
 
 ## Par projektu
 
-Crime Chronicles ir tīmekļa platforma, kur lietotāji var piedalīties detektīvspēlēs, izmeklēt lietas un attīstīt savas analītiskās prasmes. Sistēma piedāvā interaktīvu pieredzi ar pierādījumiem, aizdomās turamajiem un spēles progresu. Platforma nodrošina iespēju ne tikai spēlēt, bet arī izveidot savas lietas, kuras pēc tam pārbauda moderatori.
+Crime Chronicles ir interaktīva tīmekļa platforma, kas paredzēta detektīvspēļu spēlēšanai un izveidei. Platformas galvenais mērķis ir nodrošināt lietotājiem iespēju iejusties izmeklētāja lomā, analizēt pierādījumus, nopratināt aizdomās turamos un atrisināt dažādas krimināllietas.
+
+Sistēma tika izstrādāta, izmantojot Laravel framework, HTML, CSS, JavaScript. Projekts balstās uz MVC arhitektūras principiem un nodrošina ērtu un interaktīvu lietotāja pieredzi.
+
+![Sākumlapa](screens/main-page.png)
+
+Platformā lietotāji var reģistrēties, autorizēties un piekļūt detektīvspēļu sistēmai. Katrs lietotājs var izvēlēties sev interesējošu lietu, uzsākt izmeklēšanu un sekot savam progresam.
+
+## Kā notiek izmeklēšana
+
+Katras lietas laikā lietotājam ir pieejami dažādi pierādījumi, aizdomās turamie un jautājumi. Lietotāja uzdevums ir analizēt pieejamo informāciju un noteikt pareizo vainīgo.
+
+Izmeklēšanas process ietver:
+
+- pierādījumu apskati;
+- aizdomās turamo analīzi;
+- jautājumu izmantošanu nopratināšanas laikā;
+- gala lēmuma pieņemšanu;
+- punktu un progresa uzkrāšanu.
+
+Sistēma saglabā lietotāja progresu, atvērto pierādījumu skaitu un sasniegtos rezultātus. Pēc veiksmīgas lietas atrisināšanas lietotājs var saņemt sasniegumus un papildus punktus.
+
+![Lietas lapa](screens/play-page.png)
+
+## Lietu izveide
+
+Platforma nodrošina iespēju lietotājiem izveidot savas detektīvspēles. Veidošanas laikā iespējams pievienot:
+
+- lietas aprakstu;
+- pierādījumus;
+- aizdomās turamos;
+- jautājumus;
+- pareizo atbildi;
+- paskaidrojumu par lietas atrisinājumu.
+
+Pēc izveides lieta tiek nosūtīta moderatoram pārbaudei un apstiprināšanai.
+
+![Pamatinformacija](screens/create1.png)
+![Aizdomas turamie](screens/create2.png)
+![Pierafijumi](screens/create3.png)
+![Jautajumi](screens/create4.png)
+![Paskaidrojums](screens/create5.png)
 
 ## Galvenās funkcijas
 
-- Lietotāju reģistrācija un autentifikācija  
-- Detektīvspēļu spēlēšana (lietu izmeklēšana)  
-- Punktu sistēma un progresijas mehānika  
-- Lietu izveide no lietotāju puses  
-- Moderācijas sistēma (lietu apstiprināšana)  
-- Administrēšanas panelis (moderatoru pārvaldība)  
-- Meklēšana, filtrēšana un šķirošana  
-
-## Tehnoloģijas
-
-Projekts tika izstrādāts, izmantojot šādas tehnoloģijas:
-
-- HTML, CSS, JavaScript  
-- PHP (Laravel framework)  
-- datu bāze
+- Lietotāju reģistrācija un autentifikācija;
+- Detektīvspēļu spēlēšana;
+- Lietotāja progresa sistēma;
+- Punktu un sasniegumu sistēma;
+- Lietu izveide un rediģēšana;
+- Meklēšana, filtrēšana un šķirošana;
+- Moderatoru un administratoru panelis;
+- Darbību žurnālu sistēma;
+- Lietotāju un satura moderācija.
 
 ## Sistēmas lomas
 
-- **Lietotājs** – var spēlēt lietas un izveidot savas  
-- **Moderators** – pārbauda un apstiprina lietas, var deaktivizēt lietotājus  
-- **Administrators** – pārvalda moderatorus un sistēmas darbību  
+Sistēmā ir realizētas vairākas lietotāju lomas ar atšķirīgām piekļuves tiesībām.
 
-Šis projekts ir izstrādāts izglītības nolūkiem.
+**Lietotājs**
+- var spēlēt lietas;
+- apskatīt savu progresu;
+- saņemt sasniegumus;
+- izveidot savas lietas.
+
+**Moderators**
+- pārbauda lietotāju izveidotās lietas;
+- apstiprina vai noraida saturu;
+- pārvalda sistēmas saturu;
+- var deaktivizēt lietotājus.
+
+**Administrators**
+- pārvalda moderatoru kontus;
+- apskata darbību žurnālus;
+- administrē sistēmas darbību.
+
+![Administratora panelis - lietotaji](screens/admin-panel.png)
+
+## Tehnoloģijas
+
+Projekta izstrādē tika izmantotas šādas tehnoloģijas:
+
+- HTML;
+- CSS;
+- JavaScript;
+- PHP;
+- Laravel framework;
+- Datubāze;
+- Bootstrap;
+- Font Awesome.
+
+## Secinājums
+
+Crime Chronicles nodrošina interaktīvu vidi detektīvspēļu spēlēšanai un izveidei. Projekta izstrādes laikā tika realizēta lietotāju autentifikācija, lomu sistēma, progresa uzskaite, sasniegumu mehānika un satura moderācijas funkcionalitāte. Sistēma apvieno spēles elementus ar datubāzes un tīmekļa tehnoloģiju izmantošanu, radot pilnvērtīgu un funkcionālu platformu.
