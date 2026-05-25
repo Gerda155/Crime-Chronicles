@@ -90,11 +90,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/cases/{case}/solution', [CaseSolutionController::class, 'index'])->name('cases.solution');
     Route::put('/cases/{case}/solution', [CaseSolutionController::class, 'save'])->name('cases.solution.save');
 
+    Route::delete('/notifications/delete-all', [NotificationController::class, 'deleteAll'])->name('notifications.deleteAll');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
-    Route::delete('/notifications/delete-all', [NotificationController::class, 'deleteAll'])->name('notifications.deleteAll');
 });
 
 Route::get('/cases', [CaseController::class, 'index'])->name('cases.index');
