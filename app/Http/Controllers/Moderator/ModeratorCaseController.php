@@ -13,7 +13,7 @@ class ModeratorCaseController extends Controller
 {
     public function casesIndex(Request $request)
     {
-        $query = CaseModel::query();
+        $query = CaseModel::whereIn('status', ['pending', 'approved', 'rejected', 'active', 'inactive']);
 
         if ($request->search) {
             $query->where('title', 'like', '%' . $request->search . '%');

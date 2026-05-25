@@ -2,8 +2,8 @@
     <table class="table table-dark table-hover align-middle mb-0">
         <thead class="table-dark text-uppercase text-muted small">
             <tr>
-
                 <th>#</th>
+                <th>Autors</th>
                 <th>Nosaukums</th>
                 <th>Apraksts</th>
                 <th>Žanrs</th>
@@ -20,15 +20,19 @@
             @forelse($cases as $case)
 
             <tr class="{{ $case->status === 'inactive' ? 'text-secondary' : '' }}">
+                
+                <td>{{ $case->id }}</td>
 
-                <td>{{ $loop->iteration }}</td>
+                <td>
+                    {{ Str::limit($case->user->username ?? '—', 25) }}
+                </td>
 
                 <td class="fw-bold">
                     {{ $case->title }}
                 </td>
 
                 <td>
-                    {{ Str::limit($case->description, 60) }}
+                    {{ Str::limit($case->description, 30) }}
                 </td>
 
                 <td>
@@ -135,7 +139,6 @@
 
                         <ul class="dropdown-menu dropdown-menu-dark shadow border-0">
 
-                            {{-- PENDING --}}
                             @if($case->status === 'pending')
 
                             <li>
@@ -160,7 +163,6 @@
                             @endif
 
 
-                            {{-- APPROVED / REJECTED → back to pending --}}
                             @if(in_array($case->status, ['approved', 'rejected']))
 
                             <li>
@@ -176,7 +178,6 @@
                             @endif
 
 
-                            {{-- ACTIVE / INACTIVE --}}
                             @if($case->status === 'active')
                             <li>
                                 <form action="{{ route('moderator.cases.deactivate', $case) }}" method="POST">
@@ -184,6 +185,16 @@
                                     @method('PUT')
                                     <button class="dropdown-item text-warning">
                                         Deaktivēt
+                                    </button>
+                                </form>
+                            </li>
+
+                            <li>
+                                <form action="{{ route('moderator.cases.reset', $case) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <button class="dropdown-item text-warning">
+                                        Atgriezt uz gaidīšanu
                                     </button>
                                 </form>
                             </li>
