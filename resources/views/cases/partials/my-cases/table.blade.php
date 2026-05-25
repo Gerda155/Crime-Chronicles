@@ -55,7 +55,7 @@
 
                 <td>
 
-                    @if($case->status !== 'pending')
+                    @if(in_array($case->status, ['active', 'inactive']))
 
                     <form method="POST" action="{{ route('cases.toggle-status', $case->id) }}">
                         @csrf
@@ -66,11 +66,18 @@
 
                     </form>
 
-                    @else
+                    @elseif($case->status === 'pending')
 
                     <span class="status-pending">
                         <i class="fa-solid fa-clock me-1"></i>
                         Gaida
+                    </span>
+
+                    @elseif($case->status === 'rejected')
+
+                    <span>
+                        <i class="fa-solid fa-xmark me-1"></i>
+                        Noraidīts
                     </span>
 
                     @endif

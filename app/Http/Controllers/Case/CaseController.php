@@ -195,12 +195,11 @@ class CaseController extends Controller
 
     public function toggleStatus(CaseModel $case)
     {
-        if ($case->status === 'pending') {
-            return back();
+        if (!in_array($case->status, ['active', 'inactive'])) {
+            return back()->with('error', 'Šim statusam nevar mainīt stāvokli.');
         }
 
-        $case->status =
-            $case->status === 'active'
+        $case->status = $case->status === 'active'
             ? 'inactive'
             : 'active';
 
