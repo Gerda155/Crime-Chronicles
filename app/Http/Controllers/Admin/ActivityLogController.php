@@ -66,7 +66,7 @@ class ActivityLogController extends Controller
                 break;
         }
 
-        $logs = $query->paginate(20)->withQueryString();
+        $logs = $query->paginate(15)->withQueryString();
 
         return view('admin.logs.index', compact('logs'));
     }

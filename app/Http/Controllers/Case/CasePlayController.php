@@ -128,11 +128,11 @@ class CasePlayController extends Controller
         // Izveido statusa ziņojumu
         $status = $isCorrect
             ? 'Pareizi! Tu atradi īsto aizdomās turamo pēc '
-                . ($attemptCount + 1)
-                . ' mēģinājumiem.'
+            . ($attemptCount + 1)
+            . ' mēģinājumiem.'
             : 'Nepareizi. Tas bija '
-                . ($attemptCount + 1)
-                . '. mēģinājums. Mēģini vēlreiz.';
+            . ($attemptCount + 1)
+            . '. mēģinājums. Mēģini vēlreiz.';
 
         // Saglabā vai atjaunina lietotāja progresu
         UserProgress::updateOrCreate(
@@ -217,5 +217,16 @@ class CasePlayController extends Controller
         }
 
         return null;
+    }
+
+    public function tutorial()
+    {
+        $tutorialCase = CaseModel::where('is_tutorial', true)->first();
+
+        if (!$tutorialCase) {
+            abort(404, 'Tutorial case not found.');
+        }
+
+        return redirect()->route('cases.play', $tutorialCase->id);
     }
 }
