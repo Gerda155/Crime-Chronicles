@@ -20,6 +20,8 @@
                     </div>
                     @endif
 
+                    <input type="hidden" name="modal_id" value="editRankModal{{ $rang->id }}">
+
                     <div class="mb-3">
                         <label class="form-label">Nosaukums</label>
                         <input type="text" name="name"

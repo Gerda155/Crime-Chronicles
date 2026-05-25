@@ -54,7 +54,8 @@ class ModeratorRangController extends Controller
                 ->withErrors([
                     'min_score' => 'Šis punktu diapazons pārklājas ar esošu rangu!'
                 ])
-                ->withInput();
+                ->withInput()
+                ->with('open_modal', $request->modal_id);
         }
 
         ActivityLogService::log('create', 'rang', null, null, $data);
@@ -81,7 +82,8 @@ class ModeratorRangController extends Controller
                 ->withErrors([
                     'min_score' => 'Šis punktu diapazons pārklājas ar esošu rangu!'
                 ])
-                ->withInput();
+                ->withInput()
+                ->with('open_modal', $request->modal_id);
         }
 
         ActivityLogService::log('update', 'rang', $rang->id, $rang->toArray(), $data);

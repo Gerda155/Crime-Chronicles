@@ -41,8 +41,28 @@
     @include('partials.footer')
 
     @include('moderator.rangs.partials.modals.create')
-    @include('moderator.rangs.partials.modals.delete') 
+    @include('moderator.rangs.partials.modals.delete')
 
+    @php
+    $modalId = session('open_modal');
+    @endphp
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const modalId = '{{ $modalId }}';
+
+            if (modalId && modalId !== '') {
+                const modalEl = document.getElementById(modalId);
+
+                if (modalEl) {
+                    const modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                }
+            }
+
+        });
+    </script>
 </body>
 
 </html>
