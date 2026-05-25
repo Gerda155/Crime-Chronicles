@@ -16,7 +16,7 @@ use App\Http\Controllers\Moderator\ModeratorAchievementController;
 use App\Http\Controllers\Moderator\ModeratorGenreController;
 use App\Http\Controllers\Moderator\ModeratorRangController;
 use App\Http\Controllers\Moderator\ModeratorStatsController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\ContactController;
