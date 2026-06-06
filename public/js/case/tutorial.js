@@ -1,75 +1,114 @@
 const TutorialSystem = {
-
-    isActive: window.caseData?.isTutorial || false,
+    isActive: false,
     currentStep: 0,
     tutorialBox: null,
     highlightedElement: null,
     stepsCompleted: [],
     evidenceCount: 0,
+    isWaitingForTrigger: false,
+    caseId: null,
 
     steps: [
         {
-            title: "Sveicināts! 👋",
-            text: "Šī ir izmeklēšanas apmācība. Nākamajos soļos es Tev parādīšu, kā strādāt ar pierādījumiem.",
+            title: "Sveicināts!",
+            text: "Šī ir apmācības lieta. Es parādīšu, kā notiek izmeklēšana Crime Chronicles.",
             trigger: null,
             highlightSelector: null,
             position: "center"
         },
         {
-            title: "1. solis - Atvērt pierādījumu",
-            text: "Noklikšķini uz pogas 'Atvērt pierādījumu'",
-            trigger: "evidence_click",
+            title: "1. solis - Izpēti pierādījumus",
+            text: "Atver pirmo pierādījumu, lai sāktu izmeklēšanu.",
+            trigger: "first_evidence_opened",
             highlightSelector: ".reveal-btn",
             position: "bottom"
         },
         {
-            title: "2. solis - Atrast slēpto objektu",
-            text: "Noklikšķini uz attēla, lai to atvērtu, un atrodi slēpto objektu",
-            trigger: "hidden_object_found",
-            highlightSelector: ".evidence-img-wrapper img",
-            position: "top"
-        },
-        {
-            title: "3. solis - Atvērt vēl vienu pierādījumu",
-            text: "Lieliski! Tagad atver citu pierādījumu",
+            title: "2. solis - Savāc informāciju",
+            text: "Labi! Tagad atver vēl vienu pierādījumu. Jo vairāk informācijas savāksi, jo vieglāk būs atrast vainīgo.",
             trigger: "second_evidence_opened",
             highlightSelector: ".reveal-btn",
             position: "bottom"
         },
         {
-            title: "4. solis - Uzdot jautājumu",
-            text: "Tagad uzdod jautājumu aizdomās turamajam",
-            trigger: "ask_question",
-            highlightSelector: ".ask-btn",
-            position: "right"
-        },
-        {
-            title: "5. solis - Izvēlēties aizdomās turamo",
-            text: "Izvēlies, kurš, tavuprāt, ir vainīgais",
+            title: "3. solis - Izvēlies aizdomās turamo",
+            text: "Tagad izvēlies kādu aizdomās turamo, lai sāktu viņa iztaujāšanu.",
             trigger: "select_suspect",
             highlightSelector: ".suspect-card",
             position: "bottom"
         },
         {
-            title: "Apsveicu! 🎉",
-            text: "Tagad esi gatavs risināt īstas lietas! Veiksmi detektīv!",
-            trigger: null,
-            highlightSelector: null,
-            position: "center"
+            title: "4. solis - Uzdod jautājumu",
+            text: "Uzdod aizdomās turamajam jautājumu un izlasi viņa atbildi.",
+            trigger: "ask_question",
+            highlightSelector: ".ask-btn",
+            position: "right"
+        },
+        {
+            title: "5. solis - Pieņem lēmumu",
+            text: "Kad esi pārliecināts par savu izvēli, vari iesniegt atbildi.",
+            trigger: "ready_to_submit",
+            highlightSelector: "#submitBtn",
+            position: "top"
         }
     ],
 
-    init() {
-        if (!this.isActive) return;
+    isTutorialCompleted() {
+        if (!this.caseId) return false;
+        
+        const completed = localStorage.getItem(`tutorial_completed_${this.caseId}`);
+        if (completed === 'true') {
+            console.log('Tutorial already completed for this case');
+            return true;
+        }
+        
+        return false;
+    },
 
+    saveTutorialCompletion() {
+        if (this.caseId) {
+            localStorage.setItem(`tutorial_completed_${this.caseId}`, 'true');
+            console.log('Tutorial completion saved for case', this.caseId);
+        }
+        
+        if (window.caseData && window.caseData.id) {
+            fetch('/complete-tutorial', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    caseId: window.caseData.id,
+                    userId: window.caseData.userId 
+                })
+            }).catch(err => console.error('Failed to save tutorial completion:', err));
+        }
+    },
+
+    init() {
+        this.caseId = window.caseData?.id || null;
+
+        const shouldShowTutorial = window.caseData?.isTutorial || false;
+        
+        if (!shouldShowTutorial) {
+            console.log('Tutorial not required for this case');
+            return;
+        }
+
+        if (this.isTutorialCompleted()) {
+            console.log('Tutorial already completed, skipping');
+            return;
+        }
+        
+        this.isActive = true;
         console.log('Tutorial starting...');
         
         this.currentStep = 0;
         this.stepsCompleted = [];
         this.evidenceCount = 0;
-        
+        this.isWaitingForTrigger = false;
+
         if (this.tutorialBox) this.tutorialBox.remove();
-        
         this.createTutorialBox();
         this.start();
     },
@@ -84,18 +123,27 @@ const TutorialSystem = {
         const step = this.steps[stepIndex];
         if (!step) return;
 
-        console.log('Step', stepIndex, ':', step.title);
+        console.log('Showing step', stepIndex, ':', step.title);
         
         this.removeHighlight();
         this.renderStep(step, stepIndex);
+        
+        if (step.trigger) {
+            this.isWaitingForTrigger = true;
+        } else {
+            this.isWaitingForTrigger = false;
+        }
     },
 
     renderStep(step, stepIndex) {
         let buttonsHtml = '';
+        
         if (stepIndex < this.steps.length - 1) {
-            buttonsHtml = step.trigger
-                ? '<button class="tutorial-skip">Izlaist</button>'
-                : '<button class="tutorial-next">Nākamais ➜</button>';
+            if (step.trigger) {
+                buttonsHtml = '<button class="tutorial-skip">Izlaist</button>';
+            } else {
+                buttonsHtml = '<button class="tutorial-next">Nākamais ➜</button>';
+            }
         } else {
             buttonsHtml = '<button class="tutorial-finish">Sākt spēli!</button>';
         }
@@ -111,7 +159,7 @@ const TutorialSystem = {
             element = document.querySelector(step.highlightSelector);
         }
 
-        if (element) {
+        if (element && step.highlightSelector) {
             this.highlightElementFn(element);
             this.positionBox(element, step.position);
         } else {
@@ -126,8 +174,15 @@ const TutorialSystem = {
         if (finishBtn) finishBtn.onclick = () => this.end();
         if (skipBtn) {
             skipBtn.onclick = () => {
-                this.currentStep = this.steps.length - 1;
-                this.nextStep();
+                if (this.stepsCompleted[this.currentStep] !== true) {
+                    this.stepsCompleted[this.currentStep] = true;
+                    this.currentStep++;
+                    if (this.currentStep >= this.steps.length) {
+                        this.end();
+                    } else {
+                        this.showStep(this.currentStep);
+                    }
+                }
             };
         }
     },
@@ -136,7 +191,7 @@ const TutorialSystem = {
         this.removeHighlight();
         this.highlightedElement = element;
         element.classList.add('tutorial-highlight');
-        
+
         element.scrollIntoView({
             behavior: 'smooth',
             block: 'center',
@@ -167,7 +222,7 @@ const TutorialSystem = {
 
             let top, left;
 
-            switch(position) {
+            switch (position) {
                 case 'bottom':
                     top = rect.bottom + margin;
                     left = rect.left + (rect.width / 2) - (boxRect.width / 2);
@@ -197,7 +252,7 @@ const TutorialSystem = {
             this.tutorialBox.style.top = top + 'px';
             this.tutorialBox.style.left = left + 'px';
             this.tutorialBox.style.transform = 'none';
-            
+
             this.addArrow(targetElement, position);
         }, 100);
     },
@@ -212,54 +267,71 @@ const TutorialSystem = {
         const boxRect = this.tutorialBox.getBoundingClientRect();
         const targetRect = targetElement.getBoundingClientRect();
 
-        switch(position) {
+        switch (position) {
             case 'top':
                 arrow.style.bottom = '-8px';
-                arrow.style.left = (targetRect.left + targetRect.width/2 - boxRect.left) + 'px';
+                arrow.style.left = (targetRect.left + targetRect.width / 2 - boxRect.left) + 'px';
                 break;
             case 'bottom':
                 arrow.style.top = '-8px';
-                arrow.style.left = (targetRect.left + targetRect.width/2 - boxRect.left) + 'px';
+                arrow.style.left = (targetRect.left + targetRect.width / 2 - boxRect.left) + 'px';
                 break;
             case 'left':
                 arrow.style.right = '-8px';
-                arrow.style.top = (targetRect.top + targetRect.height/2 - boxRect.top) + 'px';
+                arrow.style.top = (targetRect.top + targetRect.height / 2 - boxRect.top) + 'px';
                 break;
             case 'right':
                 arrow.style.left = '-8px';
-                arrow.style.top = (targetRect.top + targetRect.height/2 - boxRect.top) + 'px';
+                arrow.style.top = (targetRect.top + targetRect.height / 2 - boxRect.top) + 'px';
                 break;
         }
 
         this.tutorialBox.appendChild(arrow);
     },
 
-    trigger(triggerName) {
-        console.log('Trigger:', triggerName, 'Current step:', this.currentStep);
+    markEvidenceOpened(btn) {
+        this.evidenceCount++;
+        console.log('Evidence opened count:', this.evidenceCount);
         
-        if (!this.isActive) return;
+        if (this.evidenceCount === 1) {
+            this.trigger('first_evidence_opened');
+        } else if (this.evidenceCount === 2) {
+            this.trigger('second_evidence_opened');
+        }
+    },
 
+    trigger(triggerName) {
+        console.log('Trigger received:', triggerName, 'Current step:', this.currentStep, 'Waiting:', this.isWaitingForTrigger);
+
+        if (!this.isActive) return;
+        
         const currentStep = this.steps[this.currentStep];
         
         if (currentStep && currentStep.trigger === triggerName && !this.stepsCompleted[this.currentStep]) {
-            console.log('✓ Step completed! Moving to next step');
+            console.log('✓ Trigger matched! Moving to next step');
             this.stepsCompleted[this.currentStep] = true;
             this.currentStep++;
+            this.isWaitingForTrigger = false;
 
             if (this.currentStep >= this.steps.length) {
                 this.end();
             } else {
                 this.showStep(this.currentStep);
             }
+        } else {
+            console.log('Trigger not matched or already completed');
         }
     },
 
     nextStep() {
-        this.stepsCompleted[this.currentStep] = true;
-        this.currentStep++;
-        if (this.currentStep >= this.steps.length) {
+        if (this.currentStep >= this.steps.length - 1) {
             this.end();
-        } else {
+            return;
+        }
+        
+        if (!this.stepsCompleted[this.currentStep]) {
+            this.stepsCompleted[this.currentStep] = true;
+            this.currentStep++;
             this.showStep(this.currentStep);
         }
     },
@@ -267,19 +339,34 @@ const TutorialSystem = {
     start() {
         this.currentStep = 0;
         this.stepsCompleted = [];
+        this.evidenceCount = 0;
+        this.isWaitingForTrigger = false;
         this.showStep(0);
     },
 
     end() {
         console.log('Tutorial ended');
+        
+        this.saveTutorialCompletion();
+        
         this.isActive = false;
         if (this.tutorialBox) this.tutorialBox.remove();
         this.removeHighlight();
         this.tutorialBox = null;
+
+        if (typeof showSmallNotification === 'function') {
+            showSmallNotification('Apmācība pabeigta! Tagad vari sākt izmeklēšanu!', 'success');
+        }
     }
 };
 
-// Запуск
-document.addEventListener('DOMContentLoaded', function () {
+function triggerTutorial(event) {
+    if (typeof TutorialSystem !== 'undefined' && TutorialSystem && typeof TutorialSystem.trigger === 'function') {
+        TutorialSystem.trigger(event);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded, initializing tutorial...');
     TutorialSystem.init();
 });
