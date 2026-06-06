@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const submitBtn = document.getElementById('submitBtn');
     const openedInput = document.getElementById('openedEvidenceCount');
     let score = 0;
+    let evidenceOpenedCount = 0; // Счетчик открытых доказательств
 
     window.addScore = function (points) {
         score += points;
@@ -27,6 +28,11 @@ document.addEventListener('DOMContentLoaded', function () {
     buttons.forEach(function (btn) {
         btn.addEventListener('click', function () {
 
+            // Отмечаем кнопку как открытую для туториала
+            if (typeof TutorialSystem !== 'undefined' && TutorialSystem.markEvidenceOpened) {
+                TutorialSystem.markEvidenceOpened(btn);
+            }
+
             triggerTutorial('evidence_click');
 
             const content = btn.nextElementSibling;
@@ -45,17 +51,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     let opened = parseInt(openedInput.value) || 0;
                     opened++;
+                    evidenceOpenedCount = opened;
                     openedInput.value = opened;
 
                     if (typeof updateProgress === 'function') {
                         updateProgress(opened);
-                    } else {
-                        console.warn('updateProgress function not found');
+                    }
+
+                    // ТРИГГЕР ДЛЯ ВТОРОГО ДОКАЗАТЕЛЬСТВА
+                    if (opened === 1) {
+                        console.log('Second evidence opened!');
+                        triggerTutorial('second_evidence_opened');
                     }
 
                     if (opened >= 2) {
-                        triggerTutorial('evidence_count_2');
-
                         document.querySelectorAll('.locked-question').forEach(q => {
                             q.classList.remove('d-none');
                         });
@@ -74,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         const selectedSuspect = document.getElementById('selectedSuspectId')?.value;
                         submitBtn.disabled = !(opened >= 2 && selectedSuspect);
                     }
-                    
+
                     if (typeof showSmallNotification === 'function') {
                         showSmallNotification('Pierādījums atvērts! +15 punkti', 'success');
                     } else {

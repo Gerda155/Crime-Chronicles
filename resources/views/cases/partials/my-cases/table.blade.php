@@ -55,7 +55,7 @@
 
                 <td>
 
-                    @if(in_array($case->status, ['active', 'inactive']))
+                    @if(in_array($case->status, ['approved', 'active', 'inactive']))
 
                     <form method="POST" action="{{ route('cases.toggle-status', $case->id) }}">
                         @csrf

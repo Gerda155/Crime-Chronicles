@@ -108,6 +108,7 @@ Route::middleware(['auth', ModeratorMiddleware::class])
             Route::get('/', [ModeratorCaseController::class, 'casesIndex'])->name('cases.index');
             Route::get('/create', [ModeratorCaseController::class, 'createCase'])->name('cases.create');
             Route::post('/', [ModeratorCaseController::class, 'storeCase'])->name('cases.store');
+            Route::get('/{case}', [ModeratorCaseController::class, 'show'])->name('cases.show');
             Route::get('/{case}/edit', [ModeratorCaseController::class, 'editCase'])->name('cases.edit');
             Route::put('/{case}', [ModeratorCaseController::class, 'updateCase'])->name('cases.update');
             Route::delete('/{case}', [ModeratorCaseController::class, 'destroyCase'])->name('cases.destroy');
@@ -187,7 +188,6 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::post('users/{id}/restore', [AdminController::class, 'restoreUser'])->name('users.restore');
 
     Route::get('/logs', [ActivityLogController::class, 'index'])->name('logs.index');
-
 });
 
 require __DIR__ . '/auth.php';

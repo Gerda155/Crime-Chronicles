@@ -23,12 +23,15 @@
                             data-key-area="{{ $item->key_object_area }}">
                     </div>
 
+                    @elseif($item->image_path === null)
+
                     @else
                     <a href="{{ asset($item->image_path) }}"
                         target="_blank"
                         class="btn btn-outline-light">
                         Atvērt failu
                     </a>
+
                     @endif
 
                 </div>

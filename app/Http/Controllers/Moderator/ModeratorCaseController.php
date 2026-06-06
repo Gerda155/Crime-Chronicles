@@ -196,7 +196,7 @@ class ModeratorCaseController extends Controller
 
     public function activateCase(CaseModel $case)
     {
-        ActivityLogService::log('update','case',$case->id,$case->toArray(),['status' => 'active']);
+        ActivityLogService::log('update', 'case', $case->id, $case->toArray(), ['status' => 'active']);
 
         $case->update([
             'status' => 'active'
@@ -205,5 +205,19 @@ class ModeratorCaseController extends Controller
         return redirect()
             ->route('moderator.cases.index')
             ->with('success', 'Lieta aktivēta');
+    }
+
+    public function show(CaseModel $case)
+    {
+        $case->load([
+            'user',
+            'genre',
+            'evidence',
+            'suspects',
+            'questions',
+            'suspect'
+        ]);
+
+        return view('moderator.cases.show', compact('case'));
     }
 }

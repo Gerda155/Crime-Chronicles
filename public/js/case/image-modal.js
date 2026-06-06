@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     modalImg.addEventListener('click', function (e) {
         if (!currentKeyArea || !currentWrapper) {
+            showSmallNotification('Šim pierādījumam nav slēptu objektu!', 'info');
             return;
         }
 
@@ -121,7 +122,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (typeof TutorialSystem !== 'undefined' && TutorialSystem.trigger) {
-            TutorialSystem.trigger('hidden_object');
+            console.log('Calling tutorial trigger: hidden_object_found');
+            TutorialSystem.trigger('hidden_object_found');
         }
 
         showSmallNotification('Atrasts slepenais pierādījums! +20 punkti', 'success');

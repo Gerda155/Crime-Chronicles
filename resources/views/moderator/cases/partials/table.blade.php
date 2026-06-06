@@ -12,6 +12,7 @@
                 <th>Izveidots</th>
                 <th>Statuss</th>
                 <th>Dzēst</th>
+                <th>Skatīt</th>
             </tr>
         </thead>
 
@@ -20,7 +21,7 @@
             @forelse($cases as $case)
 
             <tr class="{{ $case->status === 'inactive' ? 'text-secondary' : '' }}">
-                
+
                 <td>{{ $case->id }}</td>
 
                 <td>
@@ -227,6 +228,12 @@
 
                         <i class="fa-solid fa-trash"></i>
                     </button>
+                </td>
+
+                <td>
+                    <a href="{{ route('moderator.cases.show', $case) }}" class="btn btn-info">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
                 </td>
 
             </tr>
