@@ -95,6 +95,33 @@ Projekta izstrādē tika izmantotas šādas tehnoloģijas:
 - Bootstrap;
 - Font Awesome.
 
+## Instalācija (lokālai izmantošanai)
+
+Lai palaistu projektu savā datorā:
+
+# 1. Klonē repozitoriju
+git clone https://github.com/Gerda155/Crime-Chronicles.git
+cd crime-chronicles
+
+# 2. Kopē .env failu un konfigurē datubāzi
+cp .env.example .env
+
+# 3. Instalē PHP atkarības
+composer install
+
+# 4. Instalē JavaScript atkarības
+npm install
+npm run build
+
+# 5. Ģenerē aplikācijas atslēgu
+php artisan key:generate
+
+# 6. Izveido datubāzes tabulas un aizpilda ar sākotnējiem datiem
+php artisan migrate --seed
+
+# 7. Palaid attīstības serveri
+php artisan serve
+
 ## Secinājums
 
 Crime Chronicles nodrošina interaktīvu vidi detektīvspēļu spēlēšanai un izveidei. Projekta izstrādes laikā tika realizēta lietotāju autentifikācija, lomu sistēma, progresa uzskaite, sasniegumu mehānika un satura moderācijas funkcionalitāte. Sistēma apvieno spēles elementus ar datubāzes un tīmekļa tehnoloģiju izmantošanu, radot pilnvērtīgu un funkcionālu platformu.
