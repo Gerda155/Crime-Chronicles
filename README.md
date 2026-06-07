@@ -99,27 +99,27 @@ Projekta izstrādē tika izmantotas šādas tehnoloģijas:
 
 Lai palaistu projektu savā datorā:
 
-# 1. Klonē repozitoriju
+### 1. Klonē repozitoriju
 git clone https://github.com/Gerda155/Crime-Chronicles.git
 cd crime-chronicles
 
-# 2. Kopē .env failu un konfigurē datubāzi
+### 2. Kopē .env failu un konfigurē datubāzi
 cp .env.example .env
 
-# 3. Instalē PHP atkarības
+### 3. Instalē PHP atkarības
 composer install
 
-# 4. Instalē JavaScript atkarības
+### 4. Instalē JavaScript atkarības
 npm install
 npm run build
 
-# 5. Ģenerē aplikācijas atslēgu
+### 5. Ģenerē aplikācijas atslēgu
 php artisan key:generate
 
-# 6. Izveido datubāzes tabulas un aizpilda ar sākotnējiem datiem
+### 6. Izveido datubāzes tabulas un aizpilda ar sākotnējiem datiem
 php artisan migrate --seed
 
-# 7. Palaid attīstības serveri
+### 7. Palaid attīstības serveri
 php artisan serve
 
 ## Secinājums
