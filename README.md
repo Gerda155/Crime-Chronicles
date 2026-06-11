@@ -4,7 +4,8 @@
 
 ## Par projektu
 
-Crime Chronicles ir interaktīva tīmekļa platforma, kas paredzēta detektīvspēļu spēlēšanai un izveidei. Platformas galvenais mērķis ir nodrošināt lietotājiem iespēju iejusties izmeklētāja lomā, analizēt pierādījumus, nopratināt aizdomās turamos un atrisināt dažādas krimināllietas.
+Crime Chronicles ir interaktīva tīmekļa platforma, kas paredzēta detektīvspēļu spēlēšanai un izveidei. Platformas galvenais mērķis ir nodrošināt lietotājiem iespēju iejusties izmeklētāja lomā, analizēt pierādījumus, nopratināt aizdomās turamos un atrisināt dažādas krimināllietas. 
+Saite: 89.254.131.120:8009
 
 Sistēma tika izstrādāta, izmantojot Laravel framework, HTML, CSS, JavaScript. Projekts balstās uz MVC arhitektūras principiem un nodrošina ērtu un interaktīvu lietotāja pieredzi.
 
